@@ -1,0 +1,707 @@
+﻿@model Projecthoca.Models.EnitityVM.HocaVM
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+   
+}
+<div id="contextMenu" class="context-menu">
+    <ul>
+        <li><a href="#" id="chinhsua">Chỉnh sửa</a></li>
+        <li><a href="#" id="Themkh">Cho khách thuê</a></li>
+        <li><a href="#" id="Bamgio">Bấm giờ</a></li>
+        <li><a href="#" id="Themdichvu">Thêm dịch vụ</a></li>
+    </ul>
+</div>
+
+<div class="modal fade" id="Themkhachthuetill" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm khách thuê</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formkhachthue" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="hidden" class="form-control" id="Ma_khuvuccau" value="">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Tên khách hàng</label>
+                        <input type="text" class="form-control" id="Tenkhachhang">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Ngày câu</label>
+                        <input type="date" class="form-control" id="Ngaycau">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Thời gian bắt đầu câu</label>
+                        <input type="time" class="form-control" id="Thoigianbatdau">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thoát</button>
+                <button type="button" id="submitkt" class="btn btn-primary">Lưu khách thuê</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="Themkhuvuchc" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm khu vực</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formkhuvuc" enctype="multipart/form-data">
+                    <div class="form-group">
+                        @if(Model!=null && Model.Ma_hoca !=null)
+                        {
+                            <input type="hidden" class="form-control" id="Ma_hoca" value="@Model.Ma_hoca">
+                        }
+                        <input type="hidden" class="form-control" id="Idkhuvuccau" value="">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Tên khu vực câu</label>
+                        <input type="text" class="form-control" id="Ten_Khuvuccau">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label" >Trạng thái</label>
+                        <select class="form-select" id="Trangthai" >
+                            <option value="Chuacokhach" selected>Chưa có khách</option>
+                    
+                        </select> 
+                    </div>
+        
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thoát</button>
+                <button type="button" id="submitkv" class="btn btn-primary">Lưu khu vực</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="Themhocau" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm hồ câu</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formThemtaikhoan" enctype="multipart/form-data" asp-action="themhoca" asp-controller="Quanlyhoca">
+                    <div class="form-group">
+                        <label class="col-form-label" asp-for="Ten_hoca">Tên gọi hồ cá</label>
+                        <input asp-for="Ten_hoca" type="text" class="form-control" id="hovaten">
+                        <span asp-validation-for="Ten_hoca" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label" asp-for="Kieuhoca">Kiểu hồ câu</label>
+                        <select asp-for="Kieuhoca" class="form-select" aria-label="Default select example" id="Ma_LoaiPhong" onchange="updateImage()">
+                            <option value="hcn" selected>Hồ hình chữ nhật</option>
+                        </select>
+                        <span asp-validation-for="Kieuhoca" class="text-danger"></span>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary" id="submitBtntk">Thêm hồ câu</button>
+                        <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeBtn">Close</button>
+                    </div>
+                </form>
+
+            </div>
+       
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="row">
+                @if(Model !=null && Model.Ten_hoca !=null)
+                {
+                    <div class="col-md-10 col-12">
+                        <h4 class="m-0 font-weight-bold text-primary">@Model.Ten_hoca</h4>
+                    </div>
+
+                }
+                else
+                {
+                    <div class="col-md-10 col-12">
+                        <h4 class="m-0 font-weight-bold text-primary">Hồ câu á</h4>
+                    </div>
+                }
+
+                @if (Model != null && Model.Kieuhoca != null)
+                {
+                    <div class="col-md-2 col-12">
+                        
+                    </div>
+                }
+                else
+                {
+                    <div class="col-md-2 col-12">
+                        <button class="btn btn-primary" data-toggle="modal" data-target="#Themhocau">
+                            <span class="fs-20">Thêm hồ câu</span>
+                        </button>
+                    </div>
+                }
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                @if (Model != null &&  Model.Kieuhoca == "hcn")
+                {
+                    <div class="container" data-id="@Model.Ma_hoca">
+                        <div class="top-seats" id="top-seats">
+                     
+                          
+                        </div>
+                        <div class="d-flex justify-content-center align-items-center position-relative">
+                            <div class="hoca">
+                                <div class="wave"></div>
+                            </div>
+                        </div>
+                        <div class="bottom-seats" id="bottom-seats">
+                          
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <p>Hãy thêm hồ cá </p>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+@section Styles {
+    <link rel="stylesheet" href="~/css/hoca.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+   
+    <style>
+        .chongoi {
+            cursor: pointer;
+        }
+        .chongoi:hover{
+                background-color: #dc410b;
+        }
+        .Khuvuc{
+            background-image: url('../Admin_Style/img/1.jpg');
+            background-color: #dfe6e9;
+            width: 90px; /* Chiều rộng của chỗ ngồi */
+            height: 90px; /* Chiều cao của chỗ ngồi */
+            margin: 7px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #2d3436;
+            cursor: pointer;
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+       .Khuvuc:hover {
+                background-color: #33CCFF;
+          }
+
+        .context-menu {
+            display: none;
+            position: absolute;
+            z-index: 1000;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .context-menu ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+         }
+
+         .context-menu ul li {
+             padding: 8px 12px;
+             cursor: pointer;
+         }
+
+         .context-menu ul li a{
+             text-decoration: none;
+                color: #333;
+         }
+         .context-menu ul li:hover {
+               background-color: #f1f1f1;
+           }
+
+        .Cokhach {
+            background-color: greenyellow;
+            width:90px; /* Chiều rộng của chỗ ngồi */
+            height: 90px; /* Chiều cao của chỗ ngồi */
+            margin: 7px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #2d3436;
+            cursor: pointer;
+            display:flex;
+            flex-direction:column;
+
+        }
+        .Dangsuachua {
+            background-color: yellow;
+            width: 90px; /* Chiều rộng của chỗ ngồi */
+            height: 90px; /* Chiều cao của chỗ ngồi */
+            margin: 7px;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: #2d3436;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+        }
+        .status-text {
+            font-size: 15px;
+            font-weight: normal;
+            color: #fff;
+            margin-left: 5px;
+            text-shadow: -1px -1px 0 #2d3436, 1px -1px 0 #2d3436, -1px 1px 0 #2d3436, 1px 1px 0 #2d3436;
+            font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+           
+        }
+
+       </style>
+
+}
+@section Scripts{
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const connection = new signalR.HubConnectionBuilder()
+                .withUrl("/Timehub")
+                .build();
+            connection.start().catch(function (err) {
+                console.error(err.toString());
+            });
+
+            $("#submitkv").click(function () {
+                Themkhuvuc();
+            });
+            $('#Thoigianketthuc').timepicker({
+                timeFormat: 'HH:mm', // Định dạng 24 giờ
+                interval: 60,
+                minTime: '00:00',
+                maxTime: '23:59',
+                defaultTime: '00:00',
+                startTime: '00:00',
+                dynamic: true,
+                dropdown: false,
+                scrollbar: false
+
+            });
+            $('#Thoigianbatdau').timepicker({
+                timeFormat: 'HH:mm', // Định dạng 24 giờ
+                interval: 60,
+                minTime: '00:00',
+                maxTime: '23:59',
+                defaultTime: '00:00',
+                startTime: '00:00',
+                dynamic: true,
+                dropdown: false,
+                scrollbar: false
+
+            });
+            $(document).on("click", ".chongoi", function () {
+                var khuVucId = $(this).data("id");
+                // Khởi tạo modal và hiển thị nó
+                $("#Themkhuvuchc").modal("show");
+                // Cập nhật giá trị của input ẩn
+                $("#Idkhuvuccau").val(khuVucId);
+            });
+            Danhsachkhuvuc();
+            setInterval(function () {
+                setCurrentTime('#Thoigianbatdau');
+            }, 1000);
+            $(document).on("touchstart", ".Khuvuc", function (e) {
+                e.preventDefault();
+                var khuVucId = $(this).data("id");
+                console.log("khu vực nè", khuVucId);
+                Kiemtrakv(khuVucId);
+                $("#contextMenu").css({
+                    display: "block",
+                    left: e.originalEvent.touches[0].pageX,
+                    top: e.originalEvent.touches[0].pageY
+                }).data("id", khuVucId);
+            });
+            $(document).on("contextmenu", ".Khuvuc", function (e) {
+                e.preventDefault();
+                var khuVucId = $(this).data("id");
+
+                Kiemtrakv(khuVucId);
+                Kiemtrabamgio(khuVucId);
+                $("#contextMenu").css({
+                    display: "block",
+                    left: e.pageX,
+                    top: e.pageY
+                }).data("id", khuVucId);
+            });
+            $(document).click(function () {
+                $("#contextMenu").hide();
+            });
+            $("#contextMenu a").click(function (e) {
+                e.preventDefault();
+                var action = $(this).attr("id");
+                var khuVucId = $("#contextMenu").data("id");
+
+                if (action === "edit") {
+                    // Handle edit action
+                   // Themkhachhang(khuVucId);
+                   alert("Edit " + khuVucId);
+                } else if (action === "delete") {
+                    alert("Delete " + khuVucId);
+                } else if (action === "Themkh") {
+                 
+                    $("#Themkhachthuetill").modal("show");
+                    $("#Ma_khuvuccau").val(khuVucId);
+                } else if (action === "Bamgio") {
+                   
+                    //Updatebamgio(khuVucId);
+               
+                    Demthoigian(khuVucId);
+                    Swal.fire({
+                        title: "Thành công",
+                        text: "Bấm giờ thành công",
+                        icon: "success"
+                    });
+                    
+                }
+                $("#contextMenu").hide();
+            });
+            $(document).on("click", "#submitkt", function () {
+                Themkhachhang();
+            });
+        });
+        function Themkhuvuc() {
+            var Ma_hoca = $("#Ma_hoca").val();
+            var Ten_Khuvuccau = $("#Ten_Khuvuccau").val();
+            var Trangthai = $("#Trangthai").val();
+            var Ghichu = $("#Ghichu").val();
+            var Idkhuvuccau = $("#Idkhuvuccau").val();
+            var form = $("#formkhuvuc")[0];
+            var formData = new FormData(form);
+            formData.append("Ma_hoca", Ma_hoca);
+            formData.append("Ten_Khuvuccau", Ten_Khuvuccau);
+            formData.append("Trangthai", Trangthai);
+            formData.append("Ghichu", Ghichu);
+            formData.append("Idkhuvuccau", Idkhuvuccau);
+            $.ajax({
+                url: "/Khuvuchoca/Themkhuvuc",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Thành công",
+                            text: response.message,
+                            icon: "success"
+                        });
+                        form.reset();
+                        $("#Themkhuvuchc").modal("hide");
+                        Danhsachkhuvuc();
+                    } else {
+                        Swal.fire({
+                            title: "Thất bại",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
+        function Danhsachkhuvuc() {
+            var Ma_hoca = $("#Ma_hoca").val();
+            $.ajax({
+                url: "/Khuvuchoca/Danhsachkhuvuc",
+                type: "POST",
+                data: { Ma_hocau: Ma_hoca },
+                success: function (response) {
+                    if (response.success) {
+                        console.log(response.data);
+                        var str1 = "";
+                        var str2 = "";
+                        $("#top-seats").empty();
+                        $("#bottom-seats").empty();
+                        // Vùng chứa các ghế ở phía trên
+                        for (let i = 1; i <= 10; i++) {
+                            str1 += `<div class="chongoi" id="${i}" data-id="${i}">+</div>`;
+                        }
+                        $("#top-seats").append(str1);
+                        // Vùng chứa các ghế ở phía dưới
+                        for (let i = 11; i <= 21; i++) {
+                            str2 += `<div class="chongoi" id="${i}" data-id="${i}">+</div>`;
+                        }
+                        $("#bottom-seats").append(str2);
+
+                        // Cập nhật các ghế dựa trên dữ liệu từ response.data
+                        $.each(response.data, function (index, value) {
+                            if (value.idkhuvuccau >= 1 && value.idkhuvuccau <= 21) {
+                                const element = $(`#${value.idkhuvuccau}`);
+                                element.attr('data-id', value.ma_Khuvuccau);
+                                $('.Khuvuc').removeClass('chongoi');
+                                if (value.trangthai === "Cokhach") {
+                                    element.html(`<span class="status-text">${value.ten_Khuvuccau}</span><span class="status-text">Có khách</span><span class="status-text" id="timeout">${value.timeout}</span>`);
+                                    element.addClass("Cokhach");
+                                    element.addClass("Khuvuc");
+                                    element.removeClass("chongoi");
+                                } else if (value.trangthai === "Dangsuachua") {
+                                    element.html(`<span class="status-text">${value.ten_Khuvuccau}</span><span class="status-text">Có khách</span>`);
+                                    element.addClass("Dangsuachua");
+                                    element.addClass("Khuvuc");
+                                    element.removeClass("chongoi");
+                                } else if (value.trangthai === "Chuacokhach") {
+                                    element.html(`<span class="status-text">${value.ten_Khuvuccau}</span>`);
+                                    element.addClass("Khuvuc");
+                                    element.addClass("chongoi");
+                                
+                                }
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Thất bại",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
+        function setCurrentTime(inputId) {
+            var now = new Date();
+            var hours = now.getHours().toString().padStart(2, '0');
+            var minutes = now.getMinutes().toString().padStart(2, '0');
+            var currentTime = hours + ':' + minutes;
+            $(inputId).val(currentTime);
+        }
+        function Themkhachhang() {
+            var Tenkhachhang = $("#Tenkhachhang").val();
+            var Sodienthoai = $("#Sodienthoai").val();
+            var Ngaycau = $("#Ngaycau").val();
+            var Thoigianbatdau = $("#Thoigianbatdau").val();
+            var Thoigianketthuc = $("#Thoigianketthuc").val();
+            var Ma_khuvuccau = $("#Ma_khuvuccau").val();
+            var form = $("#formkhachthue")[0];
+            var formData = new FormData(form);
+            formData.append("Ten_Khachhang", Tenkhachhang);
+            formData.append("Sodienthoai", Sodienthoai);
+            formData.append("Ngaycau", Ngaycau);
+            formData.append("Thoigianbatdau", Thoigianbatdau);
+            formData.append("Thoigianketthuc", Thoigianketthuc);
+            formData.append("Ma_khuvuccau", Ma_khuvuccau)
+            $.ajax({
+                url: "/Khuvuchoca/Themkhachthue",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Thành công",
+                            text: response.message,
+                            icon: "success"
+                        });
+                        form.reset();
+                        $("#Themkhachthuetill").modal("hide");
+                        Danhsachkhuvuc();
+                    } else {
+                        Swal.fire({
+                            title: "Thất bại",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
+        function Kiemtrakv(Ma_khuvuc) {
+            console.log("Ma_khuvuc:", Ma_khuvuc);
+            var formData = new FormData();
+            formData.append("Ma_khuvuc", Ma_khuvuc);
+
+            $.ajax({
+                url: "/Khuvuchoca/Kiemtrakv",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    var submitButton = document.getElementById('submitkt');
+                    var updateButton = document.getElementById('updatekt');
+                    var themkh = document.getElementById('Themkh');
+
+                    if (response.success) {
+                        if (submitButton) {
+                            submitButton.innerText = 'Cập nhật';
+                            submitButton.id = 'updatekt';
+                        }
+                        if (themkh) {
+                            themkh.innerText = 'Cập nhật';
+                        }
+                    } else {
+                        if (updateButton) {
+                            updateButton.innerText = 'Cho khách thuê';
+                            updateButton.id = 'submitkt';
+                        }
+                        if (themkh) {
+                            themkh.innerText = 'Cho khách thuê';
+                        }
+                    }
+                }
+            });
+        }
+        function layThoiGianConLai(khuVucId, element) {
+            var formData = new FormData();
+            formData.append("Ma_khuvvuc", khuVucId);
+            $.ajax({
+                url: "/Khuvuchoca/Laytoigian",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        var thoiGianConLai = response.time;
+                        element.html(`${thoiGianConLai}`);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
+        function Demthoigian(KhuvucId)
+        {
+            var formData = new FormData();
+            formData.append("Ma_khuvvuc", KhuvucId);
+            $.ajax({
+                url: "/Khuvuchoca/Demthoigian",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        connection.on("ReceiveTimeUpdate", function (maKhuvuc, time) {
+                            console.log("Khu vực: " + maKhuvuc + " - Thời gian: " + time);
+                            // Cập nhật giao diện người dùng với thời gian mới
+                        });
+
+                        Danhsachkhuvuc();
+                       
+                    }
+                    else
+                    {
+                        console.log("Thất bại");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
+        function Updatebamgio(KhuvucId)
+        {
+            var formData = new FormData();
+            formData.append("Ma_khuvvuc", KhuvucId);
+            $.ajax({
+                url: "/Khuvuchoca/UpdateBamgio",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        console.log("Thành công");
+                    }
+                    else {
+                        console.log("Thất bại");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
+        function Kiemtrabamgio(KhuvucId) {
+            var formData = new FormData();
+            formData.append("Ma_khuvvuc", KhuvucId);
+            $.ajax({
+                url: "/Khuvuchoca/KiemtraBamgio",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        var submitButton = document.getElementById('Bamgio');
+                        submitButton.innerText = 'Dừng thời gian';
+                        submitButton.id = 'dungtg';
+                        document.getElementById('Bamgio').innerText = 'Dừng thời gian';
+                        console.log("Dừng thời gian");
+                    } else {
+                        var submitButton = document.getElementById('dungtg');
+                        submitButton.innerText = 'Bấm giờ';
+                        submitButton.id = 'Bamgio';
+                        document.getElementById('dungtg').innerText = 'Bấm giờ';
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
+
+
+
+
+
+    </script>
+
+}

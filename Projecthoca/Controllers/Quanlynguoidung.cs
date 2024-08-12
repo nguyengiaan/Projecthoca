@@ -1,0 +1,97 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Projecthoca.Models.EnitityVM;
+using Projecthoca.Service.Interface;
+
+namespace Projecthoca.Controllers
+{
+    public class Quanlynguoidung : Controller
+    {
+        private readonly INguoidung _nguoidung;
+        public Quanlynguoidung(INguoidung nguoidung)
+        {
+            _nguoidung= nguoidung;
+        }
+        [HttpPost]
+        public async Task<IActionResult> Dangkytaikhoan (NguoidungVM nguoidung)
+        {
+            try
+            {
+                var errorList = ModelState.Values.SelectMany(m => m.Errors).Select(e => e.ErrorMessage).ToList();
+                if (!ModelState.IsValid)
+                {
+                    return Json(new { success = false, message = errorList });
+                }
+                var result = await _nguoidung.Dangkynguoidung(nguoidung);
+                if (result.StatusCode == 1)
+                {
+                    return Json(new { success = true, message = "Đăng ký thành công" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = result.Message });
+                }
+            }
+            catch(Exception ex )
+            {
+                return Json(new { StatusCode = 0, Message = ex.Message });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult>Danhsachtaikhoan(int page, int pagesize)
+        {
+            try
+            {
+
+                var pageindex = page;
+                var result = await _nguoidung.Laydanhsachnguoidung(page, pagesize);
+                if (result.ds != null && result.ds.Count > 0)
+                {
+                    var totalItems = result.ds.Count;
+                    return Json(new { success = true, users = result.ds, totalPages = result.totalpages, totalItems = totalItems, pageindex = pageindex });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Không có dữ liệu." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Có lỗi xảy ra: {ex.Message}" });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult>Dangnhaptaikhoan(DangnhapVM user)
+        {
+            try
+            {
+                var errorList = ModelState.Values.SelectMany(m => m.Errors).Select(e => e.ErrorMessage).ToList();
+                if (!ModelState.IsValid)
+                {
+                    return Json(new { success = false, messeger = errorList });
+                }
+
+                var data= await _nguoidung.Dangnhap(user);
+                if (data.StatusCode==1)
+                {
+                    return Json(new { success = true ,messeger=data.Message });
+                }
+                else
+                {
+                    return Json(new { success = false, messeger = data.Message });
+                }
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, messeger =ex.Message });
+            }
+        }
+
+
+  
+        public async Task<IActionResult> Dangxuat()
+        {
+            await _nguoidung.LogoutAsync();
+            return RedirectToAction("Dangnhap", "Home");
+        }
+    }
+}

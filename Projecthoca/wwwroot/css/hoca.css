@@ -1,0 +1,97 @@
+﻿
+body {
+    background-color: #f5f5f5; /* Màu nền nhẹ nhàng */
+}
+
+.hoca {
+    background-image: url('../Admin_Style/img/wtbg.jpg');
+    width: 80%; /* Chiều rộng của hồ cá là 80% của kích thước màn hình */
+    height: 60vh; /* Chiều cao của hồ cá là 40% của chiều cao màn hình */
+    margin: 20px auto;
+    border-radius: 15px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+    background-size: contain;
+    background-position: center;
+    background-repeat: repeat;
+}
+
+.chongoi {
+    background-image: url('../Admin_Style/img/1.jpg');
+    background-color: #dfe6e9;
+    width: 90px; /* Chiều rộng của chỗ ngồi */
+    height: 90px; /* Chiều cao của chỗ ngồi */
+    margin: 7px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #2d3436;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.top-seats, .bottom-seats {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap; /* Tự động xuống hàng khi không đủ chỗ */
+}
+
+.left-seats, .right-seats {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.left-seats {
+    left: -80px;
+}
+
+.right-seats {
+    right: -80px;
+}
+
+
+@keyframes wave {
+    0% {
+        background-position: 0% 0%;
+    }
+
+    100% {
+        background-position: 100% 0%;
+    }
+}
+
+@keyframes animateWave {
+    0% {
+        transform: translate3d(0, 0, 0);
+    }
+
+    100% {
+        transform: translate3d(-50%, 0, 0);
+    }
+}
+
+@media (max-width: 768px) {
+    .hoca {
+        width: 90%; /* Giảm kích thước hồ cá trên màn hình nhỏ */
+        height: 30vh; /* Điều chỉnh chiều cao hồ cá */
+    }
+
+    .chongoi {
+        width: 50px;
+        height: 25px;
+    }
+
+    .left-seats, .right-seats {
+        left: -60px;
+        right: -60px;
+    }
+}
