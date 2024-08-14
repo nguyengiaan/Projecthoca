@@ -54,7 +54,14 @@ namespace Projecthoca.Controllers
             return View(data);
         }
 
-
+        public IActionResult Quanlydanhmuc()
+        {
+            return View();
+        }
+        public IActionResult Quanlygia()
+        {
+            return View();
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

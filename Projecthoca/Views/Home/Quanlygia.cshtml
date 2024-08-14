@@ -1,0 +1,338 @@
+﻿@{
+    Layout = "_Layout";
+}
+@model Projecthoca.Models.EnitityVM.GiahocaVM
+<!-- Modal Thêm Giá-->
+<div class="modal fade" id="Themgia" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm giá hồ câu</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formThemgia" enctype="multipart/form-data">
+                    <div class="form-group">
+
+                        <input asp-for="Ma_giahoca" type="hidden" class="form-control" id="Ma_giahoca">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Ca</label>
+                        <input asp-for="Ca" type="number" class="form-control" id="Ca">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Giá có cá</label>
+                        <input asp-for="Gia_coca" type="number" class="form-control" id="Gia_coca">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Giá không cá</label>
+                        <input asp-for="Gia_khongca" type="text" class="form-control" id="Gia_khongca">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="submitBtndm">Thêm danh mục</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeBtn">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Danh sách Danh mục-->
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3  ">
+            <div class="row">
+                <div class="col-md-10 col-12">
+                    <h4 class="m-0 font-weight-bold text-primary">Danh sách Giá</h4>
+                </div>
+                <div class="col-md-2 col-12">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#Themgia"> <span class="fs-20">Thêm giá</span> </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã giá hồ cá</th>
+                            <th>Ca</th>
+                            <th>Có cá</th>
+                            <th>Không có cá</th>
+        
+                            <th>Xóa</th>
+                            <th>Sửa</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Mã giá hồ cá</th>
+                            <th>Ca</th>
+                            <th>Có cá</th>
+                            <th>Không có cá</th>
+
+                            <th>Xóa</th>
+                            <th>Sửa</th>
+                        </tr>
+                    </tfoot>
+                    <tbody id="tblbody">
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-sm-12 col-md-5">
+                        <div class="col-sm-12 col-md-7">
+                            <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+                                <nav aria-label="Page navigation example" id="pagination">
+
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @section Scripts {
+            <script>
+                $(document).ready(function () {
+              
+                    $(document).on('click', '#submitBtndm', function () {
+                        Themgia();
+                    });
+                    danhsachgia(1, 10);
+                    $('#Themgia').on('hidden.bs.modal', function () {
+                        resetForm();
+                        $('#updateBtndm').attr('id', 'submitBtndm').text('Thêm giá');
+
+                    });
+                    $(document).on('click', '#updateBtndm', function () {
+                        Capnhatgia();
+                    });
+                });
+                function Themgia() {
+                    var form = $("#formThemgia")[0];
+                    var data = new FormData(form);
+                    $.ajax({
+                        type: "POST",
+                        url: "/Quanlygiahoca/Themgia",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            Swal.fire({
+                                title: "Loading...",
+                                text: "Please wait",
+                                imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+                                imageWidth: 100,
+                                imageHeight: 100,
+                                imageAlt: "Loading",
+                            });
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                $("#Themgia").modal("hide");
+                                form.reset();
+                                danhsachgia(1, 10);
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                function danhsachgia(page, pagesize) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Quanlygiahoca/Danhsachgiahoca",
+                        data: { page: page, pagesize: pagesize }, // Thêm dữ liệu này nếu cần
+                        success: function (response) {
+                            $('#tblbody').empty();
+                            console.log(response.dsdm);
+                            if (response.success) {
+                                $.each(response.dsdm, function (index, value) {
+                                    var str = `<tr>
+                                                                                                                        <td>MAGC${value.ma_giahoca}</td>
+                                                                                        <td>${value.ca}</td>
+                                                                                         <td>${formatCurrency(value.gia_coca)}</td>
+                                                                                                                        <td>${formatCurrency(value.gia_khongca)}</td>
+                                                                                                                                        <td><button class="btn btn-danger" data-id='${value.ma_giahoca}' onclick="Xoagia('${value.ma_giahoca}')">Xóa</button></td>
+                                                                                                                         <td><button class="btn btn-warning" data-id='${value.ma_dama_giahocanhmuc}' onclick="LaydmID('${value.ma_giahoca}')" >Sửa</button></td>
+                                                                    </tr>`;
+                                    $('#tblbody').append(str);
+                                    updatePagination(response.totalPages, response.pageindex)
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                function updatePagination(totalPages, currentPage) {
+
+                    if (totalPages > 0) {
+                        var str = `<nav aria-label="Page navigation example">
+                                                                        <ul class="pagination">`;
+                        if (totalPages > 1) {
+                            if (currentPage > 1) {
+                                str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachgia(${currentPage - 1}, 10)">Previous</a></li>`;
+                            }
+                            for (let i = 1; i <= totalPages; i++) {
+                                if (currentPage === i) {
+                                    str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
+                                } else {
+                                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachgia(${i}, 10)">${i}</a></li>`;
+                                }
+                            }
+                            if (currentPage < totalPages) {
+                                str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachgia(${currentPage + 1}, 10)">Next</a></li>`;
+                            }
+                        }
+                        str += `</ul></nav>`;
+                        $('#pagination').html(str);
+                    }
+                }
+                function formatCurrency(value) {
+                    return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                }
+                function Xoagia(Ma_giahoca) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Quanlygiahoca/Xoagia",
+                        data: { Ma_giahoca: Ma_giahoca },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                danhsachgia(1, 10);
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                function LaydmID(Ma_giahoca) {
+                    $('#Themgia').modal('show');
+                    $.ajax({
+                        type: "POST",
+                        url: "/Quanlygiahoca/Laygiatheoma",
+                        data: { Ma_giahoca: Ma_giahoca },
+                        success: function (response) {
+                            if (response.success) {
+                                $('#Ma_giahoca').val(response.data.ma_giahoca);
+                                $('#Ca').val(response.data.ca);
+                                $('#Gia_coca').val(response.data.gia_coca);
+                                $('#Gia_khongca').val(response.data.gia_khongca);
+                                $('#submitBtndm').attr('id', 'updateBtndm').text('Cập nhật');
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                function resetForm() {
+                    var form = $("#formThemgia")[0];
+                    form.reset();
+
+                }
+                function Capnhatgia() {
+                    var form = $("#formThemgia")[0];
+                    var data = new FormData(form);
+                    $.ajax({
+                        type: "POST",
+                        url: "/Quanlygiahoca/Capnhatgia",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            Swal.fire({
+                                title: "Loading...",
+                                text: "Please wait",
+                                imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+                                imageWidth: 100,
+                                imageHeight: 100,
+                                imageAlt: "Loading",
+                            });
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                $("#Themgia").modal("hide");
+                                form.reset();
+                                danhsachgia(1, 10);
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                function Laykhachthue() 
+                {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Khuvucchoca/Laykhachthue",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            Swal.fire({
+                                title: "Loading...",
+                                text: "Please wait",
+                                imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+                                imageWidth: 100,
+                                imageHeight: 100,
+                                imageAlt: "Loading",
+                            });
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                               
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+             
+            </script>
+        }

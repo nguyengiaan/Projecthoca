@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projecthoca.Data;
 
@@ -11,9 +12,10 @@ using Projecthoca.Data;
 namespace Projecthoca.Migrations
 {
     [DbContext(typeof(MyDbcontext))]
-    partial class MyDbcontextModelSnapshot : ModelSnapshot
+    [Migration("20240814033452_up_17")]
+    partial class up_17
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -248,8 +250,12 @@ namespace Projecthoca.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("TongsokgMa_tongsokg")
+                    b.Property<int>("Ma_tongsokg")
                         .HasColumnType("int");
+
+                    b.Property<string>("ThuehocaMa_thuehoca")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<TimeSpan>("giocau")
                         .HasMaxLength(100)
@@ -263,7 +269,9 @@ namespace Projecthoca.Migrations
 
                     b.HasIndex("Ma_danhmuc");
 
-                    b.HasIndex("TongsokgMa_tongsokg");
+                    b.HasIndex("Ma_tongsokg");
+
+                    b.HasIndex("ThuehocaMa_thuehoca");
 
                     b.ToTable("Chitietlancau", (string)null);
                 });
@@ -615,19 +623,23 @@ namespace Projecthoca.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Projecthoca.Models.Enitity.Thuehoca", "Thuehoca")
+                    b.HasOne("Projecthoca.Models.Enitity.Tongsokg", "Tongsokg")
                         .WithMany("Chitietlancaus")
-                        .HasForeignKey("Ma_danhmuc")
+                        .HasForeignKey("Ma_tongsokg")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Projecthoca.Models.Enitity.Tongsokg", null)
+                    b.HasOne("Projecthoca.Models.Enitity.Thuehoca", "Thuehoca")
                         .WithMany("Chitietlancaus")
-                        .HasForeignKey("TongsokgMa_tongsokg");
+                        .HasForeignKey("ThuehocaMa_thuehoca")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Danhmuc");
 
                     b.Navigation("Thuehoca");
+
+                    b.Navigation("Tongsokg");
                 });
 
             modelBuilder.Entity("Projecthoca.Models.Enitity.Danhmuc", b =>

@@ -11,9 +11,6 @@ public class TimerBackgroundService : BackgroundService
     private readonly IHubContext<Timehub> _hubContext;
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<TimerBackgroundService> _logger;
-
-    private readonly object _lockObject = new object();
-    private string _maKhuvuc;
     private CancellationTokenSource _timerCancellationTokenSource;
 
     public TimerBackgroundService(IHubContext<Timehub> hubContext, IServiceScopeFactory scopeFactory, ILogger<TimerBackgroundService> logger)
@@ -25,45 +22,26 @@ public class TimerBackgroundService : BackgroundService
             _timerCancellationTokenSource = new CancellationTokenSource(); // Khởi tạo _timerCancellationTokenSource
         
     }
-
-    public void SetMaKhuvuc(string maKhuvuc)
-    {
-    lock (_lockObject)
-    {
-        _maKhuvuc = maKhuvuc;
-        _timerCancellationTokenSource?.Cancel(); // Hủy bộ đếm thời gian hiện tại nếu có
-        _timerCancellationTokenSource = new CancellationTokenSource(); // Tạo mới CancellationTokenSource
-        _logger.LogInformation("Đã thiết lập mã khu vực: {maKhuvuc}", maKhuvuc);
-    }
-    }
-
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
         {
-            string maKhuvuc;
-            lock (_lockObject)
-            {
-                maKhuvuc = _maKhuvuc;
-            }
-            if (string.IsNullOrEmpty(maKhuvuc))
-            {
-                await Task.Delay(5000, stoppingToken); // Nếu không có _maKhuvuc, đợi 5 giây
-                continue;
-            }
 
             using (var scope = _scopeFactory.CreateScope())
             {
                 var _kvc = scope.ServiceProvider.GetRequiredService<IKhuvuccau>();
 
                 try
-                {
-                    var data = await _kvc.KiemtraBamgio(_maKhuvuc);
-                    if (data)
+                { 
+                
+                    var data = await _kvc.Danhsachbamgio();
+                    if (data!=null && data.Count >0)
                     {
-                        await _kvc.Demthoigian(_maKhuvuc);
-                        var time = await _kvc.Laythoigian(_maKhuvuc);
-                        await _hubContext.Clients.All.SendAsync("ReceiveTimeUpdate", _maKhuvuc, time); // Gửi thời gian cùng mã khu vực
+                        foreach(var a in data )
+                        {
+                            var data1=await _kvc.Demthoigian(a.Ma_khuvuc);
+                        
+                        }
                     }
                     else
                     {
@@ -92,6 +70,5 @@ public class TimerBackgroundService : BackgroundService
     private void StopTimer()
     {
         _timerCancellationTokenSource?.Cancel();
-        _maKhuvuc = null;
     }
 }

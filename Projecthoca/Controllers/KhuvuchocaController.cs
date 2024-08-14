@@ -132,21 +132,6 @@ namespace Projecthoca.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Demthoigian(string Ma_khuvvuc)
-        {
-            try
-            {
-               
-                 _time.SetMaKhuvuc(Ma_khuvvuc);
-                return Json(new { success = true });
-            }
-            catch(Exception ex )
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
-
-        [HttpPost]
         public async Task<IActionResult>UpdateBamgio(string Ma_khuvvuc)
         {
             try
@@ -187,5 +172,90 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Dungthoigian(string Ma_khuvvuc)
+        {
+            try
+            {
+                var data = await _kvc.Dadungtg(Ma_khuvvuc);
+                if(data)
+                {
+                    return Json(new { success = true });
+                }
+                else
+                {
+                    return Json(new { success = false });
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> Xoakhuvuc(string Ma_khuvvuc)
+        {
+            try
+            {
+                var data = await _kvc.Deletekvc(Ma_khuvvuc);
+                if (data)
+                {
+                    return Json(new { success = true ,messeger="Xóa thành công"});
+                }
+                else
+                {
+                    return Json(new { success = false, messeger = "Hãy thêm khu vực câu" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult>Xoakhachhang(string Ma_khuvvuc)
+        {
+            try
+            {
+                var data = await _kvc.Xoakhachthue(Ma_khuvvuc);
+                if (data)
+                {
+                    return Json(new { success = true, messeger = "Xóa thành công" });
+                }
+                else
+                {
+                    return Json(new { success = false, messeger = "Hãy thêm khách hàng" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Laykhachthue(string Ma_khuvvuc)
+        {
+            try
+            {
+                var data = await _kvc.Laykhachthue(Ma_khuvvuc);
+                if (data!=null)
+                {
+                    return Json(new { success = true, data = data });
+                }
+                else
+                {
+                    return Json(new { success = false, messeger = "Hãy thêm khách hàng" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }

@@ -175,6 +175,7 @@ namespace Projecthoca.Service.Responser
             {
                 var data = await _context.Thuehoca.FirstOrDefaultAsync(x => x.Ma_khuvuccau == maKhuvuc);
                 data.Timeout = data.Timeout.Add(TimeSpan.FromSeconds(1));
+
                 await _context.SaveChangesAsync();
                 return true;
 
@@ -230,6 +231,121 @@ namespace Projecthoca.Service.Responser
             catch(Exception ex)
             {
                 return false;
+            }
+        }
+
+        public async Task<List<BamgioVM>> Danhsachbamgio()
+        {
+            try
+            {
+                var data=await _context.Thuehoca.Where(x => x.trangthai == "Dabamgio").Select(x => new BamgioVM
+                {
+                    Ma_khuvuc= x.Ma_khuvuccau,
+                    Trangthai = x.trangthai,
+                }).ToListAsync();
+                return data;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<bool> Dadungtg(string Ma_khuvuc)
+        {
+            try
+            {
+                var data= await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).FirstOrDefaultAsync();
+                if(data!=null)
+                {
+                    data.trangthai = "Dungthoigian";
+                  await _context.SaveChangesAsync();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> Deletekvc(string Ma_khuvuc)
+        {
+            try
+            {
+                var data = await _context.Khuvuccau.FindAsync(Ma_khuvuc);
+                if (data != null)
+                {
+                    _context.Khuvuccau.Remove(data);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public  async Task<bool> Xoakhachthue(string Ma_khuvuc)
+        {
+            try
+            {
+               var data = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).FirstAsync();
+                var data1=await _context.Khuvuccau.FindAsync(Ma_khuvuc);
+                if (data != null)
+                {
+
+                    _context.Thuehoca.Remove(data);
+                    data1.Trangthai = "Chuacokhach";
+                    _context.SaveChanges();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<ThuehocaVM> Laykhachthue(string Ma_khuvuc)
+        {
+            try
+            {
+                var data=await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).Select(x => new ThuehocaVM
+                {
+                    Ma_thuehoca = x.Ma_thuehoca,
+                    Ma_khuvuccau = x.Ma_khuvuccau,
+                    Ten_khachhang = x.Ten_khachhang,
+                    Ngaycau = x.Ngaycau,
+                    Thoigianbatdau = x.Thoigianbatdau,
+                    Timeout = x.Timeout,
+                    Ten_Khuvuccau = x.Khuvuccau.Ten_Khuvuccau,
+                }).FirstOrDefaultAsync();
+                if (data != null)
+                {
+                    return data;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch(Exception ex)
+            {
+                return null;
             }
         }
     }

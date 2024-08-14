@@ -13,11 +13,14 @@ namespace Projecthoca.Models.Enitity
         public List<Danhmuc> Danhmucs { get; set; }
 
         public List<Danhmucgia> Danhmucgias { get; set; }
+
+        public List<Giahoca> Giahocas { get; set; }
         public ApplicationUser()
         {
             Hoccas = new List<Hoca>();
             Danhmucs = new List<Danhmuc>();
             Danhmucgias = new List<Danhmucgia>();
+            Giahocas = new List<Giahoca>();
         }
     }
 }

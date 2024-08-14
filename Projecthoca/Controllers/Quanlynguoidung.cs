@@ -86,8 +86,6 @@ namespace Projecthoca.Controllers
             }
         }
 
-
-  
         public async Task<IActionResult> Dangxuat()
         {
             await _nguoidung.LogoutAsync();

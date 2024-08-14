@@ -9,9 +9,7 @@ namespace Projecthoca.Models.EnitityVM
         public string Ten_Khuvuccau { get; set; }
         [Required(ErrorMessage = "Trạng thái cấu không được để trống")]
         public string Trangthai { get; set; }
-
         public TimeSpan? Timeout { get; set; }
-
         public string?Ma_hoca { get; set; }
         public string?Idkhuvuccau { get; set; }
     }

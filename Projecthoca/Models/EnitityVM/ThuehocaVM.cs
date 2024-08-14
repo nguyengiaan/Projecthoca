@@ -15,7 +15,8 @@ namespace Projecthoca.Models.EnitityVM
         public TimeSpan Thoigianbatdau { get; set; }
         public TimeSpan? Timeout { get; set; }
 
-      
+        public string? Ten_Khuvuccau { get; set; }
+
     }
 
 }

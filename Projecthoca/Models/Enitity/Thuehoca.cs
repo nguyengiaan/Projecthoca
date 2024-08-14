@@ -12,9 +12,17 @@
         public string trangthai { get; set; }
         public List<Hoadondanhmuc> Hoadondanhmucs { get; set; }
         public Khuvuccau Khuvuccau { get; set; }
+        public List<Danhmuchoadon> Danhmuchoadons { get; set; }
+
+        public List<Chitietlancau> Chitietlancaus { get; set; }
+
+        public List<Tongsokg> Tongsokgs { get; set; }
         public Thuehoca()
         {
             Hoadondanhmucs = new List<Hoadondanhmuc>();
+            Danhmuchoadons=new List<Danhmuchoadon>();
+            Chitietlancaus = new List<Chitietlancau>();
+            Tongsokgs = new List<Tongsokg>();
         }
     }
 }

@@ -10,7 +10,7 @@
 }
 <div id="contextMenu" class="context-menu">
     <ul>
-        <li><a href="#" id="chinhsua">Chỉnh sửa</a></li>
+        <li><a href="#" id="Xoakhuvuc">Xóa khu vực</a></li>
         <li><a href="#" id="Themkh">Cho khách thuê</a></li>
         <li><a href="#" id="Bamgio">Bấm giờ</a></li>
         <li><a href="#" id="Themdichvu">Thêm dịch vụ</a></li>
@@ -295,40 +295,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
     <script>
         $(document).ready(function () {
-            const connection = new signalR.HubConnectionBuilder()
-                .withUrl("/Timehub")
-                .build();
-            connection.start().catch(function (err) {
-                console.error(err.toString());
-            });
 
+            setInterval(function () {
+                Danhsachkhuvuc();
+            }, 1000);
             $("#submitkv").click(function () {
                 Themkhuvuc();
             });
-            $('#Thoigianketthuc').timepicker({
-                timeFormat: 'HH:mm', // Định dạng 24 giờ
-                interval: 60,
-                minTime: '00:00',
-                maxTime: '23:59',
-                defaultTime: '00:00',
-                startTime: '00:00',
-                dynamic: true,
-                dropdown: false,
-                scrollbar: false
-
-            });
-            $('#Thoigianbatdau').timepicker({
-                timeFormat: 'HH:mm', // Định dạng 24 giờ
-                interval: 60,
-                minTime: '00:00',
-                maxTime: '23:59',
-                defaultTime: '00:00',
-                startTime: '00:00',
-                dynamic: true,
-                dropdown: false,
-                scrollbar: false
-
-            });
+       
             $(document).on("click", ".chongoi", function () {
                 var khuVucId = $(this).data("id");
                 // Khởi tạo modal và hiển thị nó
@@ -383,15 +357,16 @@
                     $("#Ma_khuvuccau").val(khuVucId);
                 } else if (action === "Bamgio") {
                    
-                    //Updatebamgio(khuVucId);
-               
-                    Demthoigian(khuVucId);
-                    Swal.fire({
-                        title: "Thành công",
-                        text: "Bấm giờ thành công",
-                        icon: "success"
-                    });
-                    
+                    Updatebamgio(khuVucId);
+
+
+
+                } else if (action === "dungtg") {
+                    Dungthoigian(khuVucId);
+                }else if (action === "Xoakh") {
+                    Xoakhachang(khuVucId);
+                }else if (action === "Xoakhuvuc") {
+                    Xoakhuvuc(khuVucId)
                 }
                 $("#contextMenu").hide();
             });
@@ -485,7 +460,8 @@
                                 } else if (value.trangthai === "Chuacokhach") {
                                     element.html(`<span class="status-text">${value.ten_Khuvuccau}</span>`);
                                     element.addClass("Khuvuc");
-                                    element.addClass("chongoi");
+                             
+                                    element.removeClass("chongoi");
                                 
                                 }
                             }
@@ -568,27 +544,16 @@
                 processData: false,
                 contentType: false,
                 success: function (response) {
-                    var submitButton = document.getElementById('submitkt');
-                    var updateButton = document.getElementById('updatekt');
-                    var themkh = document.getElementById('Themkh');
-
                     if (response.success) {
-                        if (submitButton) {
-                            submitButton.innerText = 'Cập nhật';
-                            submitButton.id = 'updatekt';
-                        }
-                        if (themkh) {
-                            themkh.innerText = 'Cập nhật';
-                        }
+                        var submitButton = document.getElementById('Themkh');
+                        submitButton.innerText = 'Xóa khách hàng';
+                        submitButton.id = 'Xoakh';
                     } else {
-                        if (updateButton) {
-                            updateButton.innerText = 'Cho khách thuê';
-                            updateButton.id = 'submitkt';
-                        }
-                        if (themkh) {
-                            themkh.innerText = 'Cho khách thuê';
-                        }
+                        var submitButton = document.getElementById('Xoakh');
+                        submitButton.innerText = 'Thêm khách hàng ';
+                        submitButton.id = 'Themkh';
                     }
+
                 }
             });
         }
@@ -613,37 +578,6 @@
                 }
             });
         }
-        function Demthoigian(KhuvucId)
-        {
-            var formData = new FormData();
-            formData.append("Ma_khuvvuc", KhuvucId);
-            $.ajax({
-                url: "/Khuvuchoca/Demthoigian",
-                type: "POST",
-                data: formData,
-                processData: false,
-                contentType: false,
-                success: function (response) {
-                    if (response.success) {
-                        connection.on("ReceiveTimeUpdate", function (maKhuvuc, time) {
-                            console.log("Khu vực: " + maKhuvuc + " - Thời gian: " + time);
-                            // Cập nhật giao diện người dùng với thời gian mới
-                        });
-
-                        Danhsachkhuvuc();
-                       
-                    }
-                    else
-                    {
-                        console.log("Thất bại");
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error("Có lỗi xảy ra: ", error);
-                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
-                }
-            });
-        }
         function Updatebamgio(KhuvucId)
         {
             var formData = new FormData();
@@ -656,7 +590,12 @@
                 contentType: false,
                 success: function (response) {
                     if (response.success) {
-                        console.log("Thành công");
+
+                        Swal.fire({
+                            title: "Thành công",
+                            text: "Bấm giờ thành công",
+                            icon: "success"
+                        });
                     }
                     else {
                         console.log("Thất bại");
@@ -697,10 +636,90 @@
                 }
             });
         }
+        function Dungthoigian(KhuvucId) {
+            var formData = new FormData();
+            formData.append("Ma_khuvvuc", KhuvucId);
+            $.ajax({
+                url: "/Khuvuchoca/Dungthoigian",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
 
+                        Swal.fire({
+                            title: "Thành công",
+                            text: "Dừng thời gian thành công",
+                            icon: "success"
+                        });
+                    }
+                    else {
+                        console.log("Thất bại");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
+        function Xoakhachang(KhuvucId) {
+            var formData = new FormData();
+            formData.append("Ma_khuvvuc", KhuvucId);
+            $.ajax({
+                url: "/Khuvuchoca/Xoakhachhang",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
 
+                        Swal.fire({
+                            title: "Thành công",
+                            text: response.messeger,
+                            icon: "success"
+                        });
+                    }
+                    else {
+                        console.log("Thất bại");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
+        function Xoakhuvuc(KhuvucId) {
+            var formData = new FormData();
+            formData.append("Ma_khuvvuc", KhuvucId);
+            $.ajax({
+                url: "/Khuvuchoca/Xoakhuvuc",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
 
-
+                        Swal.fire({
+                            title: "Thành công",
+                            text: response.messeger,
+                            icon: "success"
+                        });
+                    }
+                    else {
+                        console.log("Thất bại");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
 
     </script>
 

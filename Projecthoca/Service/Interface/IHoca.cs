@@ -7,5 +7,6 @@ namespace Projecthoca.Service.Interface
         public Task<Boolean> Themhoca(HocaVM hoca);
 
 
+
     }
 }

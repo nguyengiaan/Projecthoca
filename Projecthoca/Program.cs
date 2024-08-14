@@ -46,11 +46,13 @@ builder.Services.AddScoped<INguoidung, NguoidungReponser>();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IHoca, HocaReponser>();
 builder.Services.AddScoped<IKhuvuccau, KhuvuccauReponser>();
+builder.Services.AddScoped<IDanhmuc, DanhmucReponser>();
+builder.Services.AddScoped<IGiahoca, GiahocaReponser>();
 builder.Services.AddSingleton<TimerBackgroundService>();
 builder.Services.AddHostedService<TimerBackgroundService>();
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddLogging();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
