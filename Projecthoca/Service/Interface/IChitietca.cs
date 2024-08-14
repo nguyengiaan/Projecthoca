@@ -9,5 +9,9 @@ namespace Projecthoca.Service.Interface
         public Task<List<DanhmucVM>> Danhsachdanhmuchs();
 
         public Task<List<ChitietcaVM>> Laychitietca(string khuvucid);
+
+        public Task<TongsokgVM> Tongsokg(string khuvucid);
+
+        public Task<Boolean> Xoaca(string machitietca);
     }
 }

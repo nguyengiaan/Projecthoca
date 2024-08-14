@@ -53,5 +53,54 @@ namespace Projecthoca.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult>Danhsachca(string khuvucid)
+        {
+            try
+            {
+                var data = await _ctc.Laychitietca(khuvucid);
+                return Json(new { success = true, data = data });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = true, messege = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult>Sokgca(string khuvucid)
+        {
+            try
+            {
+                var data = await _ctc.Tongsokg(khuvucid);
+                return Json(new { success = true, data = data });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = true, messege = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult>Xoaca(string Ma_chitietlancau)
+        {
+            try
+            {
+                var data= await _ctc.Xoaca(Ma_chitietlancau);
+                if (data)
+                {
+                    return Json(new { success = true, messege = "Xóa thành công" });
+                }
+                else
+                {
+                    return Json(new { success = true, messege = "Xóa thất bại" });
+                }   
+            } 
+            catch (Exception ex)
+            {
+                return Json(new { success = true, messege = ex.Message });
+            }
+        }
+
     }
 }

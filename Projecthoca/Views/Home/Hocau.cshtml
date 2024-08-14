@@ -19,7 +19,7 @@
 </div>
 <!--Modal thêm chi tiết cá-->
 <div class="modal fade" id="Themchitietca" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog  modal-dialog-centered ">
+    <div class="modal-dialog  modal-dialog-centered  ">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Thêm chi tiết cá</h5>
@@ -55,7 +55,7 @@
 </div>
 <!--Modal xem cá -->
 <div class="modal fade" id="Xemca" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Xem cá được câu</h5>
@@ -81,28 +81,12 @@
                                     <th>Thời Gian</th>
                                     <th>Tên Loại Cá</th>
                                     <th>Trọng Lượng (kg)</th>
+                                    <th>Thành tiền (VNĐ)</th>
                                     <th>Xóa</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr>
-                                    <td>9:00</td>
-                                    <td>Cá Chép</td>
-                                    <td>4.0</td>
-                                    <td>1</td>
-                                </tr>
-                                <tr>
-                                    <td>9:30</td>
-                                    <td>Cá Trắm</td>
-                                    <td>3.4</td>
-                                    <td>1</td>
-                                </tr>
-                                <tr>
-                                    <td>14:20</td>
-                                    <td>Cá Chép</td>
-                                    <td>4.0</td>
-                                    <td>1</td>
-                                </tr>
+                            <tbody id="dsca">
+                            
                             </tbody>
                         </table>
                     </div>
@@ -479,6 +463,8 @@
                 } else if (action === "Xemchitietca") { 
                     $("#Xemca").modal("show");
                     Xemkhkhuvuc(khuVucId);
+                    Danhsachca(khuVucId)
+                    Tongsokg(khuVucId);
                 }
                 else if (action === "Themdichvu") {
                     alert("Thêm dịch vụ");
@@ -664,15 +650,19 @@
                 processData: false,
                 contentType: false,
                 success: function (response) {
+                   var str = '';
                     if (response.success) {
                         var submitButton = document.getElementById('Themkh');
                         submitButton.innerText = 'Xóa khách hàng';
                         submitButton.id = 'Xoakh';
+                     
                     } else {
                         var submitButton = document.getElementById('Xoakh');
                         submitButton.innerText = 'Thêm khách hàng ';
                         submitButton.id = 'Themkh';
+
                     }
+         
 
                 }
             });
@@ -850,9 +840,10 @@
                 processData: false,
                 contentType: false,
                 success: function (response) {
+                    html = "";
                     if (response.success) {
                         $('#Ma_thuehoca').val(response.data.ma_thuehoca);
-                        html = "";
+                       
                         html += `<div><span>Tên khu vực:</span><span class="value">${response.data.ten_Khuvuccau}</span></div>`
                         html += `<div><span>Tên khách hàng:</span><span class="value">${response.data.ten_khachhang}</span></div>`
                        html += `<div><span>Ngày câu:</span><span class="value">${response.data.ngaycau}</span></div>`
@@ -862,7 +853,8 @@
                    
                     }
                     else {
-                        console.log("Thất bại");
+                html += `<div><span class="value">Chưa có khách hàng hãy thêm khách hàng</span></div>`
+                        $('.customer-info').html(html);
                     }
                 },
                 error: function (xhr, status, error) {
@@ -924,6 +916,8 @@
                         form.reset();
                         $("#Themchitietca").modal("hide");
                         $("#Xemca").modal("show");
+                        Danhsachca(kvc)
+                        Tongsokg(kvc);
                         form.reset();
                     } else {
                         Swal.fire({
@@ -939,7 +933,103 @@
                 }
             });
         }
+        function Danhsachca(khuvucId) {
+            $.ajax({
+                type: "POST",
+                url: "/Chitietca/Danhsachca",
+                data: { khuvucId: khuvucId },
+                success: function (response) {
+                    console.log(response.dsdm);
+                    if (response.success) {
+                        console.log(response.data);
+                        var html = '';
+                        $('#dsca').empty();
+                        $.each(response.data, function (index, value) {
+                           
+                            var str = `<tr>
+                                         <td>${value.giocau}</td>
+                                         <td>${value.tendanhmuc}</td>
+                                         <td>${value.sokg}</td>
+                                           <td>${formatCurrency(value.thanhtien)}</td>
+                                                                          <td><button class="btn btn-danger" data-id="${value.ma_chitietlancau}" onclick="Xoaca('${value.ma_chitietlancau}')" >Xóa</button></td>
 
+                                       </tr>`;
+                            html += str; // Thêm chuỗi vào biến html
+                        });
+                        $('#dsca').html(html); // Append tất cả HTML đã tạo vào #dsca
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                }
+            });
+        }
+        function formatCurrency(value) {
+            return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+        }
+        function Tongsokg(khuvucId) {
+            $.ajax({
+                type: "POST",
+                url: "/Chitietca/Sokgca",
+                data: { khuvucId: khuvucId },
+                success: function (response) {
+               
+                    var str = '';
+                    if (response.success) {
+  
+                       
+                        $('.bill-total').empty();
+
+
+                        var str = `<h2>Tổng Trọng Lượng Cá Câu Được: <span>${response.data.sokg} kg</span></h2>`;
+                          // Thêm chuỗi vào biến html
+                     
+                        $('.bill-total').html(str); // Append tất cả HTML đã tạo vào #dsca
+                    } else {
+                        var html = `<h2>Tổng Trọng Lượng Cá Câu Được: <span>0 kg</span></h2>`;
+                        $('.bill-total').html(str);
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                }
+            });
+        }
+        function Xoaca(Ma_chitietlancau)
+        {
+            var formData = new FormData();
+            formData.append("Ma_chitietlancau", Ma_chitietlancau);
+            $.ajax({
+                url: "/Chitietca/Xoaca",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Thành công",
+                            text: response.message,
+                            icon: "success"
+                        });
+                        Danhsachca(kvc);
+                        Tongsokg(kvc);
+                    }
+                    else {
+                        console.log("Thất bại");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
     </script>
-
+    hju
 }

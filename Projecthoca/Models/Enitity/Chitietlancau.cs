@@ -7,11 +7,8 @@
         public TimeSpan giocau { get; set; }
         public float sokg { get; set; }
         public string Ma_danhmuc { get; set; }
-
+        public float Thanhtien { get; set; }
         public string Ma_thuehoca { get; set; }
-
-  
-
         public Thuehoca Thuehoca { get; set; }
         public Danhmuc Danhmuc { get; set; }    
     }

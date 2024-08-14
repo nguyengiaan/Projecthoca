@@ -29,6 +29,7 @@ namespace Projecthoca.Service.Responser
                 {
                     Ma_danhmuc = x.Ma_danhmuc,
                     Ten_danhmuc=x.Ten_danhmuc,
+            
                 }).ToListAsync();
                 return data;
             }
@@ -38,11 +39,11 @@ namespace Projecthoca.Service.Responser
             }
         }
 
-        public async Task<List<ChitietcaVM>> Laychitietca(string khuvucid)
+        public async Task<List<ChitietcaVM>> Laychitietca(string khuvucId)
         {
             try
             {
-                var nguoithue= await _context.Thuehoca.Where(x=>x.Ma_khuvuccau == khuvucid).FirstOrDefaultAsync();
+                var nguoithue= await _context.Thuehoca.Where(x=>x.Ma_khuvuccau == khuvucId).FirstOrDefaultAsync();
                 if (nguoithue == null)
                 {
                     return null;
@@ -54,6 +55,8 @@ namespace Projecthoca.Service.Responser
                     Ma_danhmuc = x.Ma_danhmuc,
                     Ma_thuehoca = x.Ma_thuehoca,
                     sokg = x.sokg,
+                    Thanhtien = x.Thanhtien,
+                    Tendanhmuc=x.Danhmuc.Ten_danhmuc,
                 }).ToListAsync();
                 return data;
             }
@@ -77,6 +80,7 @@ namespace Projecthoca.Service.Responser
                 {
                     nextNumber = int.Parse(lastMaDV.Substring(2)) + 1;
                 }
+                var gia=await _context.Danhmuc.Where(x => x.Ma_danhmuc == chitietca.Ma_danhmuc).FirstOrDefaultAsync();
                 string macc = "CT" + nextNumber.ToString("D4");
                 var data = new Chitietlancau();
                 data.giocau = chitietca.giocau;
@@ -84,6 +88,7 @@ namespace Projecthoca.Service.Responser
                 data.Ma_danhmuc = chitietca.Ma_danhmuc;
                 data.Ma_thuehoca = chitietca.Ma_thuehoca;
                 data.sokg = chitietca.sokg;
+                data.Thanhtien = (gia.Gia * chitietca.sokg);
                 await _context.chitietlancaus.AddAsync(data);
                 await _context.SaveChangesAsync();
                 var data1 = new Tongsokg();
@@ -91,6 +96,7 @@ namespace Projecthoca.Service.Responser
                 data1.sokg = tt.Sum(x => x.sokg);
                 data1.soluong = tt.Count;
                 data1.Ma_thuehoca = chitietca.Ma_thuehoca;
+                data1.Tongsotien = tt.Sum(x => x.Thanhtien);
                 var tongkg = await _context.Tongsokg.Where(x => x.Ma_thuehoca == chitietca.Ma_thuehoca).FirstOrDefaultAsync();
                 if(tongkg != null)
                 {
@@ -108,7 +114,65 @@ namespace Projecthoca.Service.Responser
             }
         }
 
-        
+        public async Task<TongsokgVM> Tongsokg(string khuvucid)
+        {
+            try
+            {
+                var data=await _context.Thuehoca.Where(x => x.Ma_khuvuccau == khuvucid).FirstOrDefaultAsync();
+                if (data == null)
+                {
+                    return null;
+                }
+                else
+                {
+                    var tongsokg= await _context.Tongsokg.Where(x => x.Ma_thuehoca == data.Ma_thuehoca).Select(x => new TongsokgVM
+                    {
+                        Ma_tongsokg = x.Ma_tongsokg,
+                        sokg = x.sokg,
+                        soluong = x.soluong,
+                    }).FirstOrDefaultAsync();
+                    return tongsokg;
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
 
+        public async Task<bool> Xoaca(string machitietca)
+        {
+            try
+            {
+               var data=await _context.chitietlancaus.Where(x => x.Ma_chitietlancau == machitietca).FirstOrDefaultAsync();
+                if (data == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    _context.chitietlancaus.Remove(data);
+                    await _context.SaveChangesAsync();
+                    var data1 = new Tongsokg();
+                    var tt = await _context.chitietlancaus.Where(x => x.Ma_thuehoca == data.Ma_thuehoca).ToListAsync();
+                    data1.sokg = tt.Sum(x => x.sokg);
+                    data1.soluong = tt.Count;
+                    data1.Ma_thuehoca = data.Ma_thuehoca;
+                    data1.Tongsotien = tt.Sum(x => x.Thanhtien);
+                    var tongkg = await _context.Tongsokg.Where(x => x.Ma_thuehoca == data.Ma_thuehoca).FirstOrDefaultAsync();
+                    if (tongkg != null)
+                    {
+                        _context.Tongsokg.Remove(tongkg);
+                    }
+                    await _context.Tongsokg.AddAsync(data1);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

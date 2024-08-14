@@ -8,9 +8,11 @@ namespace Projecthoca.Models.EnitityVM
         [Required(ErrorMessage ="Hãy thêm giờ câu")]
         public TimeSpan giocau { get; set; }
         [Required(ErrorMessage = "Hãy thêm số kg")]
-        public float sokg { get; set; }
-        public string ?Ma_danhmuc { get; set; }
 
+        public float sokg { get; set; }
+        public float ?Thanhtien { get; set; }
+        public string ?Ma_danhmuc { get; set; }
+        public string ?Tendanhmuc { get; set; }  
         public string ?Ma_thuehoca { get; set; }
     }
 }
