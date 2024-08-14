@@ -14,9 +14,74 @@
         <li><a href="#" id="Themkh">Cho khách thuê</a></li>
         <li><a href="#" id="Bamgio">Bấm giờ</a></li>
         <li><a href="#" id="Themdichvu">Thêm dịch vụ</a></li>
+        <li><a href="#" id="Xemchitietca">Xem số cá </a></li>
     </ul>
 </div>
-
+<!--Modal xem cá -->
+<div class="modal fade" id="Xemca" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Xem cá được câu</h5>
+                <div>
+                    <button type="button" class="btn btn-primary" id="submitBtndm">Xem chi tiết cá</button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">  <span aria-hidden="true">&times;</span></button>
+                </div>
+            
+            </div>
+            <div class="modal-body">
+                <div class="bill-container">
+                    <div class="customer-info">
+                        <h2>Thông tin khách hàng</h2>
+                        <div><span>Tên khu câu:</span><span class="value">Khu vực 7</span></div>
+                        <div><span>Tên khách hàng:</span><span class="value">Vũ Văn A</span></div>
+                        <div><span>Thời gian bắt đầu câu:</span><span class="value">23:08:00</span></div>
+                        <div><span>Thời gian câu:</span><span class="value">03:07:55</span></div>
+                    </div>
+                    <div class="bill-details">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Thời Gian</th>
+                                    <th>Tên Loại Cá</th>
+                                    <th>Trọng Lượng (kg)</th>
+                                    <th>Số Con</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>9:00</td>
+                                    <td>Cá Chép</td>
+                                    <td>4.0</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>9:30</td>
+                                    <td>Cá Trắm</td>
+                                    <td>3.4</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td>14:20</td>
+                                    <td>Cá Chép</td>
+                                    <td>4.0</td>
+                                    <td>1</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="bill-total">
+                        <h2>Tổng Trọng Lượng Cá Câu Được: <span>11.4 kg</span></h2>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+               
+            </div>
+        </div>
+    </div>
+</div>
+<!--Modal xem cá -->
 <div class="modal fade" id="Themkhachthuetill" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog  modal-dialog-centered ">
         <div class="modal-content">
@@ -185,6 +250,7 @@
 </div>
 @section Styles {
     <link rel="stylesheet" href="~/css/hoca.css">
+    <link rel="stylesheet" href="~/css/Formchitietcau.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
    
     <style>
@@ -347,27 +413,34 @@
 
                 if (action === "edit") {
                     // Handle edit action
-                   // Themkhachhang(khuVucId);
-                   alert("Edit " + khuVucId);
+                    // Themkhachhang(khuVucId);
+                    alert("Edit " + khuVucId);
                 } else if (action === "delete") {
                     alert("Delete " + khuVucId);
                 } else if (action === "Themkh") {
-                 
+
                     $("#Themkhachthuetill").modal("show");
                     $("#Ma_khuvuccau").val(khuVucId);
                 } else if (action === "Bamgio") {
-                   
+
                     Updatebamgio(khuVucId);
 
 
 
                 } else if (action === "dungtg") {
                     Dungthoigian(khuVucId);
-                }else if (action === "Xoakh") {
+                } else if (action === "Xoakh") {
                     Xoakhachang(khuVucId);
-                }else if (action === "Xoakhuvuc") {
+                } else if (action === "Xoakhuvuc") {
                     Xoakhuvuc(khuVucId)
+                } else if (action === "Xemchitietca") { 
+                    $("#Xemca").modal("show");
+                    Xemkhkhuvuc(khuVucId);
                 }
+                else if (action === "Themdichvu") {
+                    alert("Thêm dịch vụ");
+                }
+        
                 $("#contextMenu").hide();
             });
             $(document).on("click", "#submitkt", function () {
@@ -425,7 +498,7 @@
                 data: { Ma_hocau: Ma_hoca },
                 success: function (response) {
                     if (response.success) {
-                        console.log(response.data);
+                    
                         var str1 = "";
                         var str2 = "";
                         $("#top-seats").empty();
@@ -709,6 +782,37 @@
                             text: response.messeger,
                             icon: "success"
                         });
+                    }
+                    else {
+                        console.log("Thất bại");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
+        function Xemkhkhuvuc(KhuvucId) {
+            var formData = new FormData();
+            formData.append("Ma_khuvvuc", KhuvucId);
+            $.ajax({
+                url: "/Khuvuchoca/Laykhachthue",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        console.log(response.data)
+                        html = "";
+                        html += `<div><span>Tên khu vực:</span><span class="value">${response.data.ten_Khuvuccau}</span></div>`
+                        html += `<div><span>Tên khách hàng:</span><span class="value">${response.data.ten_khachhang}</span></div>`
+                       html += `<div><span>Ngày câu:</span><span class="value">${response.data.ngaycau}</span></div>`
+                        html += `<div><span>Thời gian bắt đầu câu:</span><span class="value">${response.data.thoigianbatdau}</span></div>`
+                        html += `<div><span>Thời gian  câu:</span><span class="value">${response.data.timeout}</span></div>`
+                        $('.customer-info').html(html);
+                   
                     }
                     else {
                         console.log("Thất bại");
