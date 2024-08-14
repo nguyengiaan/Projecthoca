@@ -10,6 +10,8 @@
 
         public string Ma_thuehoca { get; set; }
 
+  
+
         public Thuehoca Thuehoca { get; set; }
         public Danhmuc Danhmuc { get; set; }    
     }

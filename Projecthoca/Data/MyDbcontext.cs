@@ -96,7 +96,7 @@ namespace Projecthoca.Data
             modelBuilder.Entity<Chitietlancau>().Property(e => e.giocau).HasMaxLength(100);
             modelBuilder.Entity<Chitietlancau>().Property(e => e.sokg).HasMaxLength(100);
             modelBuilder.Entity<Chitietlancau>().HasOne(x => x.Danhmuc).WithMany(x => x.Chitietlancaus).HasForeignKey(x => x.Ma_danhmuc);
-            modelBuilder.Entity<Chitietlancau>().HasOne(x => x.Thuehoca).WithMany(x => x.Chitietlancaus).HasForeignKey(x => x.Ma_danhmuc);
+            modelBuilder.Entity<Chitietlancau>().HasOne(x => x.Thuehoca).WithMany(x => x.Chitietlancaus).HasForeignKey(x => x.Ma_thuehoca);
             // table TongsoKG
             modelBuilder.Entity<Tongsokg>().ToTable("Tongsokg").HasKey(x => x.Ma_tongsokg);
             modelBuilder.Entity<Tongsokg>().Property(e => e.sokg).HasMaxLength(100);

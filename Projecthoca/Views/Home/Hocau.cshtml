@@ -17,6 +17,42 @@
         <li><a href="#" id="Xemchitietca">Xem số cá </a></li>
     </ul>
 </div>
+<!--Modal thêm chi tiết cá-->
+<div class="modal fade" id="Themchitietca" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm chi tiết cá</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formthemca" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <input type="hidden" class="form-control" id="Ma_thuehoca" value="">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Tên loài cá</label>
+                        <select class="form-select" id="Ma_danhmuc">
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Giờ câu</label>
+                        <input type="time" class="form-control" id="giocau">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Số ký</label>
+                        <input type="number" class="form-control" id="sokg">
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thoát</button>
+                <button type="button" id="submitca" class="btn btn-primary">Thêm cá nè</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!--Modal xem cá -->
 <div class="modal fade" id="Xemca" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
@@ -24,7 +60,7 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Xem cá được câu</h5>
                 <div>
-                    <button type="button" class="btn btn-primary" id="submitBtndm">Xem chi tiết cá</button>
+                    <button type="button" class="btn btn-primary" id="Themchitietcabtn" data-toggle="modal" data-target="#Themchitietca">Thêm chi tiết cá</button>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">  <span aria-hidden="true">&times;</span></button>
                 </div>
             
@@ -45,7 +81,7 @@
                                     <th>Thời Gian</th>
                                     <th>Tên Loại Cá</th>
                                     <th>Trọng Lượng (kg)</th>
-                                    <th>Số Con</th>
+                                    <th>Xóa</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -360,6 +396,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
     <script>
+        var kvc;
         $(document).ready(function () {
 
             setInterval(function () {
@@ -368,7 +405,10 @@
             $("#submitkv").click(function () {
                 Themkhuvuc();
             });
-       
+            $("#Themchitietcabtn").click(function () {
+                $('#Xemca').modal('hide');
+            });
+             Danhsachhs();
             $(document).on("click", ".chongoi", function () {
                 var khuVucId = $(this).data("id");
                 // Khởi tạo modal và hiển thị nó
@@ -379,6 +419,9 @@
             Danhsachkhuvuc();
             setInterval(function () {
                 setCurrentTime('#Thoigianbatdau');
+            }, 1000);
+            setInterval(function () {
+                setCurrentTime('#giocau');
             }, 1000);
             $(document).on("touchstart", ".Khuvuc", function (e) {
                 e.preventDefault();
@@ -394,9 +437,9 @@
             $(document).on("contextmenu", ".Khuvuc", function (e) {
                 e.preventDefault();
                 var khuVucId = $(this).data("id");
-
                 Kiemtrakv(khuVucId);
                 Kiemtrabamgio(khuVucId);
+                kvc=khuVucId;
                 $("#contextMenu").css({
                     display: "block",
                     left: e.pageX,
@@ -410,7 +453,7 @@
                 e.preventDefault();
                 var action = $(this).attr("id");
                 var khuVucId = $("#contextMenu").data("id");
-
+            ;
                 if (action === "edit") {
                     // Handle edit action
                     // Themkhachhang(khuVucId);
@@ -446,7 +489,11 @@
             $(document).on("click", "#submitkt", function () {
                 Themkhachhang();
             });
+            $(document).on("click", "#submitca", function () {
+                Themcane();
+            });
         });
+
         function Themkhuvuc() {
             var Ma_hoca = $("#Ma_hoca").val();
             var Ten_Khuvuccau = $("#Ten_Khuvuccau").val();
@@ -804,7 +851,7 @@
                 contentType: false,
                 success: function (response) {
                     if (response.success) {
-                        console.log(response.data)
+                        $('#Ma_thuehoca').val(response.data.ma_thuehoca);
                         html = "";
                         html += `<div><span>Tên khu vực:</span><span class="value">${response.data.ten_Khuvuccau}</span></div>`
                         html += `<div><span>Tên khách hàng:</span><span class="value">${response.data.ten_khachhang}</span></div>`
@@ -816,6 +863,74 @@
                     }
                     else {
                         console.log("Thất bại");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
+        function Danhsachhs()
+        {
+            $.ajax({
+                type: "GET",
+                url: "/Chitietca/Danhsachhs", 
+                success: function (response) {
+             
+                    if (response.success) {
+                        $.each(response.data, function (index, value) {
+                            var str = '';
+                            var str=`  <option value="${value.ma_danhmuc}">${value.ten_danhmuc}</option>`
+
+                            $('#Ma_danhmuc').append(str);
+                    
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                }
+            });
+        }
+        function Themcane() {
+            var form = $("#formthemca")[0];
+            var Ma_thuehoca = $("#Ma_thuehoca").val();
+            var Ma_danhmuc = $("#Ma_danhmuc").val();
+            var giocau = $("#giocau").val();
+            var sokg = $("#sokg").val();
+
+            var formData = new FormData();
+            formData.append("Ma_thuehoca", Ma_thuehoca);
+            formData.append("Ma_danhmuc", Ma_danhmuc);
+            formData.append("giocau", giocau);
+            formData.append("sokg", sokg);
+            $.ajax({
+                url: "/Chitietca/ThemCa",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Thành công",
+                            text: response.message,
+                            icon: "success"
+                        });
+                        form.reset();
+                        $("#Themchitietca").modal("hide");
+                        $("#Xemca").modal("show");
+                        form.reset();
+                    } else {
+                        Swal.fire({
+                            title: "Thất bại",
+                            text: response.message,
+                            icon: "error"
+                        });
                     }
                 },
                 error: function (xhr, status, error) {
