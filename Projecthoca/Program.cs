@@ -49,6 +49,7 @@ builder.Services.AddScoped<IKhuvuccau, KhuvuccauReponser>();
 builder.Services.AddScoped<IDanhmuc, DanhmucReponser>();
 builder.Services.AddScoped<IGiahoca, GiahocaReponser>();
 builder.Services.AddScoped<IChitietca, ChitietcaReponser>();
+builder.Services.AddScoped<IDanhmuchoadon, DanhmuchoadonReponser>();
 builder.Services.AddSingleton<TimerBackgroundService>();
 builder.Services.AddHostedService<TimerBackgroundService>();
 // Add services to the container.
