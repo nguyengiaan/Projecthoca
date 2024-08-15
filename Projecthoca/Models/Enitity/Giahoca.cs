@@ -8,5 +8,10 @@
         public int Gia_coca { get; set; }
         public string Id { get; set; }
         public ApplicationUser Nguoidung { get; set; }
+        public List<Giachothuehc> Giachothuehcs { get; set; }
+        public Giahoca()
+        {
+            Giachothuehcs = new List<Giachothuehc>();
+        }
     }
 }

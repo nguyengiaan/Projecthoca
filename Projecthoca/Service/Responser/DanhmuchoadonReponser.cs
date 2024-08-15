@@ -54,7 +54,6 @@ namespace Projecthoca.Service.Responser
                 {
                     Ma_danhmuc = x.Ma_danhmuc,
                     Ten_danhmuc = x.Ten_danhmuc,
-
                 }).ToListAsync();
                 return data;
             }
@@ -64,12 +63,12 @@ namespace Projecthoca.Service.Responser
             }
         }
 
-        public async Task<List<DanhmuchoadonVM>> Dsdmhd(string Ma_thuehoca)
+        public async Task<List<DanhmuchoadonVM>> Dsdmhd(string Ma_khuvuc)
         {
             try
             {
-
-                var data= await _context.danhmuchoadons.Where(x => x.Ma_thuehoca == Ma_thuehoca).Select(x => new DanhmuchoadonVM
+                var data1 = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).FirstOrDefaultAsync();
+                var data= await _context.danhmuchoadons.Where(x => x.Ma_thuehoca == data1.Ma_thuehoca).Select(x => new DanhmuchoadonVM
                 {
                     Ma_thuehoca = x.Ma_thuehoca,
                     Ma_danhmuc = x.Ma_danhmuc,
@@ -79,6 +78,72 @@ namespace Projecthoca.Service.Responser
                     Gia = x.Danhmuc.Gia,
                     Ten_danhmuc = x.Danhmuc.Ten_danhmuc,
                     Ma_danhmuchoadon = x.Ma_danhmuchoadon
+                }).ToListAsync();
+                return data;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<bool> Xoadichvu(int Ma_danhmuchoadon)
+        {
+            try
+            {
+                var data= await _context.danhmuchoadons.FindAsync(Ma_danhmuchoadon);
+                if(data == null )
+                {
+                    return false;
+                }else
+                {
+                    _context.danhmuchoadons.Remove(data);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> Themthoigian(GiachothuehcVM giachothuehc)
+        {
+           try
+            {
+                var data=await _context.Giahocas.FindAsync(giachothuehc.Ma_giahoca);
+                var gct = new Giachothuehc();
+                gct.Ma_giahoca = giachothuehc.Ma_giahoca;
+                gct.Ma_thuehoca = giachothuehc.Ma_thuehoca;
+                gct.Soluong = giachothuehc.Soluong;
+                gct.Trangthai = giachothuehc.Trangthai;
+                if(giachothuehc.Trangthai=="Coca")
+                {
+                    gct.Thanhtien = giachothuehc.Soluong*data.Gia_coca;
+                }
+                else
+                {
+                    gct.Thanhtien = giachothuehc.Soluong*data.Gia_khongca;
+                }
+                return true;
+
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<List<GiahocaVM>> Danhsachgiahoca()
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var data=await _context.Giahocas.Where(x => x.Id == user.Id).Select(x => new GiahocaVM
+                {
+                    Ma_giahoca = x.Ma_giahoca,
+                    Ca=x.Ca,
                 }).ToListAsync();
                 return data;
             }

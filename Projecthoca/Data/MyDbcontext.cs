@@ -26,6 +26,8 @@ namespace Projecthoca.Data
         public DbSet<Tongsokg> Tongsokg { get; set; }
 
         public DbSet<Danhmuchoadon> danhmuchoadons { get; set; }
+
+        public DbSet<Thuehoca> Thuehocas { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -103,6 +105,13 @@ namespace Projecthoca.Data
             modelBuilder.Entity<Tongsokg>().ToTable("Tongsokg").HasKey(x => x.Ma_tongsokg);
             modelBuilder.Entity<Tongsokg>().Property(e => e.sokg).HasMaxLength(100);
             modelBuilder.Entity<Tongsokg>().HasOne(x => x.Thuehoca).WithMany(x => x.Tongsokgs).HasForeignKey(x => x.Ma_thuehoca);
+            // table Giachothuehc
+            modelBuilder.Entity<Giachothuehc>().ToTable("Giachothuehc").HasKey(x => x.Ma_giachothuehc);
+            modelBuilder.Entity<Giachothuehc>().Property(e => e.Soluong).HasMaxLength(100);
+            modelBuilder.Entity<Giachothuehc>().Property(e => e.Thanhtien).HasMaxLength(100);
+            modelBuilder.Entity<Giachothuehc>().Property(e => e.Trangthai).HasMaxLength(100);
+            modelBuilder.Entity<Giachothuehc>().HasOne(x => x.Thuehoca).WithMany(x => x.Giachothuehcs).HasForeignKey(x => x.Ma_thuehoca);
+            modelBuilder.Entity<Giachothuehc>().HasOne(x => x.Giahoca).WithMany(x => x.Giachothuehcs).HasForeignKey(x => x.Ma_giahoca);
 
         }
 
