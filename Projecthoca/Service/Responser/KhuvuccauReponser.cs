@@ -35,7 +35,6 @@ namespace Projecthoca.Service.Responser
                 kv.Ten_Khuvuccau = khuvuccau.Ten_Khuvuccau;
                 kv.Idkhuvuccau = khuvuccau.Idkhuvuccau;
                 kv.Ma_hoca = khuvuccau.Ma_hoca;
-     
                 kv.Trangthai = khuvuccau.Trangthai;
                 await _context.Khuvuccau.AddAsync(kv);
                 await _context.SaveChangesAsync();

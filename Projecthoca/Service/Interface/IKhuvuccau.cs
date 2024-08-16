@@ -17,7 +17,6 @@ namespace Projecthoca.Service.Interface
         public Task<Boolean>Dadungtg(string Ma_khuvuc);
         public Task<Boolean> Deletekvc(string Ma_khuvuc);
         public Task<Boolean> Xoakhachthue(string Ma_khuvuc);
-
         public Task<ThuehocaVM>Laykhachthue(string Ma_khuvuc);
 
     }

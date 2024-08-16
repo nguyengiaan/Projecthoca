@@ -17,12 +17,15 @@
         public List<Chitietlancau> Chitietlancaus { get; set; }
 
         public List<Tongsokg> Tongsokgs { get; set; }
+
+        public List<Giachothuehc> Giachothuehcs { get; set; }
         public Thuehoca()
         {
             Hoadondanhmucs = new List<Hoadondanhmuc>();
             Danhmuchoadons=new List<Danhmuchoadon>();
             Chitietlancaus = new List<Chitietlancau>();
             Tongsokgs = new List<Tongsokg>();
+            Giachothuehcs = new List<Giachothuehc>();
         }
     }
 }

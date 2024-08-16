@@ -1,4 +1,23 @@
-﻿
+﻿<!--Modal thông báo xóa-->
+<div class="modal" tabindex="-1" role="dialog" id="Xoathongbao">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">THÔNG BÁO!!!</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>BẠN CÓ MUỐN XÓA THÔNG BÁO KHÔNG!!!</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">YES I AM</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Không bé ơi</button>
+            </div>
+        </div>
+    </div>
+</div>
 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
     <!-- Sidebar Toggle (Topbar) -->
@@ -35,7 +54,25 @@
         </li>
 
         <!-- Nav Item - Alerts -->
-
+        <li class="nav-item dropdown no-arrow mx-1">
+            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-bell fa-fw"></i>
+                <!-- Counter - Alerts -->
+                <span class="badge badge-danger badge-counter"></span>
+            </a>
+            <!-- Dropdown - Alerts -->
+            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                 aria-labelledby="alertsDropdown">
+                <h6 class="dropdown-header">
+                    Thông báo
+                </h6>
+  
+               
+               
+                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+            </div>
+        </li>
         <div class="topbar-divider d-none d-sm-block"></div>
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="/Home/Index">
@@ -64,3 +101,86 @@
 
     </ul>
 </nav>
+<script>
+    $(document).ready(function () {
+        setInterval(Hienthithongbao, 1000);
+        $(document).on('click', '.dropdown-item', function (e) {
+            e.preventDefault();
+            var Ma_thongbao = $(this).data('id');
+            Docthongbao(Ma_thongbao);
+        });
+    });
+
+    function Hienthithongbao() {
+        $.ajax({
+            url: "/Thongbao/dsthongbao",
+            type: "GET",
+            success: function (response) {
+                if (response.success) {
+                    var count = response.total > 0 ? response.total : "";
+                    $(".badge-counter").text(count);
+                    var html = "";
+                    $.each(response.data, function (key, item) {
+                        html += `<div class="dropdown-item d-flex align-items-center justify-content-between" data-id="${item.ma_thongbao}">`;
+                        html += '<div class="d-flex align-items-center">';
+                        html += '<div class="mr-3">';
+                        html += '<div class="icon-circle bg-success">';
+                        html += '<i class="fas fa-donate text-white"></i>';
+                        html += '</div>';
+                        html += '</div>';
+                        html += '<div>';
+                        html += '<div class="small text-gray-500">' + item.ngayDang + '</div>';
+                        html += item.noiDung;
+                        html += '</div>';
+                        html += '</div>'; // End of left-aligned content
+                        html += '<div class="form-check">';
+                        html += `<input class="form-check-input" type="checkbox" value="${item.ma_thongbao}" id="check_${item.ma_thongbao}">`;
+                        html += `<label class="form-check-label" for="check_${item.ma_thongbao}"></label>`;
+                        html += '</div>';
+                        html += '</div>'; // End of dropdown-item
+                    });
+                    $(".dropdown-list").html(html);
+                }
+            }
+        });
+    }
+
+    function Docthongbao(Ma_thongbao) {
+        $.ajax({
+            url: "/Thongbao/Docthongbao",
+            type: "POST",
+            data: { Ma_thongbao: Ma_thongbao },
+            success: function (response) {
+                if (response.success) {
+                    Swal.fire({
+                        title: "Thành công",
+                        text: response.message,
+                        icon: "success"
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Thất bại",
+                        text: "Bạn chưa đọc thông báo",
+                        icon: "error"
+                    });
+                }
+            }
+        });
+    }
+</script>
+
+<style>
+    .dropdown-list {
+        max-height: 300px; /* Giới hạn chiều cao của dropdown */
+        overflow-y: auto !important; /* Thêm thanh cuộn khi nội dung vượt quá chiều cao */
+        position: relative; /* Đảm bảo phần tử có vị trí tương đối */
+    }
+
+    .dropdown-content {
+        max-height: 300px; /* Giới hạn chiều cao của nội dung dropdown */
+        overflow-y: auto !important; /* Thêm thanh cuộn khi nội dung vượt quá chiều cao */
+    }
+
+
+
+</style>

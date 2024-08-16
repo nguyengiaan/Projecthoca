@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projecthoca.Data;
 
@@ -11,9 +12,10 @@ using Projecthoca.Data;
 namespace Projecthoca.Migrations
 {
     [DbContext(typeof(MyDbcontext))]
-    partial class MyDbcontextModelSnapshot : ModelSnapshot
+    [Migration("20240815071437_up_27")]
+    partial class up_27
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -534,38 +536,6 @@ namespace Projecthoca.Migrations
                     b.ToTable("Khuvuccau", (string)null);
                 });
 
-            modelBuilder.Entity("Projecthoca.Models.Enitity.Thongbao", b =>
-                {
-                    b.Property<int>("Ma_thongbao")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Ma_thongbao"), 1L, 1);
-
-                    b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("NgayDang")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("NoiDung")
-                        .IsRequired()
-                        .HasMaxLength(1000)
-                        .HasColumnType("nvarchar(1000)");
-
-                    b.Property<bool>("Trangthai")
-                        .HasMaxLength(50)
-                        .HasColumnType("bit");
-
-                    b.HasKey("Ma_thongbao");
-
-                    b.HasIndex("Id");
-
-                    b.ToTable("Thongbao", (string)null);
-                });
-
             modelBuilder.Entity("Projecthoca.Models.Enitity.Thuehoca", b =>
                 {
                     b.Property<string>("Ma_thuehoca")
@@ -814,15 +784,6 @@ namespace Projecthoca.Migrations
                     b.Navigation("Hoca");
                 });
 
-            modelBuilder.Entity("Projecthoca.Models.Enitity.Thongbao", b =>
-                {
-                    b.HasOne("Projecthoca.Models.Enitity.ApplicationUser", "ApplicationUser")
-                        .WithMany("Thongbaos")
-                        .HasForeignKey("Id");
-
-                    b.Navigation("ApplicationUser");
-                });
-
             modelBuilder.Entity("Projecthoca.Models.Enitity.Thuehoca", b =>
                 {
                     b.HasOne("Projecthoca.Models.Enitity.Khuvuccau", "Khuvuccau")
@@ -854,8 +815,6 @@ namespace Projecthoca.Migrations
                     b.Navigation("Giahocas");
 
                     b.Navigation("Hoccas");
-
-                    b.Navigation("Thongbaos");
                 });
 
             modelBuilder.Entity("Projecthoca.Models.Enitity.Danhmuc", b =>
