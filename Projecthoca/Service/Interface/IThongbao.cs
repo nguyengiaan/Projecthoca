@@ -6,6 +6,8 @@ namespace Projecthoca.Service.Interface
     {
         public  Task<(List<ThongbaoVM> ds, int total)> danhsachtb();
 
+        public Task<Boolean> docthongbao(int Ma_thongbao);
+
 
 
     }

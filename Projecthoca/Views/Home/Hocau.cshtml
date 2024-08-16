@@ -32,7 +32,7 @@
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">Trạng thái</label>
-                        <select class="form-select" id="Trangthaithoigian">
+                        <select class="form-select" id="Trangthaicacau">
                             <option value="Coca">Có cá</option>
                             <option value="Khongcoca">Không có cá</option>
                         </select>
@@ -121,6 +121,12 @@
                             </tbody>
                         </table>
                     </div>
+                    <div class="discount-section">
+                        <label for="discount-input">Giảm giá (%):</label>
+                        <input type="number" id="discount-input" class="form-control" placeholder="Nhập % giảm giá">
+                        <button type="button" class="btn btn-warning mt-2" id="apply-discount-btn">Áp dụng giảm giá</button>
+                    </div>
+
                     <div class="bill-total">
                         <h2>Tổng thanh toán: <span>11.000.000</span></h2>
                     </div>
@@ -271,7 +277,7 @@
                         {
                             <input type="hidden" class="form-control" id="Ma_hoca" value="@Model.Ma_hoca">
                         }
-                        <input type="hidden" class="form-control" id="Idkhuvuccau" value="">
+                        <input type="hidden" class="form-control" id="Idkhuvuccau_kv" value="">
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">Tên khu vực câu</label>
@@ -494,7 +500,9 @@
             margin-left: 5px;
             text-shadow: -1px -1px 0 #2d3436, 1px -1px 0 #2d3436, -1px 1px 0 #2d3436, 1px 1px 0 #2d3436;
             font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+
         }
+
 
     </style>
 
@@ -519,71 +527,67 @@
 
             // Thêm các kiểu in
             var printStyles = `
-                                     <style>
-                body {
-                    font-family: Arial, sans-serif;
-                    color: #000;
-                }
-                .bill-container {
-                    font-family: Arial, sans-serif;
-                    color: #000;
-                    padding: 40px; /* Tăng padding */
-                    width: 150mm; /* Tăng chiều rộng cho hóa đơn */
-                    margin: 0 auto;
-                    border: 1px solid #ddd;
-                    border-radius: 5px;
-                    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                }
-                .store-info, .bill-header, .customer-info, .bill-footer {
-                    margin-bottom: 25px; /* Tăng khoảng cách giữa các phần */
-                    text-align: left; /* Canh trái */
-                    border: 1px solid #000; /* Bo viền */
-                    padding: 15px; /* Tăng padding bên trong */
-                    border-radius: 5px; /* Tạo bo tròn các góc */
-                    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Thêm hiệu ứng đổ bóng nhẹ */
-                }
-                .store-info strong, .bill-header strong {
-                    display: block;
-                    font-size: 1.8em; /* Tăng kích thước chữ */
-                    margin-bottom: 15px; /* Tăng khoảng cách dưới */
-                }
-                .bill-description {
-                    text-align: left; /* Canh trái */
-                    font-size: 1.4em; /* Tăng kích thước chữ */
-                    margin-bottom: 25px; /* Tăng khoảng cách dưới */
-                }
-                .customer-info div, .bill-footer div {
-                    font-size: 1.3em; /* Tăng kích thước chữ */
-                    margin-bottom: 15px; /* Tăng khoảng cách dưới */
-                }
-                .bill-details table {
-                    width: 100%;
-                    border-collapse: collapse;
-                    margin-bottom: 35px; /* Tăng khoảng cách dưới */
-                }
-                .bill-details th, .bill-details td {
-                    border: 1px solid #000;
-                    padding: 12px; /* Tăng padding */
-                    text-align: left; /* Canh trái */
-                    font-size: 1.2em; /* Tăng kích thước chữ */
-                }
-                .bill-details th {
-                    background-color: #f2f2f2;
-                    text-align: center;
-                }
-                .bill-footer {
-                    text-align: left; /* Canh trái */
-                    font-size: 1.3em; /* Tăng kích thước chữ */
-                }
-                .signatures {
-                    display: flex;
-                    justify-content: space-between;
-                    margin-top: 50px; /* Tăng khoảng cách trên */
-                    font-size: 1.3em; /* Tăng kích thước chữ */
-                    text-align: center;
-                }
-            </style>
-                    `;
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        color: #000;
+                    }
+                    .bill-container {
+                        font-family: Arial, sans-serif;
+                        color: #000;
+                        padding: 40px; /* Tăng padding */
+                        width: 150mm; /* Tăng chiều rộng cho hóa đơn */
+                        margin: 0 auto;
+                        border: 1px solid #ddd;
+                        border-radius: 5px;
+                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    }
+                    .store-info, .bill-header, .customer-info, .bill-footer {
+                        margin-bottom: 25px; /* Tăng khoảng cách giữa các phần */
+                        text-align: center;
+                    }
+                    .store-info strong, .bill-header strong {
+                        display: block;
+                        font-size: 1.8em; /* Tăng kích thước chữ */
+                        margin-bottom: 15px; /* Tăng khoảng cách dưới */
+                    }
+                    .bill-description {
+                        text-align: center;
+                        font-size: 1.4em; /* Tăng kích thước chữ */
+                        margin-bottom: 25px; /* Tăng khoảng cách dưới */
+                    }
+                    .customer-info div, .bill-footer div {
+                        font-size: 1.3em; /* Tăng kích thước chữ */
+                        margin-bottom: 15px; /* Tăng khoảng cách dưới */
+                    }
+                    .bill-details table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-bottom: 35px; /* Tăng khoảng cách dưới */
+                    }
+                    .bill-details th, .bill-details td {
+                        border: 1px solid #000;
+                        padding: 12px; /* Tăng padding */
+                        text-align: left;
+                        font-size: 1.2em; /* Tăng kích thước chữ */
+                    }
+                    .bill-details th {
+                        background-color: #f2f2f2;
+                        text-align: center;
+                    }
+                    .bill-footer {
+                        text-align: right;
+                        font-size: 1.3em; /* Tăng kích thước chữ */
+                    }
+                    .signatures {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-top: 50px; /* Tăng khoảng cách trên */
+                        font-size: 1.3em; /* Tăng kích thước chữ */
+                        text-align: center;
+                    }
+                </style>
+            `;
             window.addEventListener('afterprint', function () {
                 location.reload();
             });
@@ -596,19 +600,7 @@
 
 
 
-        document.addEventListener('DOMContentLoaded', function () {
-            // Đường dẫn đến tệp Lottie JSON
-            const animationPath = '../Admin_Style/img/animation.json';
 
-            // Tải và hiển thị animation
-            lottie.loadAnimation({
-                container: document.getElementById('lottie-animation'), // ID của thẻ chứa animation
-                renderer: 'svg',
-                loop: true,
-                autoplay: true,
-                path: animationPath
-            });
-        });
 
 
 
@@ -643,11 +635,12 @@
             });
             Danhsachhs();
             $(document).on("click", ".chongoi", function () {
-                var khuVucId = $(this).data("id");
+                var khuVucId_kv = $(this).attr("id");
+                console.log("khu vực câu nè ", khuVucId_kv);
                 // Khởi tạo modal và hiển thị nó
                 $("#Themkhuvuchc").modal("show");
                 // Cập nhật giá trị của input ẩn
-                $("#Idkhuvuccau").val(khuVucId);
+                $("#Idkhuvuccau_kv").val(khuVucId_kv);
             });
             Danhsachkhuvuc();
             setInterval(function () {
@@ -745,7 +738,7 @@
             var Ten_Khuvuccau = $("#Ten_Khuvuccau").val();
             var Trangthai = $("#Trangthai").val();
             var Ghichu = $("#Ghichu").val();
-            var Idkhuvuccau = $("#Idkhuvuccau").val();
+            var Idkhuvuccau = $("#Idkhuvuccau_kv").val();
             var form = $("#formkhuvuc")[0];
             var formData = new FormData(form);
             formData.append("Ma_hoca", Ma_hoca);
@@ -1479,7 +1472,7 @@
             var Ma_thuehoca = $("#Ma_thuehoca").val();
             var Ma_giahoca = $("#Ma_giahoca").val();
             var Soluong = $("#Soluong").val();
-            var Trangthai = $("#Trangthaithoigian").val();
+            var Trangthai = $("#Trangthai").val();
             var formData = new FormData();
             formData.append("Ma_giahoca", Ma_giahoca);
             formData.append("Soluong", Soluong);
@@ -1627,6 +1620,8 @@
                 }
             });
         }
+
+
     </script>
 
 }
