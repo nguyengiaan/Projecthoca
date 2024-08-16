@@ -200,6 +200,26 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult>Giamgia(GiamgiaVM giamgia)
+        {
+            try
+            {
+                var data= await _dmhd.Giamgia(giamgia);
+                if(data)
+                {
+                    return Json(new { success = true }) ;
+                }else
+                {
+                    return Json(new { success = false, message = "Giảm giá thất bại" });
+                }
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
     }
    
 }

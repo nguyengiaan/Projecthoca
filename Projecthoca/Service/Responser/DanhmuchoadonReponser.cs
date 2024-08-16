@@ -281,5 +281,36 @@ namespace Projecthoca.Service.Responser
                 return null;
             }
         }
+
+        public async Task<bool> Giamgia(GiamgiaVM giamgia)
+        {
+           try
+            {
+                var data=await _context.Thuehoca.Where(x => x.Ma_khuvuccau == giamgia.Ma_khuvuc).FirstOrDefaultAsync();
+                var hoadon = await _context.Hoadondanhmuc.Where(x => x.Ma_thuehoca == data.Ma_thuehoca).FirstOrDefaultAsync();
+                if (hoadon == null)
+                {
+                    return false;
+                }
+                if(giamgia.Giamgia > 0 && giamgia.Giamgia <=100)
+                {
+                    var discountAmount = hoadon.Tongthanhtoan * (giamgia.Giamgia / 100.0);
+                    hoadon.Tongthanhtoan = hoadon.Tongthanhtoan - (int)discountAmount;
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                else
+                {
+                    hoadon.Tongthanhtoan =Convert.ToInt32( hoadon.Tongthanhtoan - giamgia.Giamgia);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

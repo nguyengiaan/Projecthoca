@@ -40,8 +40,19 @@ namespace Projecthoca.Service.Responser
             }
         }
 
-   
-
-        
+        public async Task<bool> docthongbao(int Ma_thongbao)
+        {
+            try
+            {
+                var data = await _context.Thongbaos.FindAsync(Ma_thongbao);
+                _context.Thongbaos.Remove(data);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
     }
 }

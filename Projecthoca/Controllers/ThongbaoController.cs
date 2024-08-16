@@ -31,5 +31,23 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, messeger=ex.Message });
             }   
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Docthongbao(int Ma_thongbao)
+        {
+            try
+            {
+                var data= await _thongbao.docthongbao(Ma_thongbao);
+                if(data)
+                {
+                    return Json(new { success = true, messeger = "Bạn đã đọc thông báo " });
+                }
+                return Json(new { success = false, messeger = "Bạn chưa đọc thông báo  " });
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, messeger = ex.Message });
+            }
+        }
     }
 }
