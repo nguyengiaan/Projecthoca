@@ -95,3 +95,36 @@ body {
         right: -60px;
     }
 }
+@media (max-width: 480px) {
+    .hoca {
+        display: none;
+    }
+
+    .top-seats, .bottom-seats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr); /* Chia thành 3 cột bằng nhau */
+        grid-gap: 1px; /* Tạo khoảng cách giữa các ô */
+        justify-items: center; /* Căn giữa các ô theo chiều ngang */
+        align-items: center; /* Căn giữa các ô theo chiều dọc */
+    }
+
+    .chongoi {
+        width: 90%; /* Đảm bảo mỗi ô chiếm toàn bộ không gian của cột */
+        height: 90px;
+        background-size: cover;
+    }
+
+    /* Tùy chỉnh font size cho các tiêu đề và văn bản nhỏ hơn */
+    .bill-total h2,
+    .voucher-container label,
+    .voucher-container input[type="text"],
+    .apply-button {
+        font-size: 12px; /* Kích thước chữ nhỏ hơn */
+    }
+
+    .afterApplyVoucher {
+        font-size: 14px; /* Kích thước chữ nhỏ hơn */
+        margin-top: 10px;
+    }
+}
+

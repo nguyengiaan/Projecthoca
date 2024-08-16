@@ -121,5 +121,85 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult>Danhsachthoigian(string KhuvucId)
+        {
+            try
+            {
+                var data = await _dmhd.Danhsachthoigian(KhuvucId);  
+                if(data !=null)
+                {
+                    return Json(new { success = true, data = data });
+                }else
+                {
+                    return Json(new { success = false, data = "Kho có data" });
+                }
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, data =ex.Message });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult>Xoathoigian(int Ma_giachothuehc)
+        {
+            try
+            {
+                var data= await _dmhd.Xoathoigian(Ma_giachothuehc);
+                if(data)
+                {
+                    return Json(new { success = true, message = "Xóa ca thành công" });
+                }else
+                {
+                    return Json(new { success = false, message = "Xóa ca thất bại" });
+                }
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Tongtienhd(string khuVucId)
+        {
+            try
+            {
+                var data= await _dmhd.Tongthanhtoan(khuVucId);
+                if(data != null)
+                {
+                    return Json(new { success = true });
+                }else
+                {
+                    return Json(new { success = false });
+                }
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> Laytongthanhtoan(string khuVucId)
+        {
+            try
+            {
+                var data = await _dmhd.Laytongthangtoan(khuVucId);
+                if (data != null)
+                {
+                    return Json(new { success = true, data = data });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Không có dữ liệu" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
     }
+   
 }

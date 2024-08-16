@@ -16,5 +16,9 @@ namespace Projecthoca.Service.Interface
 
         public Task<List<GiahocaVM>> Danhsachgiahoca();
 
+        public Task<List<GiachothuehcVM>> Danhsachthoigian(string KhuvucId);
+        public Task<Boolean> Xoathoigian(int Ma_giachothuehc);
+        public Task<Boolean> Tongthanhtoan(string KhuvucId);
+        public Task<HoadondanhmucVM>Laytongthangtoan(string KhuvucId);
     }
 }

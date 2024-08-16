@@ -88,8 +88,9 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Xem các dịch vụ</h5>
                 <div>
-                    <button type="button" class="btn btn-primary" id="Themthoigianbtn" data-toggle="modal" data-target="#Themthoigian">Thêm ca câu</button>
+                    <button type="button" class="btn btn-info" id="Themthoigianbtn" data-toggle="modal" data-target="#Themthoigian">Thêm ca câu</button>
                     <button type="button" class="btn btn-primary" id="Themdichvubtn" data-toggle="modal" data-target="#Themdichvu">Thêm dịch vụ</button>
+                    <button type="button" class="btn btn-success" id="Inhoadon">In hóa đơn</button>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">  <span aria-hidden="true">&times;</span></button>
                 </div>
 
@@ -121,7 +122,7 @@
                         </table>
                     </div>
                     <div class="bill-total">
-                        <h2>Tổng Trọng Lượng Cá Câu Được: <span>11.4 kg</span></h2>
+                        <h2>Tổng thanh toán: <span>11.000.000</span></h2>
                     </div>
                 </div>
             </div>
@@ -403,6 +404,7 @@
         .chongoi:hover{
                 background-color: #dc410b;
         }
+
         .Khuvuc{
             background-image: url('../Admin_Style/img/1.jpg');
             background-color: #dfe6e9;
@@ -454,6 +456,7 @@
            }
 
         .Cokhach {
+            background-image: url('../Admin_Style/img/2.jpg');
             background-color: greenyellow;
             width:90px; /* Chiều rộng của chỗ ngồi */
             height: 90px; /* Chiều cao của chỗ ngồi */
@@ -504,9 +507,105 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
     <script>
         var kvc;
+        document.getElementById("Inhoadon").addEventListener("click", function () {
+            // Lấy nội dung cần in
+            var printContents = document.querySelector("#Xemdichvu .modal-body").innerHTML;
+            var originalContents = document.body.innerHTML;
+
+            // Loại bỏ cột "Xóa" từ nội dung cần in
+            printContents = printContents.replace(/<th>Xóa<\/th>/g, ''); // Xóa tiêu đề cột "Xóa"
+            printContents = printContents.replace(/<td>.*?<\/td>\s*<\/tr>/g, '</tr>'); // Xóa ô dữ liệu trong cột "Xóa"
+
+            // Loại bỏ tất cả các nút button liên quan đến xóa
+            printContents = printContents.replace(/<button.*?delete.*?<\/button>/gi, ''); // Xóa tất cả các nút button liên quan đến xóa
+
+            // Thêm các kiểu in
+            var printStyles = `
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        color: #000;
+                    }
+                    .bill-container {
+                        font-family: Arial, sans-serif;
+                        color: #000;
+                        padding: 40px; /* Tăng padding */
+                        width: 150mm; /* Tăng chiều rộng cho hóa đơn */
+                        margin: 0 auto;
+                        border: 1px solid #ddd;
+                        border-radius: 5px;
+                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    }
+                    .store-info, .bill-header, .customer-info, .bill-footer {
+                        margin-bottom: 25px; /* Tăng khoảng cách giữa các phần */
+                        text-align: center;
+                    }
+                    .store-info strong, .bill-header strong {
+                        display: block;
+                        font-size: 1.8em; /* Tăng kích thước chữ */
+                        margin-bottom: 15px; /* Tăng khoảng cách dưới */
+                    }
+                    .bill-description {
+                        text-align: center;
+                        font-size: 1.4em; /* Tăng kích thước chữ */
+                        margin-bottom: 25px; /* Tăng khoảng cách dưới */
+                    }
+                    .customer-info div, .bill-footer div {
+                        font-size: 1.3em; /* Tăng kích thước chữ */
+                        margin-bottom: 15px; /* Tăng khoảng cách dưới */
+                    }
+                    .bill-details table {
+                        width: 100%;
+                        border-collapse: collapse;
+                        margin-bottom: 35px; /* Tăng khoảng cách dưới */
+                    }
+                    .bill-details th, .bill-details td {
+                        border: 1px solid #000;
+                        padding: 12px; /* Tăng padding */
+                        text-align: left;
+                        font-size: 1.2em; /* Tăng kích thước chữ */
+                    }
+                    .bill-details th {
+                        background-color: #f2f2f2;
+                        text-align: center;
+                    }
+                    .bill-footer {
+                        text-align: right;
+                        font-size: 1.3em; /* Tăng kích thước chữ */
+                    }
+                    .signatures {
+                        display: flex;
+                        justify-content: space-between;
+                        margin-top: 50px; /* Tăng khoảng cách trên */
+                        font-size: 1.3em; /* Tăng kích thước chữ */
+                        text-align: center;
+                    }
+                </style>
+            `;
+            window.addEventListener('afterprint', function () {
+                location.reload();
+            });
+
+            // Gộp nội dung và in
+            document.body.innerHTML = printStyles + printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+        });
+
+
+
+
+
+
+
+
+
+
+
+
         $(document).ready(function () {
             Danhsachdv();
-            Danhsachca();
+            Danhsachcahd();
             $(document).on("click", "#Themthoigianbtn", function () {
 
 
@@ -604,8 +703,8 @@
                     Tongsokg(khuVucId);
                 }
                 else if (action === "Themdichvu") {
-                  
-                  
+
+                    
                     Xemkhkhuvuc(khuVucId);
                     Danhsachhddv(khuVucId);
                     $("#Xemdichvu").modal("show");
@@ -1065,6 +1164,8 @@
                         $("#Xemca").modal("show");
                         Danhsachca(kvc)
                         Tongsokg(kvc);
+                        Tongtienhd(kvc);
+                        Laytongtt(kvc);
                         form.reset();
                     } else {
                         Swal.fire({
@@ -1098,7 +1199,7 @@
                                          <td>${value.tendanhmuc}</td>
                                          <td>${value.sokg}</td>
                                            <td>${formatCurrency(value.thanhtien)}</td>
-                                                                          <td><button class="btn btn-danger" data-id="${value.ma_chitietlancau}" onclick="Xoaca('${value.ma_chitietlancau}')" >Xóa</button></td>
+                                              <td><button class="btn btn-danger" data-id="${value.ma_chitietlancau}" onclick="Xoaca('${value.ma_chitietlancau}')" >Xóa</button></td>
 
                                        </tr>`;
                             html += str; // Thêm chuỗi vào biến html
@@ -1210,6 +1311,7 @@
             formData.append("Ma_thuehoca", Ma_thuehoca);
             formData.append("Ma_danhmuc", Ma_danhmuc);
             formData.append("soluong", soluong);
+            formData.append("Ma_khuvuc", kvc);
             $.ajax({
                 url: "/Danhmuchoadon/Themdanhmuchd",
                 type: "POST",
@@ -1268,6 +1370,9 @@
                         });
                         $('#dsdv').html(html);
                         Tongsokghd(khuVucId);
+                        danhsachcahd(khuVucId);
+                        Tongtienhd(khuVucId);
+                  
                     } else {
                         Swal.fire({
                             title: "Thông báo lỗi",
@@ -1335,7 +1440,7 @@
                 }
             });
         }
-        function Danhsachca() {
+        function Danhsachcahd() {
             $.ajax({
                 type: "GET",
                 url: "/Danhmuchoadon/Danhsachca",
@@ -1397,6 +1502,117 @@
                 error: function (xhr, status, error) {
                     console.error("Có lỗi xảy ra: ", error);
                     alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
+        function danhsachcahd(KhuvucId) {
+            $.ajax({
+                type: "POST",
+                url: "/Danhmuchoadon/Danhsachthoigian",
+                data: { khuvucId: KhuvucId },
+                success: function (response) {
+                    if (response.success) {
+                        var html = '';
+                            console.log(response.data);
+                        $.each(response.data, function (index, value) {
+                            var str = `<tr>
+
+                                                          <td>${value.ca}</td>
+                                                    <td>Giờ</td>
+                                                            <td>${value.soluong}</td>
+                                                            <td>${formatCurrency(value.giaca)}</td>
+                                                          <td>${formatCurrency(value.thanhtien)}</td>
+                                                                                                          <td><button class="btn btn-danger" data-id="${value.ma_giachothuehc}" onclick="Xoathoigian('${value.ma_giachothuehc}')" >Xóa</button></td>
+                                                 </tr>`;
+                            html += str; // Thêm chuỗi vào biến html
+                        });
+                        $('#dsdv').append(html);
+                        Tongsokghd(khuVucId);
+                      
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                }
+            });
+        }
+        function Xoathoigian(Ma_giachothuehc) {
+            var formData = new FormData();
+            formData.append("Ma_giachothuehc", Ma_giachothuehc);
+            $.ajax({
+                url: "/Danhmuchoadon/Xoathoigian",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Thành công",
+                            text: response.message,
+                            icon: "success"
+                        });
+                        Danhsachhddv(kvc)
+                    }
+                    else {
+                        console.log("Thất bại");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
+        function Tongtienhd(khuVucId) {
+            $.ajax({
+                type: "POST",
+                url: "/Danhmuchoadon/Tongtienhd",
+                data: { khuVucId: khuVucId },
+                success: function (response) {
+                    if (response.success) {
+                        Laytongtt(khuVucId);
+                
+                    } else {
+                        console.log("Tổng tiền hợp đồng thất bại");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error: ", error);
+                    Swal.fire({
+                        title: "Thông báo lỗi",
+                        text: "Đã xảy ra lỗi khi tải dữ liệu.",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+        function Laytongtt(khuVucId) {
+            $.ajax({
+                type: "POST",
+                url: "/Danhmuchoadon/Laytongthanhtoan",
+                data: { khuVucId: khuVucId },
+                success: function (response) {
+                    if (response.success) {
+                    
+                          $('.bill-total').empty();
+                        var str = `<h2>Tổng Tiền thanh toán: <span>${formatCurrency(response.data.tongthanhtoan)}</span></h2>`;
+                        $('.bill-total').html(str);
+
+                    } else {
+                        console.log("Tổng tiền hợp đồng thất bại");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Error: ", error);
+                    Swal.fire({
+                        title: "Thông báo lỗi",
+                        text: "Đã xảy ra lỗi khi tải dữ liệu.",
+                        icon: "error"
+                    });
                 }
             });
         }

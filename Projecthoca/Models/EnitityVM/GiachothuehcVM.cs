@@ -17,5 +17,9 @@ namespace Projecthoca.Models.EnitityVM
         public string Trangthai { get; set; }
 
         public int ?Thanhtien { get; set; }
+
+        public int ?Ca { get;set; }
+
+        public int Giaca { get; set; }
     }
 }

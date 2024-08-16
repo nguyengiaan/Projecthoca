@@ -24,8 +24,9 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-            
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
                 var danhmuc = await _context.Danhmuc.Where(x => x.Ma_danhmuc == danhmuchoadon.Ma_danhmuc).FirstOrDefaultAsync();
+                var kvc = await _context.Khuvuccau.Where(x => x.Ma_Khuvuccau == danhmuchoadon.Ma_khuvuc).FirstOrDefaultAsync();
                 if (danhmuc == null)
                 {
                     return false;
@@ -36,6 +37,12 @@ namespace Projecthoca.Service.Responser
                 _dmhd.Soluong = danhmuchoadon.Soluong;
                 _dmhd.thanhtien = danhmuc.Gia*danhmuchoadon.Soluong;
                 await _context.danhmuchoadons.AddAsync(_dmhd);
+                var _thongbao = new Thongbao();
+                _thongbao.NgayDang= DateTime.Now.ToString();
+                _thongbao.NoiDung = "Bạn đã thêm dịch vụ " + danhmuc.Ten_danhmuc + " vào hóa đơn" +" tại khu vực "+ kvc.Ten_Khuvuccau;
+                _thongbao.Id = user.Id;
+                _thongbao.Trangthai = false;
+                await _context.Thongbaos.AddAsync(_thongbao);
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -121,11 +128,14 @@ namespace Projecthoca.Service.Responser
                 if(giachothuehc.Trangthai=="Coca")
                 {
                     gct.Thanhtien = giachothuehc.Soluong*data.Gia_coca;
+             
                 }
                 else
                 {
                     gct.Thanhtien = giachothuehc.Soluong*data.Gia_khongca;
                 }
+                await _context.Giachothuehcs.AddAsync(gct);
+                await _context.SaveChangesAsync();
                 return true;
 
             }
@@ -148,6 +158,125 @@ namespace Projecthoca.Service.Responser
                 return data;
             }
             catch(Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<List<GiachothuehcVM>> Danhsachthoigian(string KhuvucId)
+        {
+            try
+            {
+                var nguoidung =await _context.Thuehoca.Where(x => x.Ma_khuvuccau == KhuvucId).FirstOrDefaultAsync();
+                var data= await _context.Giachothuehcs.Where(x => x.Ma_thuehoca == nguoidung.Ma_thuehoca).Select(x => new GiachothuehcVM
+                {
+                    Ma_giachothuehc = x.Ma_giachothuehc,
+                    Ma_thuehoca = x.Ma_thuehoca,
+                    Soluong = x.Soluong,
+                    Trangthai = x.Trangthai,
+                    Thanhtien = x.Thanhtien,
+                    Ca=x.Giahoca.Ca,
+                    Giaca = x.Trangthai == "Coca" ? x.Giahoca.Gia_coca : x.Giahoca.Gia_khongca,
+                }).ToListAsync();
+                return data;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<bool> Xoathoigian(int Ma_giachothuehc)
+        {
+            try
+            {
+                var data=await _context.Giachothuehcs.FindAsync(Ma_giachothuehc);
+                if (data == null)
+                {
+                    return false;
+                }
+                else
+                {
+                    _context.Giachothuehcs.Remove(data);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> Tongthanhtoan(string ma_khuvuc)
+        {
+            try
+            {
+                var thuehoca = await _context.Thuehoca
+                    .FirstOrDefaultAsync(x => x.Ma_khuvuccau == ma_khuvuc);
+                if (thuehoca == null)
+                {
+                    return false; // Không tìm thấy Thuehoca
+                }
+
+                // Xóa Hoadondanhmuc hiện có cho Thuehoca này
+                var existingHoadondanhmuc = await _context.Hoadondanhmuc
+                    .FirstOrDefaultAsync(x => x.Ma_thuehoca == thuehoca.Ma_thuehoca);
+                if (existingHoadondanhmuc != null)
+                {
+                    _context.Hoadondanhmuc.Remove(existingHoadondanhmuc);
+                }
+
+                // Tính tổng thanh toán
+                var totalSum = await _context.danhmuchoadons
+                    .Where(x => x.Ma_thuehoca == thuehoca.Ma_thuehoca)
+                    .SumAsync(x => (decimal?)x.thanhtien) ?? 0;
+
+                totalSum += await _context.Giachothuehcs
+                    .Where(x => x.Ma_thuehoca == thuehoca.Ma_thuehoca)
+                    .SumAsync(x => (decimal?)x.Thanhtien) ?? 0;
+
+                totalSum += await _context.Tongsokg
+                    .Where(x => x.Ma_thuehoca == thuehoca.Ma_thuehoca)
+                    .SumAsync(x => (decimal?)x.Tongsotien) ?? 0;
+
+                // Tạo Hoadondanhmuc mới
+                var tong = new Hoadondanhmuc
+                {
+                    Tongthanhtoan = Convert.ToInt32(totalSum),
+                    Ma_thuehoca = thuehoca.Ma_thuehoca,
+                    Ma_hddm = Guid.NewGuid().ToString()
+                };
+                await _context.Hoadondanhmuc.AddAsync(tong);
+                await _context.SaveChangesAsync();
+
+                return true;
+            }
+            catch (Exception)
+            {
+                // Xử lý ngoại lệ một cách thích hợp
+                return false;
+            }
+        }
+
+
+        public async Task<HoadondanhmucVM> Laytongthangtoan(string KhuvucId)
+        {
+            try
+            {
+                var data=await _context.Thuehoca.Where(x => x.Ma_khuvuccau == KhuvucId).FirstOrDefaultAsync();
+                if(data !=null)
+                {
+                    var hoadon = await _context.Hoadondanhmuc.Where(x => x.Ma_thuehoca == data.Ma_thuehoca).Select(x => new HoadondanhmucVM
+                    {
+                        Ma_hddm = x.Ma_hddm,
+                        Tongthanhtoan = x.Tongthanhtoan,
+                  
+                    }).FirstOrDefaultAsync();
+                    return hoadon;
+                }
+                return null;
+            } catch (Exception ex)
             {
                 return null;
             }

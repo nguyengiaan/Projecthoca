@@ -4,6 +4,8 @@
     {
 
         public int ?Ma_danhmuchoadon { get; set; }
+
+        public string? Ma_khuvuc { get; set; }
         public string ?Ma_thuehoca { get; set; }
         public int Soluong { get; set; }
         public string Ma_danhmuc { get; set; }
