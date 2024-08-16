@@ -292,16 +292,16 @@ namespace Projecthoca.Service.Responser
                 {
                     return false;
                 }
-                if(giamgia.Giamgia > 0 && giamgia.Giamgia <=100)
+                if(giamgia.Giamgiatien > 0 && giamgia.Giamgiatien <= 100)
                 {
-                    var discountAmount = hoadon.Tongthanhtoan * (giamgia.Giamgia / 100.0);
+                    var discountAmount = hoadon.Tongthanhtoan * (giamgia.Giamgiatien / 100.0);
                     hoadon.Tongthanhtoan = hoadon.Tongthanhtoan - (int)discountAmount;
                     await _context.SaveChangesAsync();
                     return true;
                 }
                 else
                 {
-                    hoadon.Tongthanhtoan =Convert.ToInt32( hoadon.Tongthanhtoan - giamgia.Giamgia);
+                    hoadon.Tongthanhtoan =Convert.ToInt32( hoadon.Tongthanhtoan - giamgia.Giamgiatien);
                     await _context.SaveChangesAsync();
                     return true;
                 }
