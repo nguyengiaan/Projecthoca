@@ -130,6 +130,8 @@ namespace Projecthoca.Service.Responser
                         Ma_tongsokg = x.Ma_tongsokg,
                         sokg = x.sokg,
                         soluong = x.soluong,
+                        Tongsotien=x.Tongsotien,
+
                     }).FirstOrDefaultAsync();
                     return tongsokg;
                 }
