@@ -532,6 +532,7 @@
                         font-family: Arial, sans-serif;
                         color: #000;
                     }
+                   
                     .bill-container {
                         font-family: Arial, sans-serif;
                         color: #000;
@@ -541,6 +542,9 @@
                         border: 1px solid #ddd;
                         border-radius: 5px;
                         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                    }
+                    .bill-container .discount-section{
+                        display:none;
                     }
                     .store-info, .bill-header, .customer-info, .bill-footer {
                         margin-bottom: 25px; /* Tăng khoảng cách giữa các phần */
@@ -599,7 +603,19 @@
         });
 
 
+         document.addEventListener('DOMContentLoaded', function () {
+     // Đường dẫn đến tệp Lottie JSON
+     const animationPath = '../Admin_Style/img/animation.json';
 
+     // Tải và hiển thị animation
+     lottie.loadAnimation({
+         container: document.getElementById('lottie-animation'), // ID của thẻ chứa animation
+         renderer: 'svg',
+         loop: true,
+         autoplay: true,
+         path: animationPath
+     });
+ });
 
 
 
