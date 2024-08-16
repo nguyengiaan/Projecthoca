@@ -176,9 +176,23 @@
                             </tbody>
                         </table>
                     </div>
+                    <div style="display:flex;flex-direction:column">
                     <div class="bill-total">
                         <h2>Tổng Trọng Lượng Cá Câu Được: <span>11.4 kg</span></h2>
                     </div>
+                   
+                      
+                    </div>
+
+                    <div class="voucher-container">
+                        <label for="voucher-code" style="font-weight:bold">Voucher:</label>
+                        <input type="text" id="voucher-code" placeholder="Nhập mã voucher">
+                        <div class="apply-button" onclick="applyVoucher()">Áp Dụng</div>
+                    </div>
+                    <div id="afterApplyVoucher" style="margin-top: 20px">
+                        <!-- Hiển thị tổng tiền sau khi áp dụng voucher sẽ xuất hiện ở đây -->
+                    </div>
+
                 </div>
             </div>
             <div class="modal-footer">
@@ -483,6 +497,7 @@
             font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 
         }
+
     </style>
 
 }
@@ -1064,7 +1079,7 @@
                 }
             });
         }
-        function Danhsachca(khuvucId) {
+      /*  function Danhsachca(khuvucId) {
             $.ajax({
                 type: "POST",
                 url: "/Chitietca/Danhsachca",
@@ -1098,9 +1113,6 @@
                 }
             });
         }
-        function formatCurrency(value) {
-            return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-        }
         function Tongsokg(khuvucId) {
             $.ajax({
                 type: "POST",
@@ -1130,7 +1142,98 @@
                     }
                 }
             });
+        }*/
+        function Danhsachca(khuvucId) {
+            $.ajax({
+                type: "POST",
+                url: "/Chitietca/Danhsachca",
+                data: { khuvucId: khuvucId },
+                success: function (response) {
+                    console.log(response.dsdm);
+                    if (response.success) {
+                        console.log(response.data);
+                        var html = '';
+                        var tongtien = 0; // Khởi tạo tổng tiền
+                        var tongkg = 0; // Khởi tạo tổng trọng lượng
+
+                        $('#dsca').empty();
+                        $.each(response.data, function (index, value) {
+                            // Cộng dồn tổng tiền và tổng trọng lượng của tất cả các mục
+                            tongtien += value.thanhtien;
+                            tongkg += value.sokg;
+
+                            var str = `<tr>
+                                          <td>${value.giocau}</td>
+                                          <td>${value.tendanhmuc}</td>
+                                          <td>${value.sokg}</td>
+                                          <td>${formatCurrency(value.thanhtien)}</td>
+                                          <td><button class="btn btn-danger" data-id="${value.ma_chitietlancau}" onclick="Xoaca('${value.ma_chitietlancau}')" >Xóa</button></td>
+                                       </tr>`;
+                            html += str; // Thêm chuỗi vào biến html
+                        });
+                        $('#dsca').html(html); // Append tất cả HTML đã tạo vào #dsca
+
+                        // Hiển thị tổng tiền và tổng trọng lượng của tất cả mục
+                        var tongHtml = `
+                                    <h2>Tổng Trọng Lượng Cá Câu Được: <span>${tongkg} kg</span></h2>
+                                    <h2>Tổng Tiền: <span>${formatCurrency(tongtien)} VND</span></h2>`;
+                        $('.bill-total').html(tongHtml);
+
+                        // Hiển thị tổng tiền ban đầu trong thẻ #afterApplyVoucher
+                        $('#afterApplyVoucher').html(`
+                            <h2 class="afterApplyVoucher">Tổng Tiền: <span>${formatCurrency(tongtien)} VND</span></h2>
+                        `);
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                }
+            });
         }
+
+        function applyVoucher() {
+            var voucherCode = $('#voucher-code').val().trim(); // Lấy mã voucher từ input và loại bỏ khoảng trắng
+            var discountAmount = 0;
+
+            // Kiểm tra mã voucher
+            if (voucherCode === 'MAGIAM10K') {
+                discountAmount = 10000; // Giảm 10,000 VND nếu mã voucher hợp lệ
+            } else {
+                Swal.fire({
+                    title: "Thông báo",
+                    text: "Mã voucher không hợp lệ!",
+                    icon: "warning"
+                });
+                return; // Kết thúc hàm nếu mã voucher không hợp lệ
+            }
+
+            // Lấy giá trị hiện tại của tổng tiền từ thẻ afterApplyVoucher
+            var tongtienText = $('#afterApplyVoucher').find('span').text();
+            var tongtien = parseInt(tongtienText.replace(/[^\d]/g, ''));
+
+            // Trừ số tiền giảm giá
+            var newTongtien = tongtien - discountAmount;
+
+            // Cập nhật lại HTML hiển thị tổng tiền với giá trị mới trong #afterApplyVoucher
+            $('#afterApplyVoucher').html(`
+                <h2 class="afterApplyVoucher">Tổng Tiền Sau Khi Áp Dụng Voucher: <span style="color:red">${formatCurrency(newTongtien)} VND</span></h2>
+            `);
+        }
+
+
+
+
+        function formatCurrency(value) {
+            return value.toLocaleString(); // Định dạng giá trị tiền tệ
+        }
+
+        function formatCurrency(value) {
+            return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+        }
+
         function Xoaca(Ma_chitietlancau) {
             var formData = new FormData();
             formData.append("Ma_chitietlancau", Ma_chitietlancau);
