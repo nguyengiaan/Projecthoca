@@ -122,9 +122,9 @@
                         </table>
                     </div>
                     <div class="discount-section">
-                        <label for="discount-input">Giảm giá (%):</label>
-                        <input type="number" id="discount-input" class="form-control" placeholder="Nhập % giảm giá">
-                        <button type="button" class="btn btn-warning mt-2" id="apply-discount-btn">Áp dụng giảm giá</button>
+                        <label for="discount-input">Giảm giá:</label>
+                        <input type="number" id="discount-input" class="form-control">
+                        <button type="button" class="btn btn-warning mt-2" id="apply-discount-btn"> Giảm giá</button>
                     </div>
 
                     <div class="bill-total">
@@ -617,6 +617,12 @@
                 $("#Xemdichvu").modal("hide");
 
             });
+            $(document).on("click", "#apply-discount-btn", function () {
+
+
+                Giamgia()
+
+            });
             $(document).on("click", "#Themdichvubtn", function () {
 
 
@@ -693,8 +699,6 @@
                 } else if (action === "Bamgio") {
 
                     Updatebamgio(khuVucId);
-
-
 
                 } else if (action === "dungtg") {
                     Dungthoigian(khuVucId);
@@ -1615,6 +1619,35 @@
                         text: "Đã xảy ra lỗi khi tải dữ liệu.",
                         icon: "error"
                     });
+                }
+            });
+        }
+        function Giamgia() {
+            var formData = new FormData();
+            var giamgia = $("#discount-input").val();
+            console.log("Giảm giá: ", giamgia);
+            console.log("Khu vực: ", kvc);
+            formData.append("Giamgiatien", giamgia);
+            formData.append("Ma_khuvuc", kvc);
+            $.ajax({
+                url: "/Danhmuchoadon/Giamgia",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        console.log("Thành công");
+                        Laytongtt(kvc);
+                        $("#discount-input").val("")
+                    } 
+                    else {
+                        console.log("Thất bại");
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
                 }
             });
         }
