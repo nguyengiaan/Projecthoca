@@ -167,9 +167,9 @@ namespace Projecthoca.Controllers
             try
             {
                 var data= await _dmhd.Tongthanhtoan(khuVucId);
-                if(data != null)
+                if(data.Item1 )
                 {
-                    return Json(new { success = true });
+                    return Json(new { success = true ,tongthanhtoan=data.Item2});
                 }else
                 {
                     return Json(new { success = false });

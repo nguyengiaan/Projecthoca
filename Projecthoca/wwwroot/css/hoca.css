@@ -196,5 +196,10 @@ body {
         font-size: 14px; /* Kích thước chữ nhỏ hơn */
         margin-top: 10px;
     }
+    @media print {
+        .hide-when-print {
+            display: none;
+        }
+    }
 }
 

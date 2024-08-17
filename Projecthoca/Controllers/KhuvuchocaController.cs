@@ -257,5 +257,26 @@ namespace Projecthoca.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult>Chuyenbanthue(ChuyenbanVM chuyenban)
+        {
+            try
+            {
+                var data = await _kvc.Chuyenkhachthue(chuyenban);
+                if(data)
+                {
+                    return Json(new { success = true, messeger = "Chuyển thành công" });
+                }
+                else
+                {
+                    return Json(new { success = false, messeger = "hãy thêm khách hàng" });
+                }
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }

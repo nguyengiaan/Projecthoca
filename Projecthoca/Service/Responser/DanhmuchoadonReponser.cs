@@ -208,7 +208,7 @@ namespace Projecthoca.Service.Responser
             }
         }
 
-        public async Task<bool> Tongthanhtoan(string ma_khuvuc)
+        public async Task<(bool, int)> Tongthanhtoan(string ma_khuvuc)
         {
             try
             {
@@ -216,7 +216,7 @@ namespace Projecthoca.Service.Responser
                     .FirstOrDefaultAsync(x => x.Ma_khuvuccau == ma_khuvuc);
                 if (thuehoca == null)
                 {
-                    return false; // Không tìm thấy Thuehoca
+                    return (false,0); // Không tìm thấy Thuehoca
                 }
 
                 // Xóa Hoadondanhmuc hiện có cho Thuehoca này
@@ -250,12 +250,12 @@ namespace Projecthoca.Service.Responser
                 await _context.Hoadondanhmuc.AddAsync(tong);
                 await _context.SaveChangesAsync();
 
-                return true;
+                return (true,tong.Tongthanhtoan);
             }
             catch (Exception)
             {
                 // Xử lý ngoại lệ một cách thích hợp
-                return false;
+                return (false,0);
             }
         }
 

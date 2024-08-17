@@ -347,5 +347,33 @@ namespace Projecthoca.Service.Responser
                 return null;
             }
         }
+
+        public async Task<bool> Chuyenkhachthue(ChuyenbanVM chuyenban)
+        {
+            try
+            {
+                var data = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == chuyenban.Ma_khuvuc).FirstOrDefaultAsync();
+                var kvmoi= await _context.Khuvuccau.FindAsync(chuyenban.Ma_khuvucmoi);
+                var kvcu = await _context.Khuvuccau.FindAsync(chuyenban.Ma_khuvuc);
+                if (data != null )
+                {
+                    kvmoi.Trangthai = "Cokhach";
+                    kvcu.Trangthai = "Chuacokhach";
+                    data.Ma_khuvuccau = chuyenban.Ma_khuvucmoi;
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
+
+        }
+
     }
 }
