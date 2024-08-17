@@ -8,7 +8,26 @@
     </div>
 
 }
-
+<!-- Modal cảnh báo xóa-->
+<div class="modal fade" id="Xoabancaukh" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Xác nhận xóa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa khách hàng bàn này không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="Xacnhanxoa">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!--Modal chuyển bàn-->
 <div class="modal fade" id="Chuyenban" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog  modal-dialog-centered  ">
@@ -543,111 +562,11 @@
 
         var kvc;
         var tongtienthanhtoan=0;
-        document.getElementById("Inhoadon").addEventListener("click", function () {
-
-            // Lấy nội dung cần in
-            var printContents = document.querySelector("#Xemdichvu .modal-body").innerHTML;
-            var originalContents = document.body.innerHTML;
-
-            // Lấy giá trị các input, kiểm tra và chuyển đổi sang định dạng tiền tệ
-            const discountValue = document.getElementById('discount-input').value || 0;
-            const cashValue = document.getElementById('tienmat').value || 0;
-            const transferValue = document.getElementById('chuyenkhoan').value || 0;
-
-            var giamgia = formatCurrency1(discountValue);
-            var tienmat = formatCurrency1(cashValue);
-            var chuyenkhoan = formatCurrency1(transferValue);
-
-            // Thay thế các input bằng các thẻ span
-            printContents = printContents.replace(/<input[^>]*id="discount-input"[^>]*>/, `<span>${giamgia}</span>`);
-            printContents = printContents.replace(/<input[^>]*id="tienmat"[^>]*>/, `<span>${tienmat}</span>`);
-            printContents = printContents.replace(/<input[^>]*id="chuyenkhoan"[^>]*>/, `<span>${chuyenkhoan}</span>`);
-            printContents = printContents.replace(/<button[^>]*id="apply-discount-btn"[^>]*>[\s\S]*?<\/button>/gi, '<span><b>Giảm giá:</b> </span>');
-
-
-
-            // Loại bỏ cột "Xóa" từ nội dung cần in
-            printContents = printContents.replace(/<th>Xóa<\/th>/g, ''); // Xóa tiêu đề cột "Xóa"
-            printContents = printContents.replace(/<td>.*?<\/td>\s*<\/tr>/g, '</tr>'); // Xóa ô dữ liệu trong cột "Xóa"
-
-            // Loại bỏ tất cả các nút button liên quan đến xóa
-            printContents = printContents.replace(/<button.*?delete.*?<\/button>/gi, ''); // Xóa tất cả các nút button liên quan đến xóa
-
-            // Thêm các kiểu in
-            var printStyles = `
-                <style>
-                    body {
-                        font-family: Arial, sans-serif;
-                        color: #000;
-                    }
-                    .bill-container {
-                        font-family: Arial, sans-serif;
-                        color: #000;
-                        padding: 40px; /* Tăng padding */
-                        width: 150mm; /* Tăng chiều rộng cho hóa đơn */
-                        margin: 0 auto;
-                        border: 1px solid #ddd;
-                        border-radius: 5px;
-                        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-                    }
-                    .bill-container .discount-section{
-                        display:none;
-                    }
-                    .store-info, .bill-header, .customer-info, .bill-footer {
-                        margin-bottom: 25px; /* Tăng khoảng cách giữa các phần */
-                        text-align: center;
-                    }
-                    .store-info strong, .bill-header strong {
-                        display: block;
-                        font-size: 1.8em; /* Tăng kích thước chữ */
-                        margin-bottom: 15px; /* Tăng khoảng cách dưới */
-                    }
-                    .bill-description {
-                        text-align: center;
-                        font-size: 1.4em; /* Tăng kích thước chữ */
-                        margin-bottom: 25px; /* Tăng khoảng cách dưới */
-                    }
-                    .customer-info div, .bill-footer div {
-                        font-size: 1.3em; /* Tăng kích thước chữ */
-                        margin-bottom: 15px; /* Tăng khoảng cách dưới */
-                    }
-                    .bill-details table {
-                        width: 100%;
-                        border-collapse: collapse;
-                        margin-bottom: 35px; /* Tăng khoảng cách dưới */
-                    }
-                    .bill-details th, .bill-details td {
-                        border: 1px solid #000;
-                        padding: 12px; /* Tăng padding */
-                        text-align: left;
-                        font-size: 1.2em; /* Tăng kích thước chữ */
-                    }
-                    .bill-details th {
-                        background-color: #f2f2f2;
-                        text-align: center;
-                    }
-                    .bill-footer {
-                        text-align: right;
-                        font-size: 1.3em; /* Tăng kích thước chữ */
-                    }
-                    .signatures {
-                        display: flex;
-                        justify-content: space-between;
-                        margin-top: 50px; /* Tăng khoảng cách trên */
-                        font-size: 1.3em; /* Tăng kích thước chữ */
-                        text-align: center;
-                    }
-                </style>
-            `;
-            window.addEventListener('afterprint', function () {
-                location.reload();
-            });
-
-            // Gộp nội dung và in
-            document.body.innerHTML = printStyles + printContents;
-            window.print();
-            document.body.innerHTML = originalContents;
-        });
+        var discountValue;
+        var cashValue;
+        var transferValue;
+        var tongtiencuoicung;
+      
         document.addEventListener('DOMContentLoaded', function () {
             const animationPath = '../Admin_Style/img/animation.json';
             lottie.loadAnimation({
@@ -701,7 +620,6 @@
                 // Cập nhật giá trị của input ẩn
                 $("#Idkhuvuccau_kv").val(khuVucId_kv);
             });
-   
             $(document).on("touchstart", ".Khuvuc", function (e) {
                 e.preventDefault();
                 var khuVucId = $(this).data("id");
@@ -751,7 +669,7 @@
                 } else if (action === "dungtg") {
                     Dungthoigian(khuVucId);
                 } else if (action === "Xoakh") {
-                    Xoakhachang(khuVucId);
+                    $('#Xoabancaukh').modal('show')
                 } else if (action === "Xoakhuvuc") {
                     Xoakhuvuc(khuVucId)
                 } else if (action === "Xemchitietca") {
@@ -788,7 +706,16 @@
             $(document).on("click", "#submitcbc", function () {
                 Chuyenban();
             });
-            
+            $(document).on("click", "#Xacnhanxoa", function () {
+                $('#Xoabancaukh').modal('hide')
+                Xoakhachang(kvc);
+
+            });
+            $(document).on("click", "#Inhoadon", function () {
+
+                Kiemtrabamgioin(kvc);
+
+            })
         });
         function formatCurrency1(value) {
             return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
@@ -1668,7 +1595,7 @@
                 data: { khuVucId: khuVucId },
                 success: function (response) {
                     if (response.success) {
-
+                        tongtiencuoicung= response.data.tongthanhtoan;
                         $('.bill-total').empty();
                         var str = `<h2>Tổng Tiền thanh toán: <span>${formatCurrency(response.data.tongthanhtoan)}</span></h2>`;
                         $('.bill-total').html(str);
@@ -1690,8 +1617,6 @@
         function Giamgia() {
             var formData = new FormData();
             var giamgia = $("#discount-input").val();
-            console.log("Giảm giá: ", giamgia);
-            console.log("Khu vực: ", kvc);
             formData.append("Giamgiatien", giamgia);
             formData.append("Ma_khuvuc", kvc);
             $.ajax({
@@ -1804,7 +1729,6 @@
                 }
             });
         }
-
         function Chuyenban()
         {
             var Ma_khuvucmoi = $("#Banmuonchuyen").val();
@@ -1841,7 +1765,171 @@
                 }
             });
         }
-      
+        function Themphieuxuat()
+        {
+            
+            var formData = new FormData();
+            formData.append("Thanhtien", tongtienthanhtoan);
+            formData.append("giamgia", discountValue);
+            formData.append("Tienmat",cashValue );
+            formData.append("Chuyenkhoan",transferValue);
+            formData.append("Tongtien", tongtiencuoicung);
+            $.ajax({
+                url: "/Phieuxuatkho/Themphieuxuatkho",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                    console.log("Thành công");
+                    } else {
+                        Swal.fire({
+                            title: "Thất bại",
+                            text: response.messeger,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
+        function Kiemtrabamgioin(KhuvucId) {
+            var formData = new FormData();
+            formData.append("Ma_khuvvuc", KhuvucId);
+            $.ajax({
+                url: "/Khuvuchoca/KiemtraBamgio",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Lỗi!!!",
+                            text: "Bạn hãy dừng bấm giờ",
+                            icon: "error"
+                        });
+                    } 
+                    else{
+                        Inhoadon();
+                        
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
+        function Inhoadon()
+        {
+            var printContents = document.querySelector("#Xemdichvu .modal-body").innerHTML;
+            var originalContents = document.body.innerHTML;
+
+            // Lấy giá trị các input, kiểm tra và chuyển đổi sang định dạng tiền tệ
+            discountValue = document.getElementById('discount-input').value || 0;
+            cashValue = document.getElementById('tienmat').value || 0;
+            transferValue = document.getElementById('chuyenkhoan').value || 0;
+
+            var giamgia = formatCurrency1(discountValue);
+            var tienmat = formatCurrency1(cashValue);
+            var chuyenkhoan = formatCurrency1(transferValue);
+
+            // Thay thế các input bằng các thẻ span
+            printContents = printContents.replace(/<input[^>]*id="discount-input"[^>]*>/, `<span>${giamgia}</span>`);
+            printContents = printContents.replace(/<input[^>]*id="tienmat"[^>]*>/, `<span>${tienmat}</span>`);
+            printContents = printContents.replace(/<input[^>]*id="chuyenkhoan"[^>]*>/, `<span>${chuyenkhoan}</span>`);
+            printContents = printContents.replace(/<button[^>]*id="apply-discount-btn"[^>]*>[\s\S]*?<\/button>/gi, '<span><b>Giảm giá:</b> </span>');
+
+
+
+            // Loại bỏ cột "Xóa" từ nội dung cần in
+            printContents = printContents.replace(/<th>Xóa<\/th>/g, ''); // Xóa tiêu đề cột "Xóa"
+            printContents = printContents.replace(/<td>.*?<\/td>\s*<\/tr>/g, '</tr>'); // Xóa ô dữ liệu trong cột "Xóa"
+
+            // Loại bỏ tất cả các nút button liên quan đến xóa
+            printContents = printContents.replace(/<button.*?delete.*?<\/button>/gi, ''); // Xóa tất cả các nút button liên quan đến xóa
+
+            // Thêm các kiểu in
+            var printStyles = `
+                        <style>
+                            body {
+                                font-family: Arial, sans-serif;
+                                color: #000;
+                            }
+                            .bill-container {
+                                font-family: Arial, sans-serif;
+                                color: #000;
+                                padding: 40px; /* Tăng padding */
+                                width: 150mm; /* Tăng chiều rộng cho hóa đơn */
+                                margin: 0 auto;
+                                border: 1px solid #ddd;
+                                border-radius: 5px;
+                                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                            }
+                            .bill-container .discount-section{
+                                display:none;
+                            }
+                            .store-info, .bill-header, .customer-info, .bill-footer {
+                                margin-bottom: 25px; /* Tăng khoảng cách giữa các phần */
+                                text-align: center;
+                            }
+                            .store-info strong, .bill-header strong {
+                                display: block;
+                                font-size: 1.8em; /* Tăng kích thước chữ */
+                                margin-bottom: 15px; /* Tăng khoảng cách dưới */
+                            }
+                            .bill-description {
+                                text-align: center;
+                                font-size: 1.4em; /* Tăng kích thước chữ */
+                                margin-bottom: 25px; /* Tăng khoảng cách dưới */
+                            }
+                            .customer-info div, .bill-footer div {
+                                font-size: 1.3em; /* Tăng kích thước chữ */
+                                margin-bottom: 15px; /* Tăng khoảng cách dưới */
+                            }
+                            .bill-details table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                margin-bottom: 35px; /* Tăng khoảng cách dưới */
+                            }
+                            .bill-details th, .bill-details td {
+                                border: 1px solid #000;
+                                padding: 12px; /* Tăng padding */
+                                text-align: left;
+                                font-size: 1.2em; /* Tăng kích thước chữ */
+                            }
+                            .bill-details th {
+                                background-color: #f2f2f2;
+                                text-align: center;
+                            }
+                            .bill-footer {
+                                text-align: right;
+                                font-size: 1.3em; /* Tăng kích thước chữ */
+                            }
+                            .signatures {
+                                display: flex;
+                                justify-content: space-between;
+                                margin-top: 50px; /* Tăng khoảng cách trên */
+                                font-size: 1.3em; /* Tăng kích thước chữ */
+                                text-align: center;
+                            }
+                        </style>
+                    `;
+            window.addEventListener('afterprint', function () {
+                Themphieuxuat();
+                location.reload();
+            });
+
+            // Gộp nội dung và in
+            document.body.innerHTML = printStyles + printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+        }
     </script>
 
 }

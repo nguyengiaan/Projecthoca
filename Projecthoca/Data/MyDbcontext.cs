@@ -33,6 +33,8 @@ namespace Projecthoca.Data
         public DbSet<Giachothuehc> Giachothuehcs { get; set; }
 
         public DbSet<Thongbao> Thongbaos { get; set; }
+
+        public DbSet<Phieuxuatkho> Phieuxuatkhos { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -123,6 +125,15 @@ namespace Projecthoca.Data
             modelBuilder.Entity<Thongbao>().Property(e => e.NgayDang).HasMaxLength(100);
             modelBuilder.Entity<Thongbao>().Property(e => e.Trangthai).HasMaxLength(50);
             modelBuilder.Entity<Thongbao>().HasOne(x => x.ApplicationUser).WithMany(x => x.Thongbaos).HasForeignKey(x => x.Id);
+            // table Phieuxuatkho
+            modelBuilder.Entity<Phieuxuatkho>().ToTable("Phieuxuatkho").HasKey(x => x.Ma_phieuxuatkho);
+            modelBuilder.Entity<Phieuxuatkho>().Property(e => e.Ngayxuat).HasMaxLength(100);
+            modelBuilder.Entity<Phieuxuatkho>().Property(e => e.Thanhtien).HasMaxLength(200);
+            modelBuilder.Entity<Phieuxuatkho>().Property(e => e.giamgia).HasMaxLength(200);
+            modelBuilder.Entity<Phieuxuatkho>().Property(e => e.Tienmat).HasMaxLength(200);
+            modelBuilder.Entity<Phieuxuatkho>().Property(e => e.Chuyenkhoan).HasMaxLength(200);
+            modelBuilder.Entity<Phieuxuatkho>().Property(e => e.Tongtien).HasMaxLength(200);
+            modelBuilder.Entity<Phieuxuatkho>().HasOne(x => x.Nguoidung).WithMany(x => x.phieuxuatkhos).HasForeignKey(x => x.Id);
         }
 
     }

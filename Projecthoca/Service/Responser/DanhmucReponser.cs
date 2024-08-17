@@ -22,7 +22,7 @@ namespace Projecthoca.Service.Responser
 
         public async Task<(List<DanhmucVM> ds, int totalpages)> Danhsachdanhmuc(int page, int pagesize)
         {
-           try
+            try
             {
                 var totalItems = _context.Danhmuc.Count();
                 var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
@@ -36,17 +36,17 @@ namespace Projecthoca.Service.Responser
                              Donvitinh = x.Donvitinh,
                              soluong = x.soluong,
                              Id = x.Id,
-                             Mieuta=x.Mieuta,
+                             Mieuta = x.Mieuta,
 
-                         }).Where(x=>x.Id == user.Id)
+                         }).Where(x => x.Id == user.Id)
                          .Skip((page - 1) * pagesize)
                          .Take(pagesize)
                          .ToListAsync();
                 return (dm, totalpages);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return (null,0);
+                return (null, 0);
             }
         }
 
@@ -54,7 +54,7 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var data = await _context.Danhmuc.Where(x=>x.Ma_danhmuc==madanhmuc).Select(x=>new DanhmucVM
+                var data = await _context.Danhmuc.Where(x => x.Ma_danhmuc == madanhmuc).Select(x => new DanhmucVM
                 {
                     Ma_danhmuc = x.Ma_danhmuc,
                     Ten_danhmuc = x.Ten_danhmuc,
@@ -65,7 +65,7 @@ namespace Projecthoca.Service.Responser
                 }).FirstOrDefaultAsync();
                 return data;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -89,7 +89,7 @@ namespace Projecthoca.Service.Responser
                 }
                 return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -97,7 +97,7 @@ namespace Projecthoca.Service.Responser
 
         public async Task<bool> Themdanhmuc(DanhmucVM danhmuc)
         {
-             try
+            try
             {
                 int nextNumber1 = 1;
                 var lastMaDV = await _context.Danhmuc
@@ -123,7 +123,7 @@ namespace Projecthoca.Service.Responser
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -134,7 +134,7 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var data = await _context.Danhmuc.FindAsync(madanhmuc);
-                if(data!=null)
+                if (data != null)
                 {
                     _context.Danhmuc.Remove(data);
                     await _context.SaveChangesAsync();
@@ -145,7 +145,7 @@ namespace Projecthoca.Service.Responser
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }

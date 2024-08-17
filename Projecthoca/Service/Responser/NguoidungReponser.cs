@@ -59,7 +59,7 @@ namespace Projecthoca.Service.Responser
                     Email = Nguoidung.Email,
                     PhoneNumber = Nguoidung.Telephone,
                     Diachi = Nguoidung.diachi,
-                    Ngaysinh =Nguoidung.Ngaysinh,
+                    Ngaysinh = Nguoidung.Ngaysinh,
                     SecurityStamp = Guid.NewGuid().ToString()
                 };
                 var result = await _userManager.CreateAsync(user, Nguoidung.Password);
@@ -89,7 +89,7 @@ namespace Projecthoca.Service.Responser
             }
             return new Status { StatusCode = 0, Message = "Đăng ký thất bại" };
         }
-        public  async Task<Status> Dangnhap(DangnhapVM user)
+        public async Task<Status> Dangnhap(DangnhapVM user)
         {
             try
             {
@@ -152,7 +152,7 @@ namespace Projecthoca.Service.Responser
                       Password = user.PasswordHash,
                       diachi = user.Diachi,
                       Ngaysinh = user.Ngaysinh,
-                  }).Skip((page - 1) * pagesize).Take(pagesize).OrderByDescending(x => x.Ma_user).ToListAsync(); 
+                  }).Skip((page - 1) * pagesize).Take(pagesize).OrderByDescending(x => x.Ma_user).ToListAsync();
                 var userWithRoles = new List<NguoidungVM>();
                 foreach (var user in data)
                 {
@@ -174,14 +174,14 @@ namespace Projecthoca.Service.Responser
                 }
                 return (userWithRoles, totalPages);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return (null, 0);
                 Console.WriteLine(ex.Message);
             }
         }
         public async Task LogoutAsync()
-        { 
+        {
             await _signInManager.SignOutAsync();
         }
 
