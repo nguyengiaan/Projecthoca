@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projecthoca.Data;
 
@@ -11,9 +12,10 @@ using Projecthoca.Data;
 namespace Projecthoca.Migrations
 {
     [DbContext(typeof(MyDbcontext))]
-    partial class MyDbcontextModelSnapshot : ModelSnapshot
+    [Migration("20240818145739_up_34")]
+    partial class up_34
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -283,10 +285,14 @@ namespace Projecthoca.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Id")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Ma_mathang")
+                    b.Property<string>("Mieuta")
                         .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NguoidungId")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Ten_danhmuc")
@@ -294,11 +300,13 @@ namespace Projecthoca.Migrations
                         .HasMaxLength(2147483647)
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("soluong")
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("int");
+
                     b.HasKey("Ma_danhmuc");
 
-                    b.HasIndex("Id");
-
-                    b.HasIndex("Ma_mathang");
+                    b.HasIndex("NguoidungId");
 
                     b.ToTable("Danhmuc", (string)null);
                 });
@@ -838,15 +846,7 @@ namespace Projecthoca.Migrations
                 {
                     b.HasOne("Projecthoca.Models.Enitity.ApplicationUser", "Nguoidung")
                         .WithMany("Danhmucs")
-                        .HasForeignKey("Id");
-
-                    b.HasOne("Projecthoca.Models.Enitity.Mathang", "Mathang")
-                        .WithMany("Danhmucs")
-                        .HasForeignKey("Ma_mathang")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Mathang");
+                        .HasForeignKey("NguoidungId");
 
                     b.Navigation("Nguoidung");
                 });
@@ -1062,11 +1062,6 @@ namespace Projecthoca.Migrations
             modelBuilder.Entity("Projecthoca.Models.Enitity.Khuvuccau", b =>
                 {
                     b.Navigation("Thuehocas");
-                });
-
-            modelBuilder.Entity("Projecthoca.Models.Enitity.Mathang", b =>
-                {
-                    b.Navigation("Danhmucs");
                 });
 
             modelBuilder.Entity("Projecthoca.Models.Enitity.Thuehoca", b =>

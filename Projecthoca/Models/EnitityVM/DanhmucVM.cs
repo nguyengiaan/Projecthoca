@@ -11,11 +11,9 @@ namespace Projecthoca.Models.EnitityVM
         public int Gia { get; set; }
         [Required(ErrorMessage = "Đơn vị tính không được để trống")]
         public string Donvitinh { get; set; }
-        [Required(ErrorMessage = "Số lượng không được để trống")]
-        public int soluong { get; set; }
 
-        [Required(ErrorMessage = "Miêu tả không được để trống")]
-        public string Mieuta { get; set; }
+        [Required(ErrorMessage = "Mặt hàng không được để trống")]
+        public string Ma_mathang { get; set; }
 
         public string ?Id { get; set; }
     }

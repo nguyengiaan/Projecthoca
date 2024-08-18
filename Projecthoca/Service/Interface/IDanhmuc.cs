@@ -13,8 +13,15 @@ namespace Projecthoca.Service.Interface
         public Task<bool> Suadanhmuc(DanhmucVM danhmuc);
 
         public Task<DanhmucVM> Laytheomadm(string madanhmuc);
+        // hàm dùng để cài đặt đơn vị tính
+        public Task<bool> Themdonvitinh(DonvitinhVM donvitinh);
 
+        public Task <List<DonvitinhVM>> Laydanhsachdvt() ;
 
+        // hàm dùng để cài đặt mặt hàng
+        public Task<bool> Themmathang(MathangVM mathang);
 
+        //Hàm dùng để lấy tất cả mặt hàng
+        public Task<List<MathangVM>> Laydanhsachmh();
     }
 }

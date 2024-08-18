@@ -25,7 +25,7 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var data = await _context.Danhmuc.Where(x => x.Mieuta == "Hải sản" && x.Id == user.Id).Select(x => new DanhmucVM
+                var data = await _context.Danhmuc.Where(x => x.Mathang.Ten_mathang == "Hải sản" && x.Id == user.Id).Select(x => new DanhmucVM
                 {
                     Ma_danhmuc = x.Ma_danhmuc,
                     Ten_danhmuc = x.Ten_danhmuc,
