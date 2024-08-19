@@ -10,7 +10,7 @@
 <!--Modal xem tài dịch vụ -->
 <!-- Modal Thêm danh mục-->
 <div class="modal fade" id="Themphieunhap" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Thêm phiếu nhập</h5>
@@ -20,57 +20,58 @@
             </div>
             <div class="modal-body">
                 <form method="post" id="formnhapkho" enctype="multipart/form-data">
-                    <div class="d-flex flex-row">
-                        <div>
+                    <div class="d-flex flex-wrap justify-content-center align-item-center">
+                        <div class="w-50 p-2">
                             <div class="form-group">
                                 <input asp-for="Ma_phieunhapkho" type="hidden" class="form-control" id="Ma_danhmuc">
                             </div>
                             <div class="form-group">
-                                <label class="col-form-label">Tên danh mục</label>
-                                <input asp-for="Nguoinhap" type="text" class="form-control" id="Ten_danhmuc">
+                                <label class="col-form-label">Người Nhập</label>
+                                <input asp-for="Nguoinhap" type="text" class="form-control" id="Nguoinhap" style="width: 100%;">
                             </div>
                             <div class="form-group">
-                                <label class="col-form-label">Giá</label>
-                                <input asp-for="Tenkho" type="text" class="form-control" id="Gia">
+                                <label class="col-form-label">Tên hàng hóa</label>
+                                <input asp-for="Ten_danhmuc" type="text" class="form-control" id="Ten_danhmuc" style="width: 100%;">
                             </div>
                             <div class="form-group">
-                                <label class="col-form-label">Đơn vị tính</label>
-                                <select class="form-select" asp-for="Donvitinh" aria-label="Default select example" id="Donvitinh">
-                                </select>
+                                <label class="col-form-label">Ngày nhập</label>
+                                <input asp-for="Ngaynhap" type="date" class="form-control" id="Ngaynhap" value="@DateTime.Now.ToString("yyyy-MM-dd")" style="width: 100%;">
                             </div>
                             <div class="form-group">
                                 <label class="col-form-label">Số lượng</label>
-                                <input type="number" class="form-control" id="soluong">
+                                <input asp-for="Soluong" type="number" class="form-control" id="Soluong" style="width: 100%;">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Mặt hàng</label>
+                                <select class="form-select" asp-for="Ma_mathang" aria-label="Default select example" id="Ma_mathang" style="width: 100%;">
+                                </select>
                             </div>
                         </div>
-                        <div>
+                        <div class="w-50 pt-4">
                             <div class="form-group">
-                                <input asp-for="Ma_phieunhapkho" type="hidden" class="form-control" id="Ma_danhmuc">
+                                <label class="col-form-label">Tên kho</label>
+                                <input asp-for="Tenkho" type="text" class="form-control" id="Tenkho" style="width: 100%;">
                             </div>
                             <div class="form-group">
-                                <label class="col-form-label">Tên danh mục</label>
-                                <input asp-for="Nguoinhap" type="text" class="form-control" id="Ten_danhmuc">
-                            </div>
-                            <div class="form-group">
-                                <label class="col-form-label">Giá</label>
-                                <input asp-for="Tenkho" type="text" class="form-control" id="Gia">
+                                <label class="col-form-label">Địa điểm</label>
+                                <input asp-for="Diadiem" type="text" class="form-control" id="Diadiem" style="width: 100%;">
                             </div>
                             <div class="form-group">
                                 <label class="col-form-label">Đơn vị tính</label>
-                                <select class="form-select" asp-for="Donvitinh" aria-label="Default select example" id="Donvitinh">
+                                <select class="form-select" asp-for="Donvitinh" aria-label="Default select example" id="Donvitinh" style="width: 100%;">
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label class="col-form-label">Số lượng</label>
-                                <input type="number" class="form-control" id="soluong">
+                                <label class="col-form-label">Đơn giá</label>
+                                <input type="number" asp-for="Dongia" class="form-control" id="soluong" style="width: 100%;">
                             </div>
                         </div>
                     </div>
-                
+
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" id="submitBtndm">Thêm danh mục</button>
+                <button type="button" class="btn btn-primary" id="submitBtnpn">Thêm phiếu nhập</button>
                 <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeBtn">Close</button>
             </div>
         </div>
@@ -141,10 +142,9 @@
         @section Scripts {
             <script>
                 $(document).ready(function () {
-                    $(document).on('click', '#submitBtndm', function () {
-                       
+                    $(document).on('click', '#submitBtnpn', function () {
+                        Themnhapkho();
                     });
-                
                     $('#Themdanhmuc').on('hidden.bs.modal', function () {
                        
 
@@ -152,190 +152,25 @@
                     $(document).on('click', '#updateBtndm', function () {
                    
                     });
+                    Laydvt();
+                    Laymathang();
                 });
-                function Themdanhmuc() {
-                    var form = $("#formThemdanhmuc")[0];
-                    var data = new FormData(form);
-                    $.ajax({
-                        type: "POST",
-                        url: "/Danhmuc/Themdanhmuc",
-                        data: data,
-                        processData: false,
-                        contentType: false,
-                        beforeSend: function () {
-                            Swal.fire({
-                                title: "Loading...",
-                                text: "Please wait",
-                                imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
-                                imageWidth: 100,
-                                imageHeight: 100,
-                                imageAlt: "Loading",
-                            });
-                        },
-                        success: function (response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    title: "Thành công",
-                                    text: response.message,
-                                    icon: "success"
-                                });
-                                $("#Themdanhmuc").modal("hide");
-                                form.reset();
-                                danhsachdanhmuc(1, 10);
-                            }
-                            else {
-                                Swal.fire({
-                                    title: "Thông báo lỗi",
-                                    text: response.message,
-                                    icon: "error"
-                                });
-                            }
-                        }
-                    });
-                }
-                function danhsachdanhmuc(page, pagesize) {
-                    $.ajax({
-                        type: "POST",
-                        url: "/Danhmuc/Danhsachdanhmuc",
-                        data: { page: page, pagesize: pagesize }, // Thêm dữ liệu này nếu cần
-                        success: function (response) {
-                            $('#tblbody').empty();
-                            console.log(response.dsdm);
-                            if (response.success) {
-                                $.each(response.dsdm, function (index, value) {
-                                    var str = `<tr>
-                                                                                                                        <td>${value.ma_danhmuc}</td>
-                                                                                        <td>${value.ten_danhmuc}</td>
-                                                                                         <td>${formatCurrency(value.gia)}</td>
-                                                                                                          <td>${value.mieuta}</td>
-                                                                                        <td>${value.donvitinh}</td>
-                                                                                        <td>${value.soluong}</td>
-                                                                                        <td><button class="btn btn-danger" data-id='${value.ma_danhmuc}' onclick="Xoadanhmuc('${value.ma_danhmuc}')">Xóa</button></td>
-                                                                                         <td><button class="btn btn-warning" data-id='${value.ma_danhmuc}' onclick="LaydmID('${value.ma_danhmuc}')" >Sửa</button></td>
-                                                                    </tr>`;
-                                    $('#tblbody').append(str);
-                                    updatePagination(response.totalPages, response.pageindex)
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: "Thông báo lỗi",
-                                    text: response.message,
-                                    icon: "error"
-                                });
-                            }
-                        }
-                    });
-                }
-                function updatePagination(totalPages, currentPage) {
-
-                    if (totalPages > 0) {
-                        var str = `<nav aria-label="Page navigation example">
-                                                                        <ul class="pagination">`;
-                        if (totalPages > 1) {
-                            if (currentPage > 1) {
-                                str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachdanhmuc(${currentPage - 1}, 10)">Previous</a></li>`;
-                            }
-                            for (let i = 1; i <= totalPages; i++) {
-                                if (currentPage === i) {
-                                    str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
-                                } else {
-                                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachdanhmuc(${i}, 10)">${i}</a></li>`;
-                                }
-                            }
-                            if (currentPage < totalPages) {
-                                str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachdanhmuc(${currentPage + 1}, 10)">Next</a></li>`;
-                            }
-                        }
-                        str += `</ul></nav>`;
-                        $('#pagination').html(str);
-                    }
-                }
-                function formatCurrency(value) {
-                    return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-                }
-                function Xoadanhmuc(Ma_danhmuc) {
-                    $.ajax({
-                        type: "POST",
-                        url: "/Danhmuc/Xoadanhmuc",
-                        data: { Ma_danhmuc: Ma_danhmuc },
-                        success: function (response) {
-                            if (response.success) {
-                                Swal.fire({
-                                    title: "Thành công",
-                                    text: response.message,
-                                    icon: "success"
-                                });
-                                danhsachdanhmuc(1, 10);
-                            }
-                            else {
-                                Swal.fire({
-                                    title: "Thông báo lỗi",
-                                    text: response.message,
-                                    icon: "error"
-                                });
-                            }
-                        }
-                    });
-                }
-                function LaydmID(Ma_danhmuc) {
-                    $('#Themdanhmuc').modal('show');
-                    $.ajax({
-                        type: "POST",
-                        url: "/Danhmuc/Laytheoma",
-                        data: { Ma_danhmuc: Ma_danhmuc },
-                        success: function (response) {
-                            if (response.success) {
-                                $('#Ma_danhmuc').val(response.data.ma_danhmuc);
-                                $('#Ten_danhmuc').val(response.data.ten_danhmuc);
-                                $('#Gia').val(response.data.gia);
-                                $('#Donvitinh').val(response.data.donvitinh);
-                                $('#soluong').val(response.data.soluong);
-                                $('#submitBtndm').attr('id', 'updateBtndm').text('Cập nhật');
-                            }
-                            else {
-                                Swal.fire({
-                                    title: "Thông báo lỗi",
-                                    text: response.message,
-                                    icon: "error"
-                                });
-                            }
-                        }
-                    });
-                }
                 function resetForm() {
                     var form = $("#formThemdanhmuc")[0];
                     form.reset();
 
                 }
-                function Capnhatdanhmuc() {
-                    var form = $("#formThemdanhmuc")[0];
-                    var data = new FormData(form);
+                function Laydvt() {
                     $.ajax({
-                        type: "POST",
-                        url: "/Danhmuc/Suadanhmuc",
-                        data: data,
-                        processData: false,
-                        contentType: false,
-                        beforeSend: function () {
-                            Swal.fire({
-                                title: "Loading...",
-                                text: "Please wait",
-                                imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
-                                imageWidth: 100,
-                                imageHeight: 100,
-                                imageAlt: "Loading",
-                            });
-                        },
+                        type: "GET",
+                        url: "/Danhmuc/Danhsachdvt",
                         success: function (response) {
+                            $('#Donvitinh').empty();
                             if (response.success) {
-                                Swal.fire({
-                                    title: "Thành công",
-                                    text: response.message,
-                                    icon: "success"
+                                $.each(response.data, function (index, value) {
+                                    var str = `<option value="${value.ten_donvitinh}">${value.ten_donvitinh}</option>`;
+                                    $('#Donvitinh').append(str);
                                 });
-                                $("#Themdanhmuc").modal("hide");
-                                form.reset();
-                                danhsachdanhmuc(1, 10);
                             }
                             else {
                                 Swal.fire({
@@ -347,5 +182,58 @@
                         }
                     });
                 }
+                function Laymathang() {
+                    $.ajax({
+                        type: "GET",
+                        url: "/Danhmuc/Danhsachmh",
+                        success: function (response) {
+                            $('#Ma_mathang').empty();
+                            if (response.success) {
+                                $.each(response.data, function (index, value) {
+                                    var str = `<option value="${value.ma_mathang}">${value.ten_mathang}</option>`;
+                                    $('#Ma_mathang').append(str);
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                function Themnhapkho()
+                { 
+                    var form = $('#formnhapkho')[0];
+                    var data = new FormData(form);
+                    $.ajax({
+                        type: "POST",
+                        url: "/Phieuxuatkho/Themphieunhapkho",
+                        data: data,
+                        contentType: false,
+                        processData: false,
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thông báo",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                $('#Themphieunhap').modal('hide');
+                                danhsachphieunhap(1, 10);
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+               
             </script>
         }

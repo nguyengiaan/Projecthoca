@@ -43,7 +43,7 @@
                 </div>
                 <div class="col-md-4 mb-2">
                     <input type="date" id="endDate" class="form-control" placeholder="Ngày kết thúc"
-                        value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                        value="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")">
                 </div>
                 <div class="col-md-4 d-flex">
                     <button id="filterButton" class="btn btn-outline-primary mr-2 flex-fill">Lọc</button>
@@ -123,16 +123,23 @@
         // Nếu không có, tải dữ liệu từ server
         danhsachphieuxuat(1, 10);
     }
-    
-    // xóa lọc
-    $('#clearFilterButton').on('click', function () {
-    $('#searchBox').val('');
-    $('#startDate').val('');
-    $('#endDate').val('');
-    // Tải lại danh sách từ localStorage hoặc server
-    danhsachphieuxuat(1, 10);
-});
 
+    // Xóa lọc
+    $('#clearFilterButton').on('click', function () {
+        $('#searchBox').val('');
+        $('#startDate').val('@DateTime.Now.ToString("yyyy-MM-dd")');
+        $('#endDate').val('@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")');
+         Tongtientatca();
+        // Tải lại danh sách từ localStorage hoặc server
+        var danhSachPhieuXuat = JSON.parse(localStorage.getItem('danhSachPhieuXuat'));
+        if (danhSachPhieuXuat) {
+            hienThiDanhSachPhieuXuat(danhSachPhieuXuat);
+            updateTotalAmounts(danhSachPhieuXuat);
+        } else {
+            danhsachphieuxuat(1, 10);
+           
+        }
+    });
 
 
     $('#searchBox').on('input', function () {

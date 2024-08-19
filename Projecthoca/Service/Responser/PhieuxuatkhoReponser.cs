@@ -137,14 +137,57 @@ namespace Projecthoca.Service.Responser
             }
         }
 
+
+        // reponxer phiếu nhập kho 
         public Task<(List<PhieunhapkhoVM> ds, int totalpages)> Danhsachphieunhap(int page, int pagesize)
         {
             throw new NotImplementedException();
         }
 
-        public Task<bool> Themphieunhapkho(PhieunhapkhoVM phieunhapkho)
+        public async Task<bool> Themphieunhapkho(PhieunhapkhoVM phieunhapkho)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                // Id mã danh mục
+                int nextNumber2 = 1;
+                var lastMaDV2 = await _context.Danhmuc
+                              .OrderByDescending(x => x.Ma_danhmuc)
+                              .Select(x => x.Ma_danhmuc)
+                              .FirstOrDefaultAsync();
+                if (lastMaDV2 != null)
+                {
+                    nextNumber2 = int.Parse(lastMaDV2.Substring(2)) + 1;
+                }
+                var madm1 = "DM" + nextNumber2.ToString("D4");
+                var data = new Phieunhapkho();
+                data.Ngaynhap = phieunhapkho.Ngaynhap;
+                data.Id = user.Id;
+                data.Nguoinhap = phieunhapkho.Nguoinhap;
+                data.Ten_danhmuc = phieunhapkho.Ten_danhmuc;
+                data.Tenkho = phieunhapkho.Tenkho;
+                data.Diadiem = phieunhapkho.Diadiem;
+                data.Donvitinh = phieunhapkho.Donvitinh;
+                data.Soluong = phieunhapkho.Soluong;
+                data.Dongia = phieunhapkho.Dongia;
+                data.Thanhtien = data.Dongia*data.Soluong;
+                var data1 = new Danhmuc();
+                data1.Ma_danhmuc = madm1;
+                data1.Ten_danhmuc = phieunhapkho.Ten_danhmuc;
+                data1.Donvitinh = phieunhapkho.Donvitinh;
+                data1.Soluong=phieunhapkho.Soluong;
+                data1.Ma_mathang = phieunhapkho.Ma_mathang;
+                data1.Gia = phieunhapkho.Dongia;
+                data1.Id = user.Id;
+                await _context.phieunhapkhos.AddAsync(data);
+                await _context.Danhmuc.AddAsync(data1);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch(Exception ex)
+            {
+                return false;
+            }
         }
     }
 }

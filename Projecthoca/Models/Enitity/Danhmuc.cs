@@ -8,6 +8,8 @@
         public string Donvitinh { get; set; }
         public string Id { get; set; }
         public string Ma_mathang { get; set; }
+
+        public int Soluong { get; set; }
         public ApplicationUser Nguoidung { get; set; }
         public Mathang Mathang { get; set; } 
         public List<Danhmuchoadon> Danhmuchoadons { get; set; }
