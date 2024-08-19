@@ -19,31 +19,54 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form method="post" id="formThemdanhmuc" enctype="multipart/form-data">
-                    <div class="form-group">
-
-                        <input asp-for="Ma_phieunhapkho" type="hidden" class="form-control" id="Ma_danhmuc">
+                <form method="post" id="formnhapkho" enctype="multipart/form-data">
+                    <div class="d-flex flex-row">
+                        <div>
+                            <div class="form-group">
+                                <input asp-for="Ma_phieunhapkho" type="hidden" class="form-control" id="Ma_danhmuc">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Tên danh mục</label>
+                                <input asp-for="Nguoinhap" type="text" class="form-control" id="Ten_danhmuc">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Giá</label>
+                                <input asp-for="Tenkho" type="text" class="form-control" id="Gia">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Đơn vị tính</label>
+                                <select class="form-select" asp-for="Donvitinh" aria-label="Default select example" id="Donvitinh">
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Số lượng</label>
+                                <input type="number" class="form-control" id="soluong">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-group">
+                                <input asp-for="Ma_phieunhapkho" type="hidden" class="form-control" id="Ma_danhmuc">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Tên danh mục</label>
+                                <input asp-for="Nguoinhap" type="text" class="form-control" id="Ten_danhmuc">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Giá</label>
+                                <input asp-for="Tenkho" type="text" class="form-control" id="Gia">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Đơn vị tính</label>
+                                <select class="form-select" asp-for="Donvitinh" aria-label="Default select example" id="Donvitinh">
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Số lượng</label>
+                                <input type="number" class="form-control" id="soluong">
+                            </div>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-form-label">Tên danh mục</label>
-                        <input asp-for="Nguoinhap" type="text" class="form-control" id="Ten_danhmuc">
-                    </div>
-                    <div class="form-group">
-                        <label class="col-form-label">Giá</label>
-                        <input asp-for="Tenkho" type="text" class="form-control" id="Gia">
-                    </div>
-                    <div class="form-group">
-                        <label class="col-form-label">Đơn vị tính</label>
-                        <select class="form-select" asp-for="Donvitinh" aria-label="Default select example" id="Donvitinh">
-                            <option value="Kg">Kg</option>
-                            <option value="Chai">Chai</option>
-                            <option value="Con">Con</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-form-label">Số lượng</label>
-                        <input  type="text" class="form-control" id="soluong">
-                    </div>
+                
                 </form>
             </div>
             <div class="modal-footer">
