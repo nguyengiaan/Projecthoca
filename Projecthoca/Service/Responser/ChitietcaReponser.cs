@@ -13,7 +13,7 @@ namespace Projecthoca.Service.Responser
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public  ChitietcaReponser(MyDbcontext context, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
+        public ChitietcaReponser(MyDbcontext context, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _userManager = userManager;
@@ -25,11 +25,11 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var data = await _context.Danhmuc.Where(x=>x.Mieuta=="Hải sản" && x.Id== user.Id).Select(x => new DanhmucVM
+                var data = await _context.Danhmuc.Where(x => x.Mathang.Ten_mathang == "Hải sản" && x.Id == user.Id).Select(x => new DanhmucVM
                 {
                     Ma_danhmuc = x.Ma_danhmuc,
-                    Ten_danhmuc=x.Ten_danhmuc,
-            
+                    Ten_danhmuc = x.Ten_danhmuc,
+
                 }).ToListAsync();
                 return data;
             }
@@ -43,12 +43,12 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var nguoithue= await _context.Thuehoca.Where(x=>x.Ma_khuvuccau == khuvucId).FirstOrDefaultAsync();
+                var nguoithue = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == khuvucId).FirstOrDefaultAsync();
                 if (nguoithue == null)
                 {
                     return null;
                 }
-                var data = await _context.chitietlancaus.Where(x=>x.Ma_thuehoca==nguoithue.Ma_thuehoca).Select(x => new ChitietcaVM
+                var data = await _context.chitietlancaus.Where(x => x.Ma_thuehoca == nguoithue.Ma_thuehoca).Select(x => new ChitietcaVM
                 {
                     Ma_chitietlancau = x.Ma_chitietlancau,
                     giocau = x.giocau,
@@ -56,11 +56,11 @@ namespace Projecthoca.Service.Responser
                     Ma_thuehoca = x.Ma_thuehoca,
                     sokg = x.sokg,
                     Thanhtien = x.Thanhtien,
-                    Tendanhmuc=x.Danhmuc.Ten_danhmuc,
+                    Tendanhmuc = x.Danhmuc.Ten_danhmuc,
                 }).ToListAsync();
                 return data;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -68,7 +68,7 @@ namespace Projecthoca.Service.Responser
 
         public async Task<bool> ThemCa(ChitietcaVM chitietca)
         {
-           try
+            try
             {
                 int nextNumber1 = 1;
                 var lastMaDV = await _context.chitietlancaus
@@ -80,7 +80,7 @@ namespace Projecthoca.Service.Responser
                 {
                     nextNumber = int.Parse(lastMaDV.Substring(2)) + 1;
                 }
-                var gia=await _context.Danhmuc.Where(x => x.Ma_danhmuc == chitietca.Ma_danhmuc).FirstOrDefaultAsync();
+                var gia = await _context.Danhmuc.Where(x => x.Ma_danhmuc == chitietca.Ma_danhmuc).FirstOrDefaultAsync();
                 string macc = "CT" + nextNumber.ToString("D4");
                 var data = new Chitietlancau();
                 data.giocau = chitietca.giocau;
@@ -88,7 +88,7 @@ namespace Projecthoca.Service.Responser
                 data.Ma_danhmuc = chitietca.Ma_danhmuc;
                 data.Ma_thuehoca = chitietca.Ma_thuehoca;
                 data.sokg = chitietca.sokg;
-                data.Thanhtien = (gia.Gia * chitietca.sokg);
+                data.Thanhtien = gia.Gia * chitietca.sokg;
                 await _context.chitietlancaus.AddAsync(data);
                 await _context.SaveChangesAsync();
                 var data1 = new Tongsokg();
@@ -98,7 +98,7 @@ namespace Projecthoca.Service.Responser
                 data1.Ma_thuehoca = chitietca.Ma_thuehoca;
                 data1.Tongsotien = tt.Sum(x => x.Thanhtien);
                 var tongkg = await _context.Tongsokg.Where(x => x.Ma_thuehoca == chitietca.Ma_thuehoca).FirstOrDefaultAsync();
-                if(tongkg != null)
+                if (tongkg != null)
                 {
                     _context.Tongsokg.Remove(tongkg);
                 }
@@ -118,19 +118,19 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var data=await _context.Thuehoca.Where(x => x.Ma_khuvuccau == khuvucid).FirstOrDefaultAsync();
+                var data = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == khuvucid).FirstOrDefaultAsync();
                 if (data == null)
                 {
                     return null;
                 }
                 else
                 {
-                    var tongsokg= await _context.Tongsokg.Where(x => x.Ma_thuehoca == data.Ma_thuehoca).Select(x => new TongsokgVM
+                    var tongsokg = await _context.Tongsokg.Where(x => x.Ma_thuehoca == data.Ma_thuehoca).Select(x => new TongsokgVM
                     {
                         Ma_tongsokg = x.Ma_tongsokg,
                         sokg = x.sokg,
                         soluong = x.soluong,
-                        Tongsotien=x.Tongsotien,
+                        Tongsotien = x.Tongsotien,
 
                     }).FirstOrDefaultAsync();
                     return tongsokg;
@@ -146,7 +146,7 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-               var data=await _context.chitietlancaus.Where(x => x.Ma_chitietlancau == machitietca).FirstOrDefaultAsync();
+                var data = await _context.chitietlancaus.Where(x => x.Ma_chitietlancau == machitietca).FirstOrDefaultAsync();
                 if (data == null)
                 {
                     return false;
@@ -171,7 +171,7 @@ namespace Projecthoca.Service.Responser
                     return true;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }

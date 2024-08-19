@@ -4,7 +4,7 @@ namespace Projecthoca.Service.Interface
 {
     public interface IChitietca
     {
-        public Task<Boolean> ThemCa(ChitietcaVM chitietca);
+        public Task<bool> ThemCa(ChitietcaVM chitietca);
 
         public Task<List<DanhmucVM>> Danhsachdanhmuchs();
 
@@ -12,6 +12,6 @@ namespace Projecthoca.Service.Interface
 
         public Task<TongsokgVM> Tongsokg(string khuvucid);
 
-        public Task<Boolean> Xoaca(string machitietca);
+        public Task<bool> Xoaca(string machitietca);
     }
 }

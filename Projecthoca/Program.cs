@@ -51,8 +51,10 @@ builder.Services.AddScoped<IGiahoca, GiahocaReponser>();
 builder.Services.AddScoped<IChitietca, ChitietcaReponser>();
 builder.Services.AddScoped<IDanhmuchoadon, DanhmuchoadonReponser>();
 builder.Services.AddScoped<IThongbao, ThongbaoReponser>();
+builder.Services.AddScoped<IPhieuxuatkho, PhieuxuatkhoReponser>();
 builder.Services.AddSingleton<TimerBackgroundService>();
 builder.Services.AddHostedService<TimerBackgroundService>();
+
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddLogging();

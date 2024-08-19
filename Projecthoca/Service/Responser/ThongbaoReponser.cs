@@ -19,24 +19,24 @@ namespace Projecthoca.Service.Responser
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
         }
-        public  async Task<(List<ThongbaoVM> ds, int total)> danhsachtb()
+        public async Task<(List<ThongbaoVM> ds, int total)> danhsachtb()
         {
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var data=await _context.Thongbaos.Where(x => x.Id ==user.Id && x.Trangthai==false).OrderByDescending(x => x.Ma_thongbao).Select(x => new ThongbaoVM
+                var data = await _context.Thongbaos.Where(x => x.Id == user.Id && x.Trangthai == false).OrderByDescending(x => x.Ma_thongbao).Select(x => new ThongbaoVM
                 {
                     Ma_thongbao = x.Ma_thongbao,
                     NoiDung = x.NoiDung,
                     NgayDang = x.NgayDang,
                     Trangthai = x.Trangthai
                 }).ToListAsync();
-                var dem=data.Count();
-                return (data,dem);
+                var dem = data.Count();
+                return (data, dem);
             }
             catch (Exception)
             {
-                return (null,0);
+                return (null, 0);
             }
         }
 
@@ -49,7 +49,7 @@ namespace Projecthoca.Service.Responser
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }

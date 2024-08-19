@@ -24,7 +24,7 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var data= await _context.Giahocas.FindAsync(giahoca.Ma_giahoca);
+                var data = await _context.Giahocas.FindAsync(giahoca.Ma_giahoca);
                 if (data != null)
                 {
 
@@ -40,7 +40,7 @@ namespace Projecthoca.Service.Responser
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -108,11 +108,11 @@ namespace Projecthoca.Service.Responser
                 return true;
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
-            
+
         }
 
         public async Task<bool> Xoagia(int Ma_giahoca)
@@ -120,9 +120,9 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var data = await _context.Giahocas.FindAsync(Ma_giahoca);
-                if(data!=null)
+                if (data != null)
                 {
-                   _context.Giahocas.Remove(data);
+                    _context.Giahocas.Remove(data);
                     await _context.SaveChangesAsync();
                     return true;
                 }
@@ -132,7 +132,7 @@ namespace Projecthoca.Service.Responser
                 }
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }

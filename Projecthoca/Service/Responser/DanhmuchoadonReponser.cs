@@ -15,7 +15,7 @@ namespace Projecthoca.Service.Responser
 
         public DanhmuchoadonReponser(MyDbcontext context, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
-            _context=context;
+            _context = context;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
         }
@@ -35,11 +35,11 @@ namespace Projecthoca.Service.Responser
                 _dmhd.Ma_thuehoca = danhmuchoadon.Ma_thuehoca;
                 _dmhd.Ma_danhmuc = danhmuchoadon.Ma_danhmuc;
                 _dmhd.Soluong = danhmuchoadon.Soluong;
-                _dmhd.thanhtien = danhmuc.Gia*danhmuchoadon.Soluong;
+                _dmhd.thanhtien = danhmuc.Gia * danhmuchoadon.Soluong;
                 await _context.danhmuchoadons.AddAsync(_dmhd);
                 var _thongbao = new Thongbao();
-                _thongbao.NgayDang= DateTime.Now.ToString();
-                _thongbao.NoiDung = "Bạn đã thêm dịch vụ " + danhmuc.Ten_danhmuc + " vào hóa đơn" +" tại khu vực "+ kvc.Ten_Khuvuccau;
+                _thongbao.NgayDang = DateTime.Now.ToString();
+                _thongbao.NoiDung = "Bạn đã thêm dịch vụ " + danhmuc.Ten_danhmuc + " vào hóa đơn" + " tại khu vực " + kvc.Ten_Khuvuccau;
                 _thongbao.Id = user.Id;
                 _thongbao.Trangthai = false;
                 await _context.Thongbaos.AddAsync(_thongbao);
@@ -57,7 +57,7 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var data = await _context.Danhmuc.Where(x => x.Mieuta == "Dịch vụ" && x.Id == user.Id).Select(x => new DanhmucVM
+                var data = await _context.Danhmuc.Where(x => x.Mathang.Ten_mathang == "Dịch vụ" && x.Id == user.Id).Select(x => new DanhmucVM
                 {
                     Ma_danhmuc = x.Ma_danhmuc,
                     Ten_danhmuc = x.Ten_danhmuc,
@@ -75,20 +75,20 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var data1 = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).FirstOrDefaultAsync();
-                var data= await _context.danhmuchoadons.Where(x => x.Ma_thuehoca == data1.Ma_thuehoca).Select(x => new DanhmuchoadonVM
+                var data = await _context.danhmuchoadons.Where(x => x.Ma_thuehoca == data1.Ma_thuehoca).Select(x => new DanhmuchoadonVM
                 {
                     Ma_thuehoca = x.Ma_thuehoca,
                     Ma_danhmuc = x.Ma_danhmuc,
                     Soluong = x.Soluong,
                     Thanhtien = x.thanhtien,
-                    DVT=x.Danhmuc.Donvitinh,
+                    DVT = x.Danhmuc.Donvitinh,
                     Gia = x.Danhmuc.Gia,
                     Ten_danhmuc = x.Danhmuc.Ten_danhmuc,
                     Ma_danhmuchoadon = x.Ma_danhmuchoadon
                 }).ToListAsync();
                 return data;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -98,18 +98,19 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var data= await _context.danhmuchoadons.FindAsync(Ma_danhmuchoadon);
-                if(data == null )
+                var data = await _context.danhmuchoadons.FindAsync(Ma_danhmuchoadon);
+                if (data == null)
                 {
                     return false;
-                }else
+                }
+                else
                 {
                     _context.danhmuchoadons.Remove(data);
                     await _context.SaveChangesAsync();
                     return true;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -117,29 +118,29 @@ namespace Projecthoca.Service.Responser
 
         public async Task<bool> Themthoigian(GiachothuehcVM giachothuehc)
         {
-           try
+            try
             {
-                var data=await _context.Giahocas.FindAsync(giachothuehc.Ma_giahoca);
+                var data = await _context.Giahocas.FindAsync(giachothuehc.Ma_giahoca);
                 var gct = new Giachothuehc();
                 gct.Ma_giahoca = giachothuehc.Ma_giahoca;
                 gct.Ma_thuehoca = giachothuehc.Ma_thuehoca;
                 gct.Soluong = giachothuehc.Soluong;
                 gct.Trangthai = giachothuehc.Trangthai;
-                if(giachothuehc.Trangthai=="Coca")
+                if (giachothuehc.Trangthai == "Coca")
                 {
-                    gct.Thanhtien = giachothuehc.Soluong*data.Gia_coca;
-             
+                    gct.Thanhtien = giachothuehc.Soluong * data.Gia_coca;
+
                 }
                 else
                 {
-                    gct.Thanhtien = giachothuehc.Soluong*data.Gia_khongca;
+                    gct.Thanhtien = giachothuehc.Soluong * data.Gia_khongca;
                 }
                 await _context.Giachothuehcs.AddAsync(gct);
                 await _context.SaveChangesAsync();
                 return true;
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -150,14 +151,14 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var data=await _context.Giahocas.Where(x => x.Id == user.Id).Select(x => new GiahocaVM
+                var data = await _context.Giahocas.Where(x => x.Id == user.Id).Select(x => new GiahocaVM
                 {
                     Ma_giahoca = x.Ma_giahoca,
-                    Ca=x.Ca,
+                    Ca = x.Ca,
                 }).ToListAsync();
                 return data;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -167,20 +168,20 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var nguoidung =await _context.Thuehoca.Where(x => x.Ma_khuvuccau == KhuvucId).FirstOrDefaultAsync();
-                var data= await _context.Giachothuehcs.Where(x => x.Ma_thuehoca == nguoidung.Ma_thuehoca).Select(x => new GiachothuehcVM
+                var nguoidung = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == KhuvucId).FirstOrDefaultAsync();
+                var data = await _context.Giachothuehcs.Where(x => x.Ma_thuehoca == nguoidung.Ma_thuehoca).Select(x => new GiachothuehcVM
                 {
                     Ma_giachothuehc = x.Ma_giachothuehc,
                     Ma_thuehoca = x.Ma_thuehoca,
                     Soluong = x.Soluong,
                     Trangthai = x.Trangthai,
                     Thanhtien = x.Thanhtien,
-                    Ca=x.Giahoca.Ca,
+                    Ca = x.Giahoca.Ca,
                     Giaca = x.Trangthai == "Coca" ? x.Giahoca.Gia_coca : x.Giahoca.Gia_khongca,
                 }).ToListAsync();
                 return data;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -190,7 +191,7 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var data=await _context.Giachothuehcs.FindAsync(Ma_giachothuehc);
+                var data = await _context.Giachothuehcs.FindAsync(Ma_giachothuehc);
                 if (data == null)
                 {
                     return false;
@@ -202,13 +203,13 @@ namespace Projecthoca.Service.Responser
                     return true;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
         }
 
-        public async Task<bool> Tongthanhtoan(string ma_khuvuc)
+        public async Task<(bool, int)> Tongthanhtoan(string ma_khuvuc)
         {
             try
             {
@@ -216,7 +217,7 @@ namespace Projecthoca.Service.Responser
                     .FirstOrDefaultAsync(x => x.Ma_khuvuccau == ma_khuvuc);
                 if (thuehoca == null)
                 {
-                    return false; // Không tìm thấy Thuehoca
+                    return (false, 0); // Không tìm thấy Thuehoca
                 }
 
                 // Xóa Hoadondanhmuc hiện có cho Thuehoca này
@@ -250,12 +251,12 @@ namespace Projecthoca.Service.Responser
                 await _context.Hoadondanhmuc.AddAsync(tong);
                 await _context.SaveChangesAsync();
 
-                return true;
+                return (true, tong.Tongthanhtoan);
             }
             catch (Exception)
             {
                 // Xử lý ngoại lệ một cách thích hợp
-                return false;
+                return (false, 0);
             }
         }
 
@@ -264,19 +265,20 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var data=await _context.Thuehoca.Where(x => x.Ma_khuvuccau == KhuvucId).FirstOrDefaultAsync();
-                if(data !=null)
+                var data = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == KhuvucId).FirstOrDefaultAsync();
+                if (data != null)
                 {
                     var hoadon = await _context.Hoadondanhmuc.Where(x => x.Ma_thuehoca == data.Ma_thuehoca).Select(x => new HoadondanhmucVM
                     {
                         Ma_hddm = x.Ma_hddm,
                         Tongthanhtoan = x.Tongthanhtoan,
-                  
+
                     }).FirstOrDefaultAsync();
                     return hoadon;
                 }
                 return null;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return null;
             }
@@ -284,15 +286,15 @@ namespace Projecthoca.Service.Responser
 
         public async Task<bool> Giamgia(GiamgiaVM giamgia)
         {
-           try
+            try
             {
-                var data=await _context.Thuehoca.Where(x => x.Ma_khuvuccau == giamgia.Ma_khuvuc).FirstOrDefaultAsync();
+                var data = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == giamgia.Ma_khuvuc).FirstOrDefaultAsync();
                 var hoadon = await _context.Hoadondanhmuc.Where(x => x.Ma_thuehoca == data.Ma_thuehoca).FirstOrDefaultAsync();
                 if (hoadon == null)
                 {
                     return false;
                 }
-                if(giamgia.Giamgiatien > 0 && giamgia.Giamgiatien <= 100)
+                if (giamgia.Giamgiatien > 0 && giamgia.Giamgiatien <= 100)
                 {
                     var discountAmount = hoadon.Tongthanhtoan * (giamgia.Giamgiatien / 100.0);
                     hoadon.Tongthanhtoan = hoadon.Tongthanhtoan - (int)discountAmount;
@@ -301,13 +303,13 @@ namespace Projecthoca.Service.Responser
                 }
                 else
                 {
-                    hoadon.Tongthanhtoan =Convert.ToInt32( hoadon.Tongthanhtoan - giamgia.Giamgiatien);
+                    hoadon.Tongthanhtoan = Convert.ToInt32(hoadon.Tongthanhtoan - giamgia.Giamgiatien);
                     await _context.SaveChangesAsync();
                     return true;
                 }
                 return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }

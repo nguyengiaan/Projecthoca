@@ -59,10 +59,10 @@ namespace Projecthoca.Service.Responser
                     Trangthai = x.Trangthai,
                     Timeout = x.Thuehocas.Select(th => th.Timeout).FirstOrDefault(),
 
-            }).ToListAsync();
+                }).ToListAsync();
                 return data;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -90,7 +90,7 @@ namespace Projecthoca.Service.Responser
                 ct.Ten_khachhang = thc.Ten_khachhang;
                 ct.Ngaycau = thc.Ngaycau;
                 ct.Thoigianbatdau = thc.Thoigianbatdau;
-                ct.Timeout=new TimeSpan(0, 0, 0);
+                ct.Timeout = new TimeSpan(0, 0, 0);
                 ct.trangthai = "Chuabamgio";
                 kvc.Trangthai = "Cokhach";
                 await _context.Thuehoca.AddAsync(ct);
@@ -99,7 +99,7 @@ namespace Projecthoca.Service.Responser
 
 
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -109,7 +109,7 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var data= await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).FirstOrDefaultAsync();
+                var data = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).FirstOrDefaultAsync();
                 if (data != null)
                 {
                     return true;
@@ -119,7 +119,7 @@ namespace Projecthoca.Service.Responser
                     return false;
                 }
             }
-            catch(Exception ex )
+            catch (Exception ex)
             {
                 return false;
             }
@@ -139,21 +139,21 @@ namespace Projecthoca.Service.Responser
                     return TimeSpan.Zero;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return TimeSpan.Zero;
             }
         }
 
-        public async Task<bool> CapnhatTg(string Ma_khuvuc,TimeSpan time)
-            
+        public async Task<bool> CapnhatTg(string Ma_khuvuc, TimeSpan time)
+
         {
             try
             {
-               var data=await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).FirstOrDefaultAsync();
+                var data = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).FirstOrDefaultAsync();
                 if (data != null)
                 {
-                    data.Timeout =time ;
+                    data.Timeout = time;
                     await _context.SaveChangesAsync();
                     return true;
                 }
@@ -162,7 +162,7 @@ namespace Projecthoca.Service.Responser
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -227,7 +227,7 @@ namespace Projecthoca.Service.Responser
                 }
                 return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -237,14 +237,14 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var data=await _context.Thuehoca.Where(x => x.trangthai == "Dabamgio").Select(x => new BamgioVM
+                var data = await _context.Thuehoca.Where(x => x.trangthai == "Dabamgio").Select(x => new BamgioVM
                 {
-                    Ma_khuvuc= x.Ma_khuvuccau,
+                    Ma_khuvuc = x.Ma_khuvuccau,
                     Trangthai = x.trangthai,
                 }).ToListAsync();
                 return data;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -254,11 +254,11 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var data= await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).FirstOrDefaultAsync();
-                if(data!=null)
+                var data = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).FirstOrDefaultAsync();
+                if (data != null)
                 {
                     data.trangthai = "Dungthoigian";
-                  await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync();
                     return true;
                 }
                 else
@@ -266,7 +266,7 @@ namespace Projecthoca.Service.Responser
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -288,18 +288,18 @@ namespace Projecthoca.Service.Responser
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
         }
 
-        public  async Task<bool> Xoakhachthue(string Ma_khuvuc)
+        public async Task<bool> Xoakhachthue(string Ma_khuvuc)
         {
             try
             {
-               var data = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).FirstAsync();
-                var data1=await _context.Khuvuccau.FindAsync(Ma_khuvuc);
+                var data = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).FirstAsync();
+                var data1 = await _context.Khuvuccau.FindAsync(Ma_khuvuc);
                 if (data != null)
                 {
 
@@ -313,7 +313,7 @@ namespace Projecthoca.Service.Responser
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -323,7 +323,7 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var data=await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).Select(x => new ThuehocaVM
+                var data = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).Select(x => new ThuehocaVM
                 {
                     Ma_thuehoca = x.Ma_thuehoca,
                     Ma_khuvuccau = x.Ma_khuvuccau,
@@ -342,10 +342,38 @@ namespace Projecthoca.Service.Responser
                     return null;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
         }
+
+        public async Task<bool> Chuyenkhachthue(ChuyenbanVM chuyenban)
+        {
+            try
+            {
+                var data = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == chuyenban.Ma_khuvuc).FirstOrDefaultAsync();
+                var kvmoi = await _context.Khuvuccau.FindAsync(chuyenban.Ma_khuvucmoi);
+                var kvcu = await _context.Khuvuccau.FindAsync(chuyenban.Ma_khuvuc);
+                if (data != null)
+                {
+                    kvmoi.Trangthai = "Cokhach";
+                    kvcu.Trangthai = "Chuacokhach";
+                    data.Ma_khuvuccau = chuyenban.Ma_khuvucmoi;
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+
+        }
+
     }
 }

@@ -29,16 +29,16 @@ namespace Projecthoca.Service.Responser
                     nextNumber = int.Parse(lastMaDV.Substring(2)) + 1;
                 }
                 var mahc = "HC" + nextNumber.ToString("D4");
-                Hoca hc=new Hoca();
+                Hoca hc = new Hoca();
                 hc.Ma_hoca = mahc;
                 hc.Ten_hoca = hoca.Ten_hoca;
                 hc.Id = hoca.Id;
-                hc.Kieuhoca= hoca.Kieuhoca;
+                hc.Kieuhoca = hoca.Kieuhoca;
                 await _context.Hoca.AddAsync(hc);
-               await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync();
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
                 throw new Exception(ex.Message);

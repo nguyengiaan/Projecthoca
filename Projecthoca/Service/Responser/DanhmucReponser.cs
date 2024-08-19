@@ -22,7 +22,7 @@ namespace Projecthoca.Service.Responser
 
         public async Task<(List<DanhmucVM> ds, int totalpages)> Danhsachdanhmuc(int page, int pagesize)
         {
-           try
+            try
             {
                 var totalItems = _context.Danhmuc.Count();
                 var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
@@ -34,19 +34,18 @@ namespace Projecthoca.Service.Responser
                              Ten_danhmuc = x.Ten_danhmuc,
                              Gia = x.Gia,
                              Donvitinh = x.Donvitinh,
-                             soluong = x.soluong,
                              Id = x.Id,
-                             Mieuta=x.Mieuta,
+                             Ma_mathang = x.Mathang.Ten_mathang,
 
-                         }).Where(x=>x.Id == user.Id)
+                         }).Where(x => x.Id == user.Id)
                          .Skip((page - 1) * pagesize)
                          .Take(pagesize)
                          .ToListAsync();
                 return (dm, totalpages);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return (null,0);
+                return (null, 0);
             }
         }
 
@@ -54,18 +53,18 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var data = await _context.Danhmuc.Where(x=>x.Ma_danhmuc==madanhmuc).Select(x=>new DanhmucVM
+                var data = await _context.Danhmuc.Where(x => x.Ma_danhmuc == madanhmuc).Select(x => new DanhmucVM
                 {
                     Ma_danhmuc = x.Ma_danhmuc,
                     Ten_danhmuc = x.Ten_danhmuc,
                     Gia = x.Gia,
                     Donvitinh = x.Donvitinh,
-                    soluong = x.soluong,
+
                     Id = x.Id
                 }).FirstOrDefaultAsync();
                 return data;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -81,15 +80,14 @@ namespace Projecthoca.Service.Responser
                     data.Ten_danhmuc = danhmuc.Ten_danhmuc;
                     data.Gia = danhmuc.Gia;
                     data.Donvitinh = danhmuc.Donvitinh;
-                    data.soluong = danhmuc.soluong;
-                    data.Mieuta = danhmuc.Mieuta;
+                    data.Ma_mathang = danhmuc.Ma_mathang;
                     _context.Danhmuc.Update(data);
                     await _context.SaveChangesAsync();
                     return true;
                 }
                 return false;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -97,7 +95,7 @@ namespace Projecthoca.Service.Responser
 
         public async Task<bool> Themdanhmuc(DanhmucVM danhmuc)
         {
-             try
+            try
             {
                 int nextNumber1 = 1;
                 var lastMaDV = await _context.Danhmuc
@@ -112,18 +110,18 @@ namespace Projecthoca.Service.Responser
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
                 var madm = "DM" + nextNumber.ToString("D4");
                 var _dm = new Danhmuc();
-                _dm.Mieuta = danhmuc.Mieuta;
+                _dm.Ma_mathang = danhmuc.Ma_mathang;
                 _dm.Ma_danhmuc = madm;
                 _dm.Ten_danhmuc = danhmuc.Ten_danhmuc;
                 _dm.Gia = danhmuc.Gia;
                 _dm.Donvitinh = danhmuc.Donvitinh;
-                _dm.soluong = danhmuc.soluong;
+
                 _dm.Id = user.Id;
                 await _context.Danhmuc.AddAsync(_dm);
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
@@ -134,7 +132,7 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var data = await _context.Danhmuc.FindAsync(madanhmuc);
-                if(data!=null)
+                if (data != null)
                 {
                     _context.Danhmuc.Remove(data);
                     await _context.SaveChangesAsync();
@@ -145,9 +143,109 @@ namespace Projecthoca.Service.Responser
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
+            }
+        }
+
+        // hàm reponser đơn vị tính
+        public async Task<bool> Themdonvitinh(DonvitinhVM donvitinh)
+        {
+            try
+            {
+                int nextNumber = 1;
+                var lastMaDV = await _context.Donvitinhs
+                              .OrderByDescending(x => x.Ma_donvitinh)
+                              .Select(x => x.Ma_donvitinh)
+                              .FirstOrDefaultAsync();
+
+                if (lastMaDV != null)
+                {
+                    nextNumber = int.Parse(lastMaDV.Substring(2)) + 1;
+                }
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var madv = "DV" + nextNumber.ToString("D4");
+                var _dv = new Donvitinh();
+                _dv.Ma_donvitinh = madv;
+                _dv.Ten_donvitinh = donvitinh.Ten_donvitinh;
+                _dv.Id = user.Id;
+                await _context.Donvitinhs.AddAsync(_dv);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<List<DonvitinhVM>> Laydanhsachdvt()
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var data = await _context.Donvitinhs
+                           .Where(x => x.Id == user.Id)
+                           .Select(x => new DonvitinhVM
+                           {
+                               Ma_donvitinh = x.Ma_donvitinh,
+                               Ten_donvitinh = x.Ten_donvitinh,
+                               Id = x.Id
+                           }).ToListAsync();
+                return data;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
+
+        public async Task<bool> Themmathang(MathangVM mathang)
+        {
+            try
+            {
+                int nextNumber = 1;
+                var lastMaDV = await _context.Mathangs
+                              .OrderByDescending(x => x.Ma_mathang)
+                              .Select(x => x.Ma_mathang)
+                              .FirstOrDefaultAsync();
+                if (lastMaDV != null)
+                {
+                    nextNumber = int.Parse(lastMaDV.Substring(2)) + 1;
+                }
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var mamh = "MH" + nextNumber.ToString("D4");
+                var _mh = new Mathang();
+                _mh.Ma_mathang = mamh;
+                _mh.Ten_mathang = mathang.Ten_mathang;
+                _mh.Id = user.Id;
+                await _context.Mathangs.AddAsync(_mh);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        // hàm lấy danh sách mặt hàng
+        public async Task<List<MathangVM>> Laydanhsachmh()
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var data = await _context.Mathangs.Where(x=>x.Id==user.Id).Select(x => new MathangVM
+                {
+                    Ma_mathang = x.Ma_mathang,
+                    Ten_mathang = x.Ten_mathang,
+    
+                }).ToListAsync();
+                return data;
+            }
+            catch(Exception ex)
+            {
+                return null;
             }
         }
     }

@@ -123,5 +123,92 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, message = ex.Message});
             }
         }
+        // contronler đơn vị tính
+
+        [HttpPost]
+        public async Task<IActionResult>Themdvt(DonvitinhVM dvt)
+        {
+            try
+            {
+                var data = await _danhmuc.Themdonvitinh(dvt);
+                if (data)
+                {
+                    return Json(new { success = true, message = "Thêm đơn vị tính thành công" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Thêm đơn vị tính không thành công" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Danhsachdvt()
+        {
+            try
+            {
+                var data = await _danhmuc.Laydanhsachdvt();
+                if (data != null)
+                {
+                    return Json(new { success = true, data = data });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Không có dữ liệu" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        // controller mặt hàng
+        [HttpPost]
+        public async Task<IActionResult> Themmathang(MathangVM mh)
+        {
+            try
+            {
+                var data = await _danhmuc.Themmathang(mh);
+                if (data)
+                {
+                    return Json(new { success = true, message = "Thêm mặt hàng thành công" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Thêm mặt hàng không thành công" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Danhsachmh()
+        {
+            try
+            {
+                var data = await _danhmuc.Laydanhsachmh();
+                if (data != null)
+                {
+                    return Json(new { success = true, data = data });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Không có dữ liệu" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }
