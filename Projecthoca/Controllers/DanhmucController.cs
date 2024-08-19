@@ -167,6 +167,27 @@ namespace Projecthoca.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<IActionResult>Xoadonvitinh(string ma_donvitinh)
+        {
+            try
+            {
+                var data = await _danhmuc.Xoadonvitinh(ma_donvitinh);
+                if (data)
+                {
+                    return Json(new { success = true, message = "Xóa đơn vị tính thành công" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Xóa đơn vị tính không thành công" });
+                }
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
         // controller mặt hàng
         [HttpPost]
         public async Task<IActionResult> Themmathang(MathangVM mh)
@@ -202,6 +223,27 @@ namespace Projecthoca.Controllers
                 else
                 {
                     return Json(new { success = false, message = "Không có dữ liệu" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Xoamathang(string ma_mathang)
+        {
+            try
+            {
+                var data = await _danhmuc.Xoamathang(ma_mathang);
+                if (data)
+                {
+                    return Json(new { success = true, message = "Xóa mặt hàng thành công" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Xóa mặt hàng không thành công" });
                 }
             }
             catch (Exception ex)

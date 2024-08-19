@@ -79,5 +79,29 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, messeger = ex.Message });
             }
         }
+
+        [HttpGet]
+        public async Task<IActionResult> Tongtientatcapx()
+        {
+            try
+            {
+                var data = await _phieuxuatkho.Tongtientatca();
+                if (data.ckeck)
+                {
+                    return Json(new { success = true, tongtienck = data.tongtienchk,tongtienmat=data.tongtienmat,tongthanhtien=data.tongthanhtien,tongtien=data.tongtatca });
+                }
+                else
+                {
+                    return Json(new { success = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false,messeger=ex.Message });
+            }
+
+
+
+        }
     }
 }

@@ -201,6 +201,29 @@ namespace Projecthoca.Service.Responser
             }
         }
 
+        public async Task<bool> Xoadonvitinh(string madonvitinh)
+        {
+            try
+            {
+                var data =await _context.Donvitinhs.FindAsync(madonvitinh);
+                if(data!=null)
+                {
+                    _context.Donvitinhs.Remove(data);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        // hàm reponser mặt hàng
         public async Task<bool> Themmathang(MathangVM mathang)
         {
             try
@@ -246,6 +269,28 @@ namespace Projecthoca.Service.Responser
             catch(Exception ex)
             {
                 return null;
+            }
+        }
+
+        public async Task<bool> Xoamathang(string mamathang)
+        {
+           try
+            {
+                var data=await _context.Mathangs.FindAsync(mamathang);
+                if (data != null)
+                {
+                    _context.Mathangs.Remove(data);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch(Exception ex)
+            {
+                return false;
             }
         }
     }

@@ -181,7 +181,6 @@
 <!--Context menu-->
 <div id="contextMenu" class="context-menu">
     <ul>
-        <li><a href="#" id="Xoakhuvuc">Xóa khu vực</a></li>
         <li><a href="#" id="Themkh">Cho khách thuê</a></li>
         <li><a href="#" id="Bamgio">Bấm giờ</a></li>
         <li><a href="#" id="Themdichvu">Xem dịch vụ</a></li>
@@ -1774,6 +1773,7 @@
             formData.append("Tienmat",cashValue );
             formData.append("Chuyenkhoan",transferValue);
             formData.append("Tongtien", tongtiencuoicung);
+            formData.append("Ma_khuvuc", kvc);
             $.ajax({
                 url: "/Phieuxuatkho/Themphieuxuatkho",
                 type: "POST",

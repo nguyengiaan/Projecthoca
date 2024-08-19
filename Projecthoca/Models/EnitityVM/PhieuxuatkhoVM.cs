@@ -10,6 +10,7 @@
         public int giamgia { get; set; }
         public int Tienmat { get; set; }
 
+        public string? Ma_khuvuc { get; set; }
         public int Chuyenkhoan { get; set; }
 
         public int Tongtien { get; set; }

@@ -75,6 +75,14 @@ namespace Projecthoca.Controllers
         {
             return View();
         }
+        public IActionResult Quanlydonvitinh()
+        {
+            return View();
+        }
+        public IActionResult Quanlymathang()
+        {
+            return View();
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

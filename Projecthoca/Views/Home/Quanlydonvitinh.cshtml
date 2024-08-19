@@ -1,0 +1,197 @@
+﻿@{
+    Layout = "_Layout";
+}
+@model Projecthoca.Models.EnitityVM.DanhmucVM
+<!--Modal thêm đơn vị tính-->
+<div class="modal fade" id="Themdonvitinh" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm đơn vị tính</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formdonvitinh" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="col-form-label">Tên đơn vị tính</label>
+                        <input type="text" class="form-control" id="Ten_donvitinh">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="submitBtndvt">Thêm đơn vị tính</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeBtn">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Danh sách đơn vị tính-->
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3  ">
+            <div class="row">
+                <div class="col-md-10 col-12">
+                    <h4 class="m-0 font-weight-bold text-primary">Danh sách đơn vị tính</h4>
+                </div>
+                <div class="col-md-2 col-12">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#Themdonvitinh"> <span class="fs-20">Thêm đơn vị tính</span> </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn vị tính</th>
+                            <th>Đơn vị tính</th>
+                            <th>Xóa</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Mã đơn vị tính</th>
+                            <th>Đơn vị tính</th>
+                            <th>Xóa</th>
+                        </tr>
+                    </tfoot>
+                    <tbody id="tblbody">
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-sm-12 col-md-5">
+                        <div class="col-sm-12 col-md-7">
+                            <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+                                <nav aria-label="Page navigation example" id="pagination">
+
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @section Scripts {
+            <script>
+                $(document).ready(function () {
+                    $(document).on('click', '#submitBtndvt', function () {
+                        Themdonvitinh();
+                    });
+                    Laydvt();
+                    $(document).on('click', '#btndvt', function () {
+                        event.preventDefault();
+                        $('#Themdanhmuc').modal('hide');
+                        $('#Themdonvitinh').modal('show');
+                    });
+                });
+                function resetForm() {
+                    var form = $("#formThemdanhmuc")[0];
+                    form.reset();
+
+                }
+                //Thêm đon vị tính
+                function Themdonvitinh() {
+                    var form = $("#formdonvitinh")[0];
+                    var data = new FormData();
+                    data.append("Ten_donvitinh", $("#Ten_donvitinh").val());
+                    $.ajax({
+                        type: "POST",
+                        url: "/Danhmuc/Themdvt",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            Swal.fire({
+                                title: "Loading...",
+                                text: "Please wait",
+                                imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+                                imageWidth: 100,
+                                imageHeight: 100,
+                                imageAlt: "Loading",
+                            });
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                Laydvt();
+                                $("#Themdonvitinh").modal("hide");
+                                form.reset();
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                //Lấy tất cả đơn vị tính
+                function Laydvt() {
+                    $.ajax({
+                        type: "GET",
+                        url: "/Danhmuc/Danhsachdvt",
+                        success: function (response) {
+                            $('#Donvitinh').empty();
+                            if (response.success) {
+                                var html = ''
+                                $.each(response.data, function (index, item) {
+                                    html += '<tr>';
+                                    html += '<td>' + item.ma_donvitinh + '</td>';
+                                    html += '<td>' + item.ten_donvitinh + '</td>';
+                                    html += `<td><button class="btn btn-danger" onclick="Xoadvt('${ item.ma_donvitinh }')">Xóa</button></td>`;
+                                    html += '</tr>';
+                                });
+                                $('#tblbody').html(html);
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                // xóa đơn vị tính
+                function Xoadvt(ma_donvitinh) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Danhmuc/Xoadonvitinh",
+                        data: { ma_donvitinh: ma_donvitinh },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                Laydvt(); // Hàm này có thể cần được kiểm tra để đảm bảo nó hoạt động đúng.
+                            } else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        },
+                        error: function () {
+                            Swal.fire({
+                                title: "Lỗi hệ thống",
+                                text: "Có lỗi xảy ra khi xóa đơn vị tính.",
+                                icon: "error"
+                            });
+                        }
+                    });
+                }
+
+            </script>
+        }

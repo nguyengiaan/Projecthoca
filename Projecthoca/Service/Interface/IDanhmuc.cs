@@ -18,10 +18,14 @@ namespace Projecthoca.Service.Interface
 
         public Task <List<DonvitinhVM>> Laydanhsachdvt() ;
 
+        public Task<bool> Xoadonvitinh(string madonvitinh);
+
         // hàm dùng để cài đặt mặt hàng
         public Task<bool> Themmathang(MathangVM mathang);
 
         //Hàm dùng để lấy tất cả mặt hàng
         public Task<List<MathangVM>> Laydanhsachmh();
+        // hàm xóa mặt hàng
+        public Task<bool> Xoamathang(string mamathang);
     }
 }

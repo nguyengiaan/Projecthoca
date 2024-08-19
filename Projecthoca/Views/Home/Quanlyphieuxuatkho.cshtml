@@ -40,26 +40,18 @@
                     <thead>
                         <tr>
                             <th>Mã phiếu xuất</th>
+                            <th>Bàn câu</th>
                             <th>Ngày xuất</th>
-                            <th>Thành tiền</th>
                             <th>Giảm giá</th>
                             <th>Tiền mặt</th>
                             <th>Chuyển khoản</th>
+                            <th>Thành tiền</th>
                             <th>Tổng tiền</th>
                             <th>Xóa</th>
                         </tr>
                     </thead>
-                    <tfoot>
-                        <tr>
-                            <th>Mã phiếu xuất</th>
-                            <th>Ngày xuất</th>
-                            <th>Thành tiền</th>
-                            <th>Giảm giá</th>
-                            <th>Tiền mặt</th>
-                            <th>Chuyển khoản</th>
-                            <th>Tổng tiền</th>
-                            <th>Xóa</th>
-                        </tr>
+                    <tfoot id="tblfoot">
+                     
                     </tfoot>
                     <tbody id="tblbody">
                     </tbody>
@@ -89,6 +81,7 @@
                     $('#Xoaphieuxuat').modal('hide');
                 });
             });
+            Tongtientatca();
         });
 
         function danhsachphieuxuat(page, pagesize) {
@@ -103,11 +96,12 @@
                         $.each(response.dsdm, function (index, value) {
                             var str = `<tr>
                                                 <td>${value.ma_phieuxuatkho}</td>
+                                                <td>${value.ma_khuvuc}</td>
                                                 <td>${value.ngayxuat.split('T')[0]}</td>
-                                                <td>${formatCurrency(value.thanhtien)}</td>
                                                 <td>${formatCurrency(value.giamgia)}</td>
                                                 <td>${formatCurrency(value.tienmat)}</td>
                                                 <td>${formatCurrency(value.chuyenkhoan)}</td>
+                                                  <td>${formatCurrency(value.thanhtien)}</td>
                                                 <td>${formatCurrency(value.tongtien)}</td>
                                                 <td><button class="btn btn-danger" data-id='${value.ma_phieuxuatkho}' id="btnhttb">Xóa</button></td>
                                             </tr>`;
@@ -166,6 +160,36 @@
                             icon: "success"
                         });
                         danhsachphieuxuat(1, 10);
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                }
+            });
+        }
+
+        function Tongtientatca()
+        {
+            $.ajax({
+                type: "GET",
+                url: "/Phieuxuatkho/Tongtientatcapx",
+                success: function (response) {
+                    if (response.success) {
+                        $('#tblfoot').empty;
+                        var html=''
+                       html+=`<tr>
+                                <th colspan="4">THÀNH TIỀN </th>
+                               <th >${formatCurrency(response.tongtienmat)}</th>
+                                                          <th>${formatCurrency(response.tongtienck)}</th>
+                                                <th>${formatCurrency(response.tongthanhtien)}</th>
+                                        <th>${formatCurrency(response.tongtien)}</th>
+                                </tr>`;
+                        $('#tblfoot').html(html);
+
+                 
                     } else {
                         Swal.fire({
                             title: "Thông báo lỗi",

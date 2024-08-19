@@ -1,0 +1,197 @@
+﻿﻿@{
+    Layout = "_Layout";
+}
+@model Projecthoca.Models.EnitityVM.DanhmucVM
+<!--Modal thêm mặt hàng-->
+<div class="modal fade" id="Themmathang" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm mặt hàng</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formmathang" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="col-form-label">Tên mặt hàng</label>
+                        <input type="text" class="form-control" id="Ten_mathang">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="submitBtnmh">Thêm mặt hàng</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeBtn">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Danh sách Danh mục-->
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3  ">
+            <div class="row">
+                <div class="col-md-10 col-12">
+                    <h4 class="m-0 font-weight-bold text-primary">Danh sách mặt hàng</h4>
+                </div>
+                <div class="col-md-2 col-12">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#Themmathang"> <span class="fs-20">Thêm mặt hàng</span> </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã mặt hàng</th>
+                            <th>Tên mặt hàng</th>
+                            <th>Xóa</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Mã mặt hàng</th>
+                            <th>Tên mặt hàng</th>
+                            <th>Xóa</th>
+                        </tr>
+                    </tfoot>
+                    <tbody id="tblbody">
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-sm-12 col-md-5">
+                        <div class="col-sm-12 col-md-7">
+                            <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+                                <nav aria-label="Page navigation example" id="pagination">
+
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @section Scripts {
+            <script>
+                $(document).ready(function () {
+           
+               
+                
+             
+
+                    $(document).on('click', '#btnmathang', function () {
+                        event.preventDefault();
+                        $('#Themmathang').modal('show');
+                    });
+                    $(document).on('click', '#submitBtnmh', function () {
+                        event.preventDefault();
+                        Themmathang();
+                    });
+                    Laymathang();
+                });
+             
+                //Thêm mặt hàng
+                function Themmathang() {
+                    var form = $("#formmathang")[0];
+                    var data = new FormData();
+                    data.append("Ten_mathang", $("#Ten_mathang").val());
+                    $.ajax({
+                        type: "POST",
+                        url: "/Danhmuc/Themmathang",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            Swal.fire({
+                                title: "Loading...",
+                                text: "Please wait",
+                                imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+                                imageWidth: 100,
+                                imageHeight: 100,
+                                imageAlt: "Loading",
+                            });
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                Laymathang();
+                                $("#Themmathang").modal("hide");
+                                $('#Themdanhmuc').modal('show');
+                                form.reset();
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                //Lấy mặt hàng
+                function Laymathang() {
+                    $.ajax({
+                        type: "GET",
+                        url: "/Danhmuc/Danhsachmh",
+                        success: function (response) {
+                            if (response.success) {
+                                var html = ''
+                                console.log(response.data);
+                                $.each(response.data, function (index, item) {
+                                    html += '<tr>';
+                                    html += '<td>' + item.ma_mathang + '</td>';
+                                    html += '<td>' + item.ten_mathang + '</td>';
+                                    html += `<td><button class="btn btn-danger" onclick="Xoamh('${item.ma_mathang}')">Xóa</button></td>`;
+                                    html += '</tr>';
+                                });
+                                $('#tblbody').html(html);
+                            } else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                // xóa mặt hàng
+                function Xoamh(ma_mathang) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Danhmuc/Xoamathang",
+                        data: { ma_mathang: ma_mathang },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                Laymathang(); // Hàm này có thể cần được kiểm tra để đảm bảo nó hoạt động đúng.
+                            } else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        },
+                        error: function () {
+                            Swal.fire({
+                                title: "Lỗi hệ thống",
+                                text: "Có lỗi xảy ra khi xóa đơn vị tính.",
+                                icon: "error"
+                            });
+                        }
+                    });
+                }
+            </script>
+        }

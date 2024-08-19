@@ -23,6 +23,29 @@ namespace Projecthoca.Service.Responser
             _httpContextAccessor = httpContextAccessor;
         }
 
+        public async Task<(bool ckeck,int tongtienchk, int tongtienmat, int tongthanhtien, int tongtatca)> Tongtientatca()
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var data= await _context.Phieuxuatkhos.Where(x=>x.Id==user.Id).ToListAsync();
+                if (data == null)
+                {
+                    return (false,0, 0, 0, 0);
+                }
+                var tongtienchk = data.Sum(x => x.Chuyenkhoan);
+                var tongtienmat = data.Sum(x => x.Tienmat);
+                var tongthanhtien = data.Sum(x => x.Thanhtien);
+                var tongthanhton = data.Sum(x => x.Tongtien);
+                return (true,tongtienchk, tongtienmat, tongthanhtien, tongthanhton);
+                
+            }
+            catch(Exception ex)
+            {
+                return (false,0, 0, 0, 0);
+            }
+        }
+
         public async Task<(List<PhieuxuatkhoVM> ds, int totalpages)> Danhsachphieu(int page, int pagesize)
         {
             try
@@ -41,6 +64,7 @@ namespace Projecthoca.Service.Responser
                              Tongtien = x.Tongtien,
                              Tienmat = x.Tienmat,
                              Chuyenkhoan = x.Chuyenkhoan,
+                             Ma_khuvuc = x.Ten_khuvuc,
                          })
                          .Skip((page - 1) * pagesize)
                          .Take(pagesize)
@@ -58,6 +82,7 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
+                var kvc= await _context.Khuvuccau.FindAsync(phieuxuatkho.Ma_khuvuc);
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
                 int nextNumber1 = 1;
                 var lastMaDV = await _context.Phieuxuatkhos
@@ -79,7 +104,7 @@ namespace Projecthoca.Service.Responser
                 data.Tienmat = phieuxuatkho.Tienmat;
                 data.Chuyenkhoan = phieuxuatkho.Chuyenkhoan;
                 data.Tongtien = phieuxuatkho.Tongtien;
-
+                data.Ten_khuvuc = kvc.Ten_Khuvuccau;
                 await _context.Phieuxuatkhos.AddAsync(data);
                 await _context.SaveChangesAsync();
                 return true;
@@ -110,6 +135,16 @@ namespace Projecthoca.Service.Responser
             {
                 return false;
             }
+        }
+
+        public Task<(List<PhieunhapkhoVM> ds, int totalpages)> Danhsachphieunhap(int page, int pagesize)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> Themphieunhapkho(PhieunhapkhoVM phieunhapkho)
+        {
+            throw new NotImplementedException();
         }
     }
 }
