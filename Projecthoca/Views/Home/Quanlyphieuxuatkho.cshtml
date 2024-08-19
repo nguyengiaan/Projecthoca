@@ -28,16 +28,33 @@
 <div class="container-fluid">
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <div class="row">
-                <div class="col-md-10 col-12">
+            <div class="row align-items-center">
+                <div class="col-md-8 col-12">
                     <h4 class="m-0 font-weight-bold text-primary">Danh sách phiếu xuất kho</h4>
+                </div>
+                <div class="col-md-4 col-12 text-md-right mt-2 mt-md-0">
+                    <input type="text" id="searchBox" class="form-control" placeholder="Tìm kiếm...">
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-4 mb-2">
+                    <input type="date" id="startDate" class="form-control" placeholder="Ngày bắt đầu"
+                        value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                </div>
+                <div class="col-md-4 mb-2">
+                    <input type="date" id="endDate" class="form-control" placeholder="Ngày kết thúc"
+                        value="@DateTime.Now.ToString("yyyy-MM-dd")">
+                </div>
+                <div class="col-md-4 d-flex">
+                    <button id="filterButton" class="btn btn-outline-primary mr-2 flex-fill">Lọc</button>
+                    <button id="clearFilterButton" class="btn btn-outline-secondary flex-fill">Xóa lọc</button>
                 </div>
             </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
-                    <thead>
+                    <thead class="thead-light">
                         <tr>
                             <th>Mã phiếu xuất</th>
                             <th>Bàn câu</th>
@@ -47,16 +64,15 @@
                             <th>Chuyển khoản</th>
                             <th>Thành tiền</th>
                             <th>Tổng tiền</th>
-                            <th>Xóa</th>
+                            <th>Chức năng</th>
                         </tr>
                     </thead>
                     <tfoot id="tblfoot">
-                     
                     </tfoot>
                     <tbody id="tblbody">
                     </tbody>
                 </table>
-                <div class="row">
+                <div class="row mt-3">
                     <div class="col-sm-12 col-md-5">
                         <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
                             <nav aria-label="Page navigation example" id="pagination">
@@ -69,136 +85,243 @@
     </div>
 </div>
 
+
+@section Styles {
+    <style>
+        .card-header {
+    background-color: #f8f9fc;
+    border-bottom: 1px solid #e3e6f0;
+}
+
+.table thead th {
+    vertical-align: middle;
+    text-align: center;
+}
+
+.table tbody tr:hover {
+    background-color: #f1f1f1;
+    transition: background-color 0.3s ease;
+}
+
+.btn {
+    transition: all 0.3s ease;
+}
+
+    </style>
+}
+
 @section Scripts {
     <script>
-        $(document).ready(function () {
-            danhsachphieuxuat(1, 10);
-            $('#dataTable').on('click', '#btnhttb', function () {
-                var Ma_phieuxuatkho = $(this).data('id');
-                $('#Xoaphieuxuat').modal('show');
-                $('#Xacnhanxoa').click(function () {
-                    Xoaphieuxuat(Ma_phieuxuatkho);
-                    $('#Xoaphieuxuat').modal('hide');
-                });
-            });
-            Tongtientatca();
+   $(document).ready(function () {
+     danhsachphieuxuat(1, 10);
+    // Kiểm tra xem danh sách có trong localStorage không
+    if (localStorage.getItem('danhSachPhieuXuat')) {
+        // Nếu có, lấy dữ liệu từ localStorage và hiển thị
+        var danhSachPhieuXuat = JSON.parse(localStorage.getItem('danhSachPhieuXuat'));
+        hienThiDanhSachPhieuXuat(danhSachPhieuXuat);
+    } else {
+        // Nếu không có, tải dữ liệu từ server
+        danhsachphieuxuat(1, 10);
+    }
+    
+    // xóa lọc
+    $('#clearFilterButton').on('click', function () {
+    $('#searchBox').val('');
+    $('#startDate').val('');
+    $('#endDate').val('');
+    // Tải lại danh sách từ localStorage hoặc server
+    danhsachphieuxuat(1, 10);
+});
+
+
+
+    $('#searchBox').on('input', function () {
+        var searchTerm = $(this).val().toLowerCase();
+        filterData(searchTerm);
+    });
+
+    $('#filterButton').on('click', function () {
+        var searchTerm = $('#searchBox').val().toLowerCase();
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+        filterData(searchTerm, startDate, endDate);
+    });
+
+    $('#dataTable').on('click', '#btnhttb', function () {
+        var Ma_phieuxuatkho = $(this).data('id');
+        $('#Xoaphieuxuat').modal('show');
+        $('#Xacnhanxoa').click(function () {
+            Xoaphieuxuat(Ma_phieuxuatkho);
+            $('#Xoaphieuxuat').modal('hide');
         });
+    });
 
-        function danhsachphieuxuat(page, pagesize) {
-            $.ajax({
-                type: "POST",
-                url: "/Phieuxuatkho/Danhsachphieu",
-                data: { page: page, pagesize: pagesize },
-                success: function (response) {
-                    $('#tblbody').empty();
-                    console.log(response.dsdm);
-                    if (response.success) {
-                        $.each(response.dsdm, function (index, value) {
-                            var str = `<tr>
-                                                <td>${value.ma_phieuxuatkho}</td>
-                                                <td>${value.ma_khuvuc}</td>
-                                                <td>${value.ngayxuat.split('T')[0]}</td>
-                                                <td>${formatCurrency(value.giamgia)}</td>
-                                                <td>${formatCurrency(value.tienmat)}</td>
-                                                <td>${formatCurrency(value.chuyenkhoan)}</td>
-                                                  <td>${formatCurrency(value.thanhtien)}</td>
-                                                <td>${formatCurrency(value.tongtien)}</td>
-                                                <td><button class="btn btn-danger" data-id='${value.ma_phieuxuatkho}' id="btnhttb">Xóa</button></td>
-                                            </tr>`;
-                            $('#tblbody').append(str);
-                        });
-                        updatePagination(response.totalPages, response.pageindex);
-                    } else {
-                        Swal.fire({
-                            title: "Thông báo lỗi",
-                            text: response.message,
-                            icon: "error"
-                        });
-                    }
-                }
-            });
-        }
+    Tongtientatca();
+});
 
-        function updatePagination(totalPages, currentPage) {
-            if (totalPages > 0) {
-                var str = `<nav aria-label="Page navigation example">
-                                    <ul class="pagination">`;
-                if (totalPages > 1) {
-                    if (currentPage > 1) {
-                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachphieuxuat(${currentPage - 1}, 10)">Previous</a></li>`;
-                    }
-                    for (let i = 1; i <= totalPages; i++) {
-                        if (currentPage === i) {
-                            str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
-                        } else {
-                            str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachphieuxuat(${i}, 10)">${i}</a></li>`;
-                        }
-                    }
-                    if (currentPage < totalPages) {
-                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachphieuxuat(${currentPage + 1}, 10)">Next</a></li>`;
-                    }
-                }
-                str += `</ul></nav>`;
-                $('#pagination').html(str);
+function danhsachphieuxuat(page, pagesize) {
+    $.ajax({
+        type: "POST",
+        url: "/Phieuxuatkho/Danhsachphieu",
+        data: { page: page, pagesize: pagesize },
+        success: function (response) {
+            if (response.success) {
+                // Lưu dữ liệu vào localStorage
+                localStorage.setItem('danhSachPhieuXuat', JSON.stringify(response.dsdm));
+                hienThiDanhSachPhieuXuat(response.dsdm);
+                updatePagination(response.totalPages, response.pageindex);
+            } else {
+                Swal.fire({
+                    title: "Thông báo lỗi",
+                    text: response.message,
+                    icon: "error"
+                });
             }
         }
+    });
+}
 
-        function formatCurrency(value) {
-            return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-        }
+function hienThiDanhSachPhieuXuat(danhSachPhieuXuat) {
+    $('#tblbody').empty();
+    $.each(danhSachPhieuXuat, function (index, value) {
+        var str = `<tr>
+                        <td>${value.ma_phieuxuatkho}</td>
+                        <td>${value.ma_khuvuc}</td>
+                        <td>${new Date(value.ngayxuat).toISOString().split('T')[0]}</td>
+                        <td>${formatCurrency(value.giamgia)}</td>
+                        <td>${formatCurrency(value.tienmat)}</td>
+                        <td>${formatCurrency(value.chuyenkhoan)}</td>
+                        <td>${formatCurrency(value.thanhtien)}</td>
+                        <td>${formatCurrency(value.tongtien)}</td>
+                        <td><button class="btn btn-danger" data-id='${value.ma_phieuxuatkho}' id="btnhttb">Xóa</button></td>
+                    </tr>`;
+        $('#tblbody').append(str);
+    });
+}
 
-        function Xoaphieuxuat(Ma_phieuxuatkho) {
-            $.ajax({
-                type: "POST",
-                url: "/Phieuxuatkho/Xoaphieuxuat",
-                data: { Ma_phieuxuatkho: Ma_phieuxuatkho },
-                success: function (response) {
-                    if (response.success) {
-                        Swal.fire({
-                            title: "Thành công",
-                            text: response.message,
-                            icon: "success"
-                        });
-                        danhsachphieuxuat(1, 10);
-                    } else {
-                        Swal.fire({
-                            title: "Thông báo lỗi",
-                            text: response.message,
-                            icon: "error"
-                        });
-                    }
+function filterData(searchTerm, startDate, endDate) {
+    var danhSachPhieuXuat = JSON.parse(localStorage.getItem('danhSachPhieuXuat'));
+    var filteredList = danhSachPhieuXuat.filter(function (item) {
+        var itemDate = new Date(item.ngayxuat);
+        var start = new Date(startDate);
+        var end = new Date(endDate);
+
+        // So sánh ngày mà không cần phần giờ
+        return (item.ma_phieuxuatkho.toLowerCase().includes(searchTerm) ||
+                item.ma_khuvuc.toLowerCase().includes(searchTerm)) &&
+                (!startDate || itemDate >= start) &&
+                (!endDate || itemDate <= end);
+    });
+
+    hienThiDanhSachPhieuXuat(filteredList);
+
+    // Tính tổng tiền sau khi lọc
+    var tongTienMat = 0;
+    var tongTienCK = 0;
+    var tongThanhTien = 0;
+    var tongTien = 0;
+
+    filteredList.forEach(function(item) {
+        tongTienMat += item.tienmat;
+        tongTienCK += item.chuyenkhoan;
+        tongThanhTien += item.thanhtien;
+        tongTien += item.tongtien;
+    });
+
+    // Cập nhật hiển thị tổng tiền
+    var html = `<tr>
+                    <th colspan="4">THÀNH TIỀN </th>
+                    <th>${formatCurrency(tongTienMat)}</th>
+                    <th>${formatCurrency(tongTienCK)}</th>
+                    <th>${formatCurrency(tongThanhTien)}</th>
+                    <th>${formatCurrency(tongTien)}</th>
+                </tr>`;
+    $('#tblfoot').html(html);
+}
+
+
+function updatePagination(totalPages, currentPage) {
+    if (totalPages > 0) {
+        var str = `<nav aria-label="Page navigation example">
+                        <ul class="pagination">`;
+        if (totalPages > 1) {
+            if (currentPage > 1) {
+                str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachphieuxuat(${currentPage - 1}, 10)">Previous</a></li>`;
+            }
+            for (let i = 1; i <= totalPages; i++) {
+                if (currentPage === i) {
+                    str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
+                } else {
+                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachphieuxuat(${i}, 10)">${i}</a></li>`;
                 }
-            });
+            }
+            if (currentPage < totalPages) {
+                str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachphieuxuat(${currentPage + 1}, 10)">Next</a></li>`;
+            }
         }
+        str += `</ul></nav>`;
+        $('#pagination').html(str);
+    }
+}
 
-        function Tongtientatca()
-        {
-            $.ajax({
-                type: "GET",
-                url: "/Phieuxuatkho/Tongtientatcapx",
-                success: function (response) {
-                    if (response.success) {
-                        $('#tblfoot').empty;
-                        var html=''
-                       html+=`<tr>
+function formatCurrency(value) {
+    return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+}
+
+function Xoaphieuxuat(Ma_phieuxuatkho) {
+    $.ajax({
+        type: "POST",
+        url: "/Phieuxuatkho/Xoaphieuxuat",
+        data: { Ma_phieuxuatkho: Ma_phieuxuatkho },
+        success: function (response) {
+            if (response.success) {
+                Swal.fire({
+                    title: "Thành công",
+                    text: response.message,
+                    icon: "success"
+                });
+                // Cập nhật danh sách từ localStorage sau khi xóa
+                var danhSachPhieuXuat = JSON.parse(localStorage.getItem('danhSachPhieuXuat'));
+                danhSachPhieuXuat = danhSachPhieuXuat.filter(item => item.ma_phieuxuatkho !== Ma_phieuxuatkho);
+                localStorage.setItem('danhSachPhieuXuat', JSON.stringify(danhSachPhieuXuat));
+                hienThiDanhSachPhieuXuat(danhSachPhieuXuat);
+                Tongtientatca();
+            } else {
+                Swal.fire({
+                    title: "Thông báo lỗi",
+                    text: response.message,
+                    icon: "error"
+                });
+            }
+        }
+    });
+}
+
+function Tongtientatca() {
+    $.ajax({
+        type: "GET",
+        url: "/Phieuxuatkho/Tongtientatcapx",
+        success: function (response) {
+            if (response.success) {
+                $('#tblfoot').empty();
+                var html = `<tr>
                                 <th colspan="4">THÀNH TIỀN </th>
-                               <th >${formatCurrency(response.tongtienmat)}</th>
-                                                          <th>${formatCurrency(response.tongtienck)}</th>
-                                                <th>${formatCurrency(response.tongthanhtien)}</th>
-                                        <th>${formatCurrency(response.tongtien)}</th>
-                                </tr>`;
-                        $('#tblfoot').html(html);
-
-                 
-                    } else {
-                        Swal.fire({
-                            title: "Thông báo lỗi",
-                            text: response.message,
-                            icon: "error"
-                        });
-                    }
-                }
-            });
+                                <th>${formatCurrency(response.tongtienmat)}</th>
+                                <th>${formatCurrency(response.tongtienck)}</th>
+                                <th>${formatCurrency(response.tongthanhtien)}</th>
+                                <th>${formatCurrency(response.tongtien)}</th>
+                            </tr>`;
+                $('#tblfoot').html(html);
+            } else {
+                Swal.fire({
+                    title: "Thông báo lỗi",
+                    text: response.message,
+                    icon: "error"
+                });
+            }
         }
+    });
+}
+
     </script>
 }
