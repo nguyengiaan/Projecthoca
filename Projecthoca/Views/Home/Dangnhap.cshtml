@@ -116,11 +116,11 @@
                     },
                     success: function (res) {
                         if (res.success) {
-                            window.location.href = '@Url.Action("Index", "Home", new { area = "" })';
+                            window.location.href = '@Url.Action("Hocau", "Home", new { area = "" })';
                         } else {
                             Swal.fire({
                                 title: "Error!",
-                                text: `${res.messeger}`,
+                                text: `${res.messeger}`,    
                                 icon: "error"
                             });
                         }

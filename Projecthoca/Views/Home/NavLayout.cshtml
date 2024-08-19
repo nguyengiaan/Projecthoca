@@ -18,6 +18,7 @@
         </div>
     </div>
 </div>
+
 <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
 
     <!-- Sidebar Toggle (Topbar) -->
@@ -50,7 +51,6 @@
                     </div>
                 </form>
             </div>
-
         </li>
 
         <!-- Nav Item - Alerts -->
@@ -67,19 +67,20 @@
                 <h6 class="dropdown-header">
                     Thông báo
                 </h6>
-  
-               
-               
+                <!-- Thông báo sẽ được hiển thị ở đây -->
                 <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
             </div>
         </li>
+
         <div class="topbar-divider d-none d-sm-block"></div>
+
+        <!-- Nav Item - User Information -->
         <li class="nav-item dropdown no-arrow">
-            <a class="nav-link dropdown-toggle" href="/Home/Index">
+            <a class="nav-link dropdown-toggle" href="/Home/Hocau">
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Trang chủ</span>
             </a>
         </li>
-        <!-- Nav Item - User Information -->
+
         <li class="nav-item dropdown no-arrow">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -95,19 +96,23 @@
                     Logout
                 </a>
             </div>
-
-
         </li>
-
     </ul>
 </nav>
+
 <script>
     $(document).ready(function () {
         setInterval(Hienthithongbao, 1000);
+        
+        // Sự kiện nhấn vào các mục trong dropdown
         $(document).on('click', '.dropdown-item', function (e) {
-            e.preventDefault();
             var Ma_thongbao = $(this).data('id');
-            Docthongbao(Ma_thongbao);
+
+            // Nếu mục nhấn có data-id (là thông báo), thì thực thi đọc thông báo
+            if (Ma_thongbao) {
+                e.preventDefault();
+                Docthongbao(Ma_thongbao);
+            }
         });
     });
 
@@ -132,12 +137,12 @@
                         html += '<div class="small text-gray-500">' + item.ngayDang + '</div>';
                         html += item.noiDung;
                         html += '</div>';
-                        html += '</div>'; // End of left-aligned content
+                        html += '</div>'; // Kết thúc phần nội dung căn trái
                         html += '<div class="form-check">';
                         html += `<input class="form-check-input" type="checkbox" value="${item.ma_thongbao}" id="check_${item.ma_thongbao}">`;
                         html += `<label class="form-check-label" for="check_${item.ma_thongbao}"></label>`;
                         html += '</div>';
-                        html += '</div>'; // End of dropdown-item
+                        html += '</div>'; // Kết thúc dropdown-item
                     });
                     $(".dropdown-list").html(html);
                 }
@@ -180,7 +185,4 @@
         max-height: 300px; /* Giới hạn chiều cao của nội dung dropdown */
         overflow-y: auto !important; /* Thêm thanh cuộn khi nội dung vượt quá chiều cao */
     }
-
-
-
 </style>
