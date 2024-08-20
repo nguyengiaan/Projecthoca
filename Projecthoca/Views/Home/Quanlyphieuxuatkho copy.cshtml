@@ -1,0 +1,159 @@
+﻿@{
+    Layout = "_Layout";
+}
+@model Projecthoca.Models.EnitityVM.DanhmucVM
+<!-- Modal cảnh báo xóa -->
+<div class="modal fade" id="Xoaphieuxuat" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Xác nhận xóa</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa phiếu xuất này không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Hủy</button>
+                <button type="button" class="btn btn-primary" id="Xacnhanxoa">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Danh sách Danh mục -->
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <div class="row">
+                <div class="col-md-10 col-12">
+                    <h4 class="m-0 font-weight-bold text-primary">Danh sách phiếu xuất kho</h4>
+                </div>
+            </div>
+        </div>
+       
+
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã phiếu xuất</th>
+                            <th>Bàn câu</th>
+                            <th>Ngày xuất</th>
+                            <th>Giảm giá</th>
+                            <th>Tiền mặt</th>
+                            <th>Chuyển khoản</th>
+                            <th>Thành tiền</th>
+                            <th>Tổng tiền</th>
+                            <th>Xóa</th>
+                        </tr>
+                    </thead>
+                    <tfoot id="tblfoot"></tfoot>
+                    <tbody id="tblbody"></tbody>
+                </table>
+                <div class="row">
+                    <div class="col-sm-12 col-md-5">
+                        <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+                            <nav aria-label="Page navigation example" id="pagination"></nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            danhsachphieuxuat(1, 10);
+            $('#dataTable').on('click', '#btnhttb', function () {
+                var Ma_phieuxuatkho = $(this).data('id');
+                $('#Xoaphieuxuat').modal('show');
+                $('#Xacnhanxoa').click(function () {
+                    Xoaphieuxuat(Ma_phieuxuatkho);
+                    $('#Xoaphieuxuat').modal('hide');
+                });
+            });
+            Tongtientatca();
+        });
+
+        function danhsachphieuxuat(page, pagesize) {
+            $.ajax({
+                type: "POST",
+                url: "/Phieuxuatkho/Danhsachphieu",
+                data: { page: page, pagesize: pagesize },
+                success: function (response) {
+                    $('#tblbody').empty();
+                    if (response.success) {
+                        $.each(response.dsdm, function (index, value) {
+                            var str = `<tr>
+                                <td>${value.ma_phieuxuatkho}</td>
+                                <td>${value.ma_khuvuc}</td>
+                                <td>${value.ngayxuat.split('T')[0]}</td>
+                                <td>${formatCurrency(value.giamgia)}</td>
+                                <td>${formatCurrency(value.tienmat)}</td>
+                                <td>${formatCurrency(value.chuyenkhoan)}</td>
+                                <td>${formatCurrency(value.thanhtien)}</td>
+                                <td>${formatCurrency(value.tongtien)}</td>
+                                <td><button class="btn btn-danger" data-id='${value.ma_phieuxuatkho}' id="btnhttb">Xóa</button></td>
+                            </tr>`;
+                            $('#tblbody').append(str);
+                        });
+                        updatePagination(response.totalPages, response.pageindex);
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                }
+            });
+        }
+
+        function updatePagination(totalPages, currentPage) {
+            if (totalPages > 0) {
+                var str = `<nav aria-label="Page navigation example">
+                    <ul class="pagination">`;
+                if (totalPages > 1) {
+                    if (currentPage > 1) {
+                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachphieuxuat(${currentPage - 1}, 10)">Previous</a></li>`;
+                    }
+                    for (let i = 1; i <= totalPages; i++) {
+                        if (currentPage === i) {
+                            str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
+                        } else {
+                            str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachphieuxuat(${i}, 10)">${i}</a></li>`;
+                        }
+                    }
+                    if (currentPage < totalPages) {
+                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachphieuxuat(${currentPage + 1}, 10)">Next</a></li>`;
+                    }
+                }
+                str += `</ul></nav>`;
+                $('#pagination').html(str);
+            }
+        }
+
+        function formatCurrency(value) {
+            return parseFloat(value).toLocaleString('vi-VN', {
+                style: 'currency',
+                currency: 'VND'
+            });
+        }
+
+        function Xoaphieuxuat(Ma_phieuxuatkho) {
+            // Code to handle deleting the item
+        }
+
+        function Tongtientatca() {
+            // Code to calculate total amount
+        }
+    </script>
+
+
+}
