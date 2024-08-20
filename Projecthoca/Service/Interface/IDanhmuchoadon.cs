@@ -22,5 +22,10 @@ namespace Projecthoca.Service.Interface
         public Task<HoadondanhmucVM> Laytongthangtoan(string KhuvucId);
 
         public Task<bool> Giamgia(GiamgiaVM giamgia);
+        // thêm danh mục hóa đơn theo list danh mục trong hóa đơn
+        public Task<bool> Themdanhmuchoadonlst(DanhmuchdVM danhmuchoadon);
+        // Cập nhật số lượng giá tiền danh mục hàng hóa
+        public Task<bool> Capnhatgiatien(int danhmuchanghoa,int soluong);
+
     }
 }

@@ -221,6 +221,48 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> Themdanhmuchdlst(DanhmuchdVM danhmuchoadon)
+        {
+            try
+            {
+                var data = await _dmhd.Themdanhmuchoadonlst(danhmuchoadon);
+                if (data)
+                {
+                    return Json(new { success = true, message = "Thêm danh mục hóa đơn thành công" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Thêm danh mục hóa đơn không thành công" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        // cập nhật số lượng hợp đồng
+
+        [HttpPost]
+        public async Task<IActionResult>Capnhatsoluonghd(int ma_danhmuchoadon,int soluong)
+        {
+            try
+            {
+                var data = await _dmhd.Capnhatgiatien(ma_danhmuchoadon,soluong);
+                if (data)
+                {
+                    return Json(new { success = true, message = "Cập nhật số lượng thành công" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Cập nhật số lượng thất bại" });
+                }
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
     }
    
 }

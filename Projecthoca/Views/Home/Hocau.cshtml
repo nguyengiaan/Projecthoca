@@ -129,55 +129,88 @@
     </div>
 </div>
 <!--Xem dịch vụ-->
-<div class="modal fade" id="Xemdichvu" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
-    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable" role="document">
+<div class="modal fade" id="Xemdichvu" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Xem các dịch vụ</h5>
-                <div>
-                    <button type="button" class="btn btn-info" id="Themthoigianbtn" data-toggle="modal"
-                        data-target="#Themthoigian">Thêm ca câu</button>
-                    <button type="button" class="btn btn-primary" id="Themdichvubtn" data-toggle="modal"
-                        data-target="#Themdichvu">Thêm dịch vụ</button>
-                    <button type="button" class="btn btn-success" id="Inhoadon">In hóa đơn</button>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <div class="d-flex flex-row">
+                    <button type="button" class="btn btn-info m-2" id="Themthoigianbtn" data-toggle="modal" data-target="#Themthoigian">Thêm ca câu</button>
+                    <!-- Di chuyển nút vào trong div -->
+                    <button type="button" class="btn btn-primary m-2" id="Themdichvubtn" data-toggle="modal" data-target="#Themdichvu">Thêm dịch vụ</button>
+                    <button type="button" class="btn btn-success m-2" id="Inhoadon">In hóa đơn</button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">  </button>
                 </div>
             </div>
             <div class="modal-body">
-                <div class="bill-container">
-                    <div class="customer-info">
-                        <h2>Thông tin khách hàng</h2>
-                        <div><span>Tên khu câu:</span><span class="value">Khu vực 7</span></div>
-                        <div><span>Tên khách hàng:</span><span class="value">Vũ Văn A</span></div>
-                        <div><span>Thời gian bắt đầu câu:</span><span class="value">23:08:00</span></div>
-                        <div><span>Thời gian câu:</span><span class="value">03:07:55</span></div>
-                    </div>
-                    <div class="bill-details">
-                        <table>
-                            <thead>
+                <div class="row">
+                    <!-- Danh sách danh mục và thông tin hóa đơn được đặt bên cạnh nhau -->
+                    <div class="col-md-6 d-none d-md-block" id="ds1">
+         
+                        <div class="p-1">
+                            <div class="input-group">
+                                <span class="input-group-text">Tìm kiếm</span>
+                                <input class="form-control w-5 h-5" aria-label="With textarea" id="Timkiem"/>
+                            </div>
+                        </div>
+                     
+                        <table class="table ">
+                            <thead style="border:1px solid black; background:lightblue;">
                                 <tr>
-
-                                    <th>Tên hàng</th>
+                                    <th>Mã danh mục</th>
+                                    <th>Tên danh mục</th>
+                                    <th>Giá</th>
                                     <th>ĐVT</th>
-                                    <th>SL</th>
-                                    <th>Đơn giá</th>
-                                    <th>Thành tiền</th>
-                                    <th>Xóa</th>
+                                    <th></th>
                                 </tr>
                             </thead>
-                            <tbody id="dsdv">
+                            <tbody id="danhmuc-list">
+                                <!-- Dữ liệu danh mục sẽ được thêm vào đây -->
                             </tbody>
                         </table>
                     </div>
 
-                    <div class="bill-total">
-                        <h2>Tổng thanh toán: <span>0</span></h2>
+                    <div class="col-md-6">
+                        <div class="bill-container">
+                            <div class="customer-info">
+                                <h2>Thông tin khách hàng</h2>
+                                <div><span>Tên khu câu:</span><span class="value">Khu vực 7</span></div>
+                                <div><span>Tên khách hàng:</span><span class="value">Vũ Văn A</span></div>
+                                <div><span>Thời gian bắt đầu câu:</span><span class="value">23:08:00</span></div>
+                                <div><span>Thời gian câu:</span><span class="value">03:07:55</span></div>
+                            </div>
+
+                            <div class="bill-details">
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Tên hàng</th>
+                                            <th>ĐVT</th>
+                                            <th>SL</th>
+                                            <th>Đơn giá</th>
+                                            <th>Thành tiền</th>
+                                            <th>Xóa</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dsdv">
+                                        <!-- Thông tin dịch vụ được thêm vào đây -->
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="bill-summary">
+                                <div class="bill-total">
+                                    <h2>Tổng thanh toán: <span id="tongthanhtoan-outside" style="color:orange;">0</span></h2>
+                                </div>
+                                <div class="Tienthoichokhach">
+                                    <h2>Tiền thối lại cho khách: <span id="tongthanhtoan-outside" style="color:red;">0</span></h2>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
-            </div>
+            <div class="modal-footer"></div>
         </div>
     </div>
 </div>
@@ -560,6 +593,11 @@
             font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 
         }
+
+        .bill-total
+        {
+
+        }
     </style>
 
 }
@@ -575,7 +613,7 @@
         var cashValue;
         var transferValue;
         var tongtiencuoicung;
-
+        var tienthua;
         document.addEventListener('DOMContentLoaded', function () {
             const animationPath = '../Admin_Style/img/animation.json';
             lottie.loadAnimation({
@@ -643,7 +681,7 @@
                 Danhsachkhuvuc();
                 setCurrentTime('#Thoigianbatdau');
                 setCurrentTime('#giocau');
-
+                Tinhtienthua();
             }, 1000);
             $("#submitkv").click(function () {
                 Themkhuvuc();
@@ -672,6 +710,7 @@
                 }).data("id", khuVucId);
             });
             $(document).on("contextmenu", ".Khuvuc", function (e) {
+        
                 e.preventDefault();
                 var khuVucId = $(this).data("id");
                 Kiemtrakv(khuVucId);
@@ -720,10 +759,12 @@
                 }
                 else if (action === "Themdichvu") {
 
-
+                    tienthua = 0;
+                    Tinhtienthua();
                     Xemkhkhuvuc(khuVucId);
                     Danhsachhddv(khuVucId);
                     $("#Xemdichvu").modal("show");
+
 
                 } else if (action === "Chuyenban") {
                     $("#Chuyenban").modal("show");
@@ -752,10 +793,35 @@
 
             });
             $(document).on("click", "#Inhoadon", function () {
-
+                $('#ds1').hide();
                 Kiemtrabamgioin(kvc);
 
             })
+            $(document).on('change', '#Timkiem', function () {
+                var Ma_mathang = $(this).val();
+                hienthihanghoa(Ma_mathang);
+            });
+            $(document).on("click", "#btnChondm", function () {
+                var data= $(this).data("id");
+                Themdichvuhd(data);
+
+            })
+            hienthihanghoa()
+            $(document).on('change', '#Soluong', function () {
+                var soluong = $(this).val();
+                var ma_danhmuchanghoa= $(this).data("id");
+                Capnhatsoluong(ma_danhmuchanghoa, soluong);
+            });
+            $(document).on('change', '#discount-input', function () {
+                Tinhtienthua();
+                Giamgia();
+            });
+            $(document).on('change', '#tienmat', function () {
+                Tinhtienthua();
+            });
+            $(document).on('change', '#chuyenkhoan', function () {
+                Tinhtienthua();
+            });
         });
         function formatCurrency1(value) {
             return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
@@ -1317,6 +1383,7 @@
                 success: function (response) {
 
                     if (response.success) {
+                        console.log("Mã danh mục", response.data)
                         $.each(response.data, function (index, value) {
                             var str = '';
                             var str = `  <option value="${value.ma_danhmuc}">${value.ten_danhmuc}</option>`
@@ -1377,6 +1444,7 @@
                 }
             });
         }
+        //danh sách hóa đơn dịch vụ
         function Danhsachhddv(khuVucId) {
             $.ajax({
                 type: "POST",
@@ -1393,7 +1461,7 @@
 
                                                       <td>${value.ten_danhmuc}</td>
                                                         <td>${value.dvt}</td>
-                                                        <td>${value.soluong}</td>
+                                                                                 <td><input class="form-control text-center" id="Soluong" type="number" value="${value.soluong}" data-id="${value.ma_danhmuchoadon}"></td>
                                                         <td>${formatCurrency(value.gia)}</td>
                                                       <td>${formatCurrency(value.thanhtien)}</td>
                                                        <td><button class="btn btn-danger" data-id="${value.ma_danhmuchoadon}" onclick="Xoadanhmuchoadon('${value.ma_danhmuchoadon}')" >Xóa</button></td>
@@ -1637,7 +1705,7 @@
                     if (response.success) {
                         tongtiencuoicung = response.data.tongthanhtoan;
                         $('.bill-total').empty();
-                        var str = `<h2>Tổng Tiền thanh toán: <span>${formatCurrency(response.data.tongthanhtoan)}</span></h2>`;
+                        var str = `<h6 class="fs-2">Tổng Tiền thanh toán: <span>${formatCurrency(response.data.tongthanhtoan)}</span></h6>`;
                         $('.bill-total').html(str);
 
                     } else {
@@ -1654,6 +1722,7 @@
                 }
             });
         }
+        // giảm giá tiền hàng hóa
         function Giamgia() {
             var formData = new FormData();
             var giamgia = $("#discount-input").val();
@@ -1690,15 +1759,16 @@
 
             $('#dsdv').append(totalStr);
         }
+        // bao gồm các button như giảm giá,tiền mặt và chuyển khoản
         function Cacbutton() {
             var totalStr = `
                 <tr>
                     <td colspan="6" style="text-align:right;">
                         <div class="d-flex align-items-center">
-                            <button class="btn btn-primary me-2" id="apply-discount-btn">
-                                <i class="bi bi-tag-fill"></i> Giảm giá
-                            </button>
-                                    <input type="text" class="form-control hide-when-print" style="max-width: 350px;" id="discount-input">
+                            <span >
+                                        <b> Giảm giá:&nbsp; </b>
+                            </span>
+                                    <input type="number" class="form-control hide-when-print" style="max-width: 350px;" id="discount-input">
                         </div>
                     </td>
                 </tr>
@@ -1864,6 +1934,7 @@
                 }
             });
         }
+        // in hóa đơn
         function Inhoadon() {
             var printContents = document.querySelector("#Xemdichvu .modal-body").innerHTML;
             var originalContents = document.body.innerHTML;
@@ -1882,7 +1953,14 @@
             printContents = printContents.replace(/<input[^>]*id="tienmat"[^>]*>/, `<span>${tienmat}</span>`);
             printContents = printContents.replace(/<input[^>]*id="chuyenkhoan"[^>]*>/, `<span>${chuyenkhoan}</span>`);
             printContents = printContents.replace(/<button[^>]*id="apply-discount-btn"[^>]*>[\s\S]*?<\/button>/gi, '<span><b>Giảm giá:</b> </span>');
+            printContents = printContents.replace(/<input[^>]*id="Soluong"[^>]*>/g, function (match) {
+                // Trích xuất giá trị "value" từ input
+                const valueMatch = match.match(/value="([^"]*)"/);
+                const soluong = valueMatch ? valueMatch[1] : '';
 
+                // Trả về thẻ <span> thay thế cho thẻ <input>
+                return `${soluong}`;
+            });
 
 
             // Loại bỏ cột "Xóa" từ nội dung cần in
@@ -1968,6 +2046,171 @@
             window.print();
             document.body.innerHTML = originalContents;
         }
+        // hàm lấy hàng hóa hiển thị trong hóa đơn
+        function hienthihanghoa(Ma_mathang) {
+       
+            $.ajax({
+                type: "POST",
+                url: "/Khuvuchoca/Danhmuchthd",
+
+                data: { Ma_mathang: Ma_mathang },
+                success:function(reponser)
+                {
+                    if (reponser.success) 
+                    { 
+                      
+                        console.log("data",reponser.data);
+                         var html = '';
+                        $('#danhmuc-list').empty();
+                        $.each(reponser.data, function (index, value) {
+                            var str = `<tr>
+                                                      <td>${value.ma_danhmuc}</td>
+                                                                <td>${value.ten_danhmuc}</td>
+                                                            
+                                                        <td>${formatCurrency(value.gia)}</td>
+                                                              <td>${formatCurrency(value.donvitinh)}</td>
+                                                                       <td><button class="btn btn-success" data-id="${value.ma_danhmuc}" id="btnChondm" >Chọn</button></td>
+                                                     </tr>`;
+                            html += str; // Thêm chuỗi vào biến html
+                        });
+                        $('#danhmuc-list').html(html);
+                    }
+                    else
+                    {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                }
+            })
+        }
+        // hàm lấy hàng hóa hiển thị trong hóa đơn
+        function Mathanghthd() {
+            $.ajax({
+                type: "GET",
+                url: "/Khuvuchoca/Mathanghthd",
+                processData: false,
+                contentType: false,
+                success: function (reponser) {
+                    if (reponser.success) {
+
+                        console.log("data mat hang", reponser.data);
+                        var html = '';
+                        $('#Ma_mathang').empty();
+                        $.each(reponser.data, function (index, value) {
+                            var str = `<option value="${value.ma_mathang}">${value.ten_mathang}</option>`;
+                            html += str; // Thêm chuỗi vào biến html
+                        });
+                        $('#Ma_mathang').html(html);
+                    }
+                    else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                }
+            })
+        }
+        // Hàm lấy thêm dịch vụ hóa đơn theo list
+        function Themdichvuhd(ma_danhmuc) {
+            console.log("Ma danh muc", ma_danhmuc);
+            var Ma_thuehoca = $("#Ma_thuehoca").val();
+            var formData = new FormData();
+            formData.append("Ma_nguoithue", Ma_thuehoca);
+            formData.append("Ma_danhmuc", ma_danhmuc);
+            formData.append("Ma_khuvuccau", kvc);
+            $.ajax({
+                url: "/Danhmuchoadon/Themdanhmuchdlst",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Thành công",
+                            text: response.message,
+                            icon: "success"
+                        });
+                 
+                        Danhsachhddv(kvc);
+                        $("#Themdichvu").modal("hide");
+                        $("#Xemdichvu").modal("show");
+                        $('#Timkiem').focus();
+                        form.reset();
+
+                    } else {
+                        Swal.fire({
+                            title: "Thất bại",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
+        // hàm cập nhật số lượng hàng hóa
+        function Capnhatsoluong(ma_danhmuchoadon,soluong )
+        {
+
+            $.ajax({
+                url: "/Danhmuchoadon/Capnhatsoluonghd",
+                type: "POST",
+                data: { ma_danhmuchoadon: ma_danhmuchoadon, soluong: soluong },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Thành công",
+                            text: response.message,
+                            icon: "success"
+                        });
+                        Danhsachhddv(kvc);
+                        form.reset();
+                    } else {
+                        Swal.fire({
+                            title: "Thất bại",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.hehe");
+                }
+            });
+        }
+        // hàm tính tiền cho khách 
+        function Tinhtienthua()
+        {
+            console.log("Tinhtienthua function called");
+            var html='';
+            var giamgia= $("#discount-input").val();
+            var tienmat = $("#tienmat").val();
+            var chuyenkhoan = $("#chuyenkhoan").val();
+            var tongtien = tongtienthanhtoan;
+            tienthua =tongtien- tienmat - giamgia- chuyenkhoan;
+            console.log("Tien thua",tienthua);
+            if (tienthua < 0)
+            {
+                html = `<h6 class="fs-2">Tiền khách thừa: <span class="text-danger">${formatCurrency(tienthua)}</span></h6>`;
+                $(".Tienthoichokhach").html(html);
+            }
+            else 
+            {
+                html = `<h6 class="fs-2">Tiền khách thiếu: <span class="text-danger">${formatCurrency(tienthua)}</span></h6>`;
+                $(".Tienthoichokhach").html(html);
+            }
+        }
+
     </script>
 
 }

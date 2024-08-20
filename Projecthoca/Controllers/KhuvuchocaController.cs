@@ -278,5 +278,48 @@ namespace Projecthoca.Controllers
             }
         }
 
+        // danh mục hiển thị trong hóa đơn
+        [HttpPost]
+        public async Task<IActionResult> Danhmuchthd(string Ma_mathang)
+        {
+            try
+            {
+                var data = await _kvc.Danhmuchthd(Ma_mathang);
+                if (data != null)
+                {
+                    return Json(new { success = true, data = data });
+                }
+                else
+                {
+                    return Json(new { success = false, messeger = "Hãy thêm danh mục" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        //mặt hàng hiển thị trong hóa đơn
+        [HttpGet]
+        public async Task<IActionResult> Mathanghthd()
+        {
+            try
+            {
+                var data = await _kvc.Mathanghthd();
+                if (data != null)
+                {
+                    return Json(new { success = true, data = data });
+                }
+                else
+                {
+                    return Json(new { success = false, messeger = "Hãy thêm mặt hàng" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }

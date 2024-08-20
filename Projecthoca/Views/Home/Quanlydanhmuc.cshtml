@@ -194,7 +194,7 @@
                         event.preventDefault();
                         Themmathang();
                     });
-                Laymathang();
+                      Laymathang();
                 });
                 function Themdanhmuc() {
                     var form = $("#formThemdanhmuc")[0];
@@ -247,12 +247,12 @@
                             if (response.success) {
                                 $.each(response.dsdm, function (index, value) {
                                     var str = `<tr>
-                                                                                                                        <td>${value.ma_danhmuc}</td>
+                                                                                <td>${value.ma_danhmuc}</td>
                                                                                         <td>${value.ten_danhmuc}</td>
                                                                                          <td>${formatCurrency(value.gia)}</td>
-                                                                                                          <td>${value.ma_mathang}</td>
+                                                                                    <td>${value.ma_mathang}</td>
                                                                                         <td>${value.donvitinh}</td>
-                                                                                      
+                     
                                                                                         <td><button class="btn btn-danger" data-id='${value.ma_danhmuc}' onclick="Xoadanhmuc('${value.ma_danhmuc}')">Xóa</button></td>
                                                                                          <td><button class="btn btn-warning" data-id='${value.ma_danhmuc}' onclick="LaydmID('${value.ma_danhmuc}')" >Sửa</button></td>
                                                                     </tr>`;

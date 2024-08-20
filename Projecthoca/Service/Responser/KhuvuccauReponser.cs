@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Projecthoca.Data;
 using Projecthoca.Models.Enitity;
 using Projecthoca.Models.EnitityVM;
@@ -10,10 +11,14 @@ namespace Projecthoca.Service.Responser
     public class KhuvuccauReponser : IKhuvuccau
     {
         private readonly MyDbcontext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public KhuvuccauReponser(MyDbcontext context)
+        public KhuvuccauReponser(MyDbcontext context, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
+            _userManager = userManager;
+            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<bool> Themkhuvuccau(KhuvuccauVM khuvuccau)
         {
@@ -374,6 +379,60 @@ namespace Projecthoca.Service.Responser
             }
 
         }
+        // danh mục hiển thị trong hóa đơn
 
+        public async Task<List<DanhmucVM>> Danhmuchthd(string ?Timkiem)
+        {
+
+            try
+            {
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                if (Timkiem == null)
+                {
+                    var data = await _context.Danhmuc.Where(x => x.Id == user.Id).Select(x => new DanhmucVM
+                    {
+                        Ma_danhmuc = x.Ma_danhmuc,
+                        Ten_danhmuc = x.Ten_danhmuc,
+                        Gia = x.Gia,
+                        Donvitinh = x.Donvitinh
+
+                    }).ToListAsync();
+                    return data;
+                }
+                else
+                {
+                    var data =await _context.Danhmuc.Where(x=>x.Ten_danhmuc.Contains(Timkiem) && x.Id ==user.Id).Select(x => new DanhmucVM
+                    {
+                        Ma_danhmuc = x.Ma_danhmuc,
+                        Ten_danhmuc = x.Ten_danhmuc,
+                        Gia = x.Gia,
+                        Donvitinh = x.Donvitinh
+                    }).ToListAsync();
+                    return data;
+                }
+            }catch(Exception ex)
+            {
+                return null;
+            }
+        }
+        //mặt hàng hiển thị trong hóa đơn
+
+        public async Task<List<MathangVM>> Mathanghthd()
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var data=await _context.Mathangs.Where(x=>x.Id== user.Id).Select(x => new MathangVM
+                {
+                    Ma_mathang = x.Ma_mathang,
+                    Ten_mathang = x.Ten_mathang
+                }).ToListAsync();
+                return data;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        }
     }
 }
