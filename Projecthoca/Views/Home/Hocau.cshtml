@@ -297,7 +297,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="bill-total">
+                    <div class="bill-total-kg">
                         <h2>Tổng Trọng Lượng Cá Câu Được: <span>11.4 kg</span></h2>
                     </div>
                 </div>
@@ -1330,13 +1330,13 @@
                     if (response.success) {
 
 
-                        $('.bill-total').empty();
+                        $('.bill-total-kg').empty();
 
 
-                        var str = `<h2>Tổng Trọng Lượng Cá Câu Được: <span>${response.data.sokg} kg</span></h2>`;
+                        var str = `<h2>Tổng Trọng Lượng Cá Câu Được: <span class="text-danger"> ${response.data.sokg} kg</span></h2>`;
                         // Thêm chuỗi vào biến html
 
-                        $('.bill-total').html(str); // Append tất cả HTML đã tạo vào #dsca
+                        $('.bill-total-kg').html(str); // Append tất cả HTML đã tạo vào #dsca
                     } else {
                         var html = `<h2>Tổng Trọng Lượng Cá Câu Được: <span>0 kg</span></h2>`;
                         $('.bill-total').html(str);
