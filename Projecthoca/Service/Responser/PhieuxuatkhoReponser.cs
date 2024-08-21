@@ -179,7 +179,7 @@ namespace Projecthoca.Service.Responser
                 data1.Ma_mathang = phieunhapkho.Ma_mathang;
                 data1.Gia = phieunhapkho.Dongia;
                 data1.Id = user.Id;
-                await _context.phieunhapkhos.AddAsync(data);
+                await _context.Phieunhapkhos.AddAsync(data);
                 await _context.Danhmuc.AddAsync(data1);
                 await _context.SaveChangesAsync();
                 return true;

@@ -672,6 +672,33 @@ namespace Projecthoca.Migrations
                     b.ToTable("Phieuxuatkho", (string)null);
                 });
 
+            modelBuilder.Entity("Projecthoca.Models.Enitity.Quanlyhanghoa", b =>
+                {
+                    b.Property<string>("Ma_sanpham")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<int>("Giaban")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Id")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Ten_donvitinh")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Ten_sanpham")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Ma_sanpham");
+
+                    b.HasIndex("Id");
+
+                    b.ToTable("Quanlyhanghoa", (string)null);
+                });
+
             modelBuilder.Entity("Projecthoca.Models.Enitity.Thongbao", b =>
                 {
                     b.Property<int>("Ma_thongbao")
@@ -996,6 +1023,17 @@ namespace Projecthoca.Migrations
                     b.Navigation("Nguoidung");
                 });
 
+            modelBuilder.Entity("Projecthoca.Models.Enitity.Quanlyhanghoa", b =>
+                {
+                    b.HasOne("Projecthoca.Models.Enitity.ApplicationUser", "Nguoidung")
+                        .WithMany("Quanlyhanghoas")
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Nguoidung");
+                });
+
             modelBuilder.Entity("Projecthoca.Models.Enitity.Thongbao", b =>
                 {
                     b.HasOne("Projecthoca.Models.Enitity.ApplicationUser", "ApplicationUser")
@@ -1040,6 +1078,8 @@ namespace Projecthoca.Migrations
                     b.Navigation("Hoccas");
 
                     b.Navigation("Mathangs");
+
+                    b.Navigation("Quanlyhanghoas");
 
                     b.Navigation("Thongbaos");
 

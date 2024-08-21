@@ -22,6 +22,8 @@ namespace Projecthoca.Models.Enitity
 
         public List<Phieunhapkho> phieunhapkhos { get; set; }
 
+        public List<Quanlyhanghoa> Quanlyhanghoas { get; set; }
+
         public List<Donvitinh> Donvitinhs { get; set; }
         public List<Mathang> Mathangs { get; set; }
         public ApplicationUser()
@@ -35,6 +37,7 @@ namespace Projecthoca.Models.Enitity
             phieunhapkhos = new List<Phieunhapkho>();
             Donvitinhs = new List<Donvitinh>();
             Mathangs = new List<Mathang>();
+            Quanlyhanghoas = new List<Quanlyhanghoa>();
         }
     }
 }

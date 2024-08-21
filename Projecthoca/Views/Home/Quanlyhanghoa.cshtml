@@ -1,0 +1,130 @@
+@{
+    Layout = "_Layout";
+}
+
+@model IEnumerable<Projecthoca.Models.EnitityVM.QuanlyhanghoaVM>
+
+<h2>Quản Lý Hàng Hóa</h2>
+
+@if (Model.Any())
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tên Sản Phẩm</th>
+                <th>Đơn Vị Tính</th>
+                <th>Giá Bán</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Ten_sanpham</td>
+                    <td>@item.Ten_donvitinh</td>
+                    <td>@item.Giaban</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Không có sản phẩm</p>
+}
+
+<h3>Thêm Sản Phẩm</h3>
+
+<form id="sanphamForm">
+    <div class="form-group">
+        <label for="Ten_sanpham">Tên Sản Phẩm:</label>
+        <input type="text" id="Ten_sanpham" name="Ten_sanpham" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label for="Ten_donvitinh">Đơn Vị Tính:</label>
+        <select id="Ten_donvitinh" name="Ten_donvitinh" class="form-control" required>
+            <option value="">Chọn đơn vị tính</option>
+            <!-- Options sẽ được thêm vào bằng AJAX -->
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="Giaban">Giá Bán:</label>
+        <input type="number" id="Giaban" name="Giaban" class="form-control" required />
+    </div>
+    <button type="submit" class="btn btn-primary" id="btnsubmitsp">Thêm Sản Phẩm</button>
+</form>
+
+
+<div id="result"></div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            // Gọi AJAX để lấy danh sách đơn vị tính
+            $.ajax({
+                type: "GET",
+                url: "/Danhmuc/Danhsachdvt",
+                success: function (response) {
+                    $('#Ten_donvitinh').empty(); // Đảm bảo ID khớp
+                    if (response.success) {
+                        $.each(response.data, function (index, value) {
+                            var str = `<option value="${value.ten_donvitinh}">${value.ten_donvitinh}</option>`;
+                            $('#Ten_donvitinh').append(str);
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        title: "Lỗi",
+                        text: "Đã xảy ra lỗi khi lấy danh sách đơn vị tính. Vui lòng thử lại.",
+                        icon: "error"
+                    });
+                }
+            });
+
+            // Xử lý gửi form
+
+            $(document).on('click', '#btnsubmitsp', function () {
+                event.preventDefault();
+                themhanghoa();
+            });
+        });
+        function themhanghoa() {
+             
+
+            var formData = new FormData();
+            formData.append("Ten_sanpham", $('#Ten_sanpham').val());
+            formData.append("Ten_donvitinh", $('#Ten_donvitinh').val());
+            formData.append("Giaban", $('#Giaban').val());
+
+            $.ajax({
+                type: 'POST',
+                url: "/Quanlyhanghoa/Create",
+                data: formData,
+                contentType: false,  // Không đặt loại nội dung, để cho trình duyệt tự động thiết lập
+                processData: false,  // Không xử lý dữ liệu thành chuỗi
+                success: function (response) {
+                    if (response.success) {
+                        $('#result').html('<p class="text-success">' + response.message + '</p>');
+                        location.reload(); // Tải lại trang để cập nhật dữ liệu
+                    } else {
+                        $('#result').html('<p class="text-danger">' + response.message + '</p>');
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(error);
+                    $('#result').html('<p class="text-danger">Đã xảy ra lỗi. Vui lòng thử lại.</p>');
+                }
+            });
+        }
+
+        
+    </script>
+}
