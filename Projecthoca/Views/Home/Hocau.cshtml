@@ -660,7 +660,7 @@
             selectbancau();
             Danhsachdv();
             Danhsachcahd();
-            $(document).on("click", "#Themthoigianbtn", function () {
+            $(document).on("click touchstart", "#Themthoigianbtn", function () {
 
 
                 $("#Xemdichvu").modal("hide");
@@ -692,26 +692,15 @@
                 $('#Xemca').modal('hide');
             });
             Danhsachhs();
-            $(document).on("click", ".chongoi", function () {
+            $(document).on("click touchstart", ".chongoi", function () {
                 var khuVucId_kv = $(this).attr("id");
-                console.log("khu vực câu nè ", khuVucId_kv);
+    
                 // Khởi tạo modal và hiển thị nó
                 $("#Themkhuvuchc").modal("show");
                 // Cập nhật giá trị của input ẩn
                 $("#Idkhuvuccau_kv").val(khuVucId_kv);
             });
-            $(document).on("touchstart", ".Khuvuc", function (e) {
-                e.preventDefault();
-                var khuVucId = $(this).data("id");
-                console.log("khu vực nè", khuVucId);
-                Kiemtrakv(khuVucId);
-                $("#contextMenu").css({
-                    display: "block",
-                    left: e.originalEvent.touches[0].pageX,
-                    top: e.originalEvent.touches[0].pageY
-                }).data("id", khuVucId);
-            });
-            $(document).on("contextmenu", ".Khuvuc", function (e) {
+            $(document).on("contextmenu touchstart", ".Khuvuc", function (e) {
         
                 e.preventDefault();
                 var khuVucId = $(this).data("id");
@@ -727,47 +716,39 @@
             $(document).click(function () {
                 $("#contextMenu").hide();
             });
-            $("#contextMenu a").click(function (e) {
+            $("#contextMenu a").on("click touchstart", function (e) {
                 e.preventDefault();
 
                 var action = $(this).attr("id");
                 var khuVucId = $("#contextMenu").data("id");
-                ;
+
                 if (action === "edit") {
                     // Handle edit action
-                    // Themkhachhang(khuVucId);
                     alert("Edit " + khuVucId);
                 } else if (action === "delete") {
                     alert("Delete " + khuVucId);
                 } else if (action === "Themkh") {
-
                     $("#Themkhachthuetill").modal("show");
                     $("#Ma_khuvuccau").val(khuVucId);
                 } else if (action === "Bamgio") {
-
                     Updatebamgio(khuVucId);
-
                 } else if (action === "dungtg") {
                     Dungthoigian(khuVucId);
                 } else if (action === "Xoakh") {
-                    $('#Xoabancaukh').modal('show')
+                    $('#Xoabancaukh').modal('show');
                 } else if (action === "Xoakhuvuc") {
-                    Xoakhuvuc(khuVucId)
+                    Xoakhuvuc(khuVucId);
                 } else if (action === "Xemchitietca") {
                     $("#Xemca").modal("show");
                     Xemkhkhuvuc(khuVucId);
-                    Danhsachca(khuVucId)
+                    Danhsachca(khuVucId);
                     Tongsokg(khuVucId);
-                }
-                else if (action === "Themdichvu") {
-
+                } else if (action === "Themdichvu") {
                     tienthua = 0;
                     Tinhtienthua();
                     Xemkhkhuvuc(khuVucId);
                     Danhsachhddv(khuVucId);
                     $("#Xemdichvu").modal("show");
-
-
                 } else if (action === "Chuyenban") {
                     $("#Chuyenban").modal("show");
                 }
@@ -777,24 +758,24 @@
             $(document).on("click", "#submitkt", function () {
                 Themkhachhang();
             });
-            $(document).on("click", "#submitca", function () {
+            $(document).on("click ", "#submitca", function () {
                 Themcane();
             });
             $(document).on("click", "#submitdv", function () {
                 Themdichvu();
             });
-            $(document).on("click", "#submittg", function () {
+            $(document).on("click ", "#submittg", function () {
                 Themthoigian();
             });
-            $(document).on("click", "#submitcbc", function () {
+            $(document).on("click ", "#submitcbc", function () {
                 Chuyenban();
             });
-            $(document).on("click", "#Xacnhanxoa", function () {
+            $(document).on("click ", "#Xacnhanxoa", function () {
                 $('#Xoabancaukh').modal('hide')
                 Xoakhachang(kvc);
 
             });
-            $(document).on("click", "#Inhoadon", function () {
+            $(document).on("click ", "#Inhoadon", function () {
                 $('#ds1').hide();
                 Kiemtrabamgioin(kvc);
 
@@ -988,7 +969,7 @@
             });
         }
         function Kiemtrakv(Ma_khuvuc) {
-            console.log("Ma_khuvuc:", Ma_khuvuc);
+            
             var formData = new FormData();
             formData.append("Ma_khuvuc", Ma_khuvuc);
 
@@ -1080,7 +1061,7 @@
                         submitButton.innerText = 'Dừng thời gian';
                         submitButton.id = 'dungtg';
                         document.getElementById('Bamgio').innerText = 'Dừng thời gian';
-                        console.log("Dừng thời gian");
+                     
                     } else {
                         var submitButton = document.getElementById('dungtg');
                         submitButton.innerText = 'Bấm giờ';
@@ -1288,9 +1269,9 @@
                 url: "/Chitietca/Danhsachca",
                 data: { khuvucId: khuvucId },
                 success: function (response) {
-                    console.log(response.dsdm);
+                   
                     if (response.success) {
-                        console.log(response.data);
+                   
                         var html = '';
                         $('#dsca').empty();
                         $.each(response.data, function (index, value) {
@@ -1385,7 +1366,7 @@
                 success: function (response) {
 
                     if (response.success) {
-                        console.log("Mã danh mục", response.data)
+               
                         $.each(response.data, function (index, value) {
                             var str = '';
                             var str = `  <option value="${value.ma_danhmuc}">${value.ten_danhmuc}</option>`
@@ -1453,7 +1434,7 @@
                 url: "/Danhmuchoadon/Dsdmhd",
                 data: { Ma_khuvuc: khuVucId },
                 success: function (response) {
-                    console.log(response.dsdm);
+                 
                     if (response.success) {
 
                         var html = '';
@@ -1523,7 +1504,7 @@
                 data: { khuvucId: khuvucId },
                 success: function (response) {
                     if (response.success) {
-                        console.log(response.data);
+                   
                         var html = `
                                         <tr>
                                             <td>Cá câu</td>
@@ -1551,7 +1532,7 @@
                 url: "/Danhmuchoadon/Danhsachca",
                 success: function (response) {
                     if (response.success) {
-                        console.log("response.data", response.data);
+                     
                         $.each(response.data, function (index, value) {
                             var str = '';
                             var str = `  <option value="${value.ma_giahoca}">${value.ca} giờ</option>`
@@ -1618,7 +1599,7 @@
                 success: function (response) {
                     if (response.success) {
                         var html = '';
-                        console.log(response.data);
+                        
                         $.each(response.data, function (index, value) {
                             var str = `<tr>
 
@@ -1680,7 +1661,7 @@
                 success: function (response) {
                     if (response.success) {
                         tongtienthanhtoan = response.tongthanhtoan;
-                        console.log("Tổng tiền  ", tongtienthanhtoan);
+                        
                         Laytongtt(khuVucId);
                         Giacutt(tongtienthanhtoan);
                         Cacbutton();
@@ -1738,7 +1719,7 @@
                 contentType: false,
                 success: function (response) {
                     if (response.success) {
-                        console.log("Thành công");
+            
                         Laytongtt(kvc);
 
                     }
@@ -2061,7 +2042,7 @@
                     if (reponser.success) 
                     { 
                       
-                        console.log("data",reponser.data);
+        
                          var html = '';
                         $('#danhmuc-list').empty();
                         $.each(reponser.data, function (index, value) {
@@ -2098,7 +2079,6 @@
                 success: function (reponser) {
                     if (reponser.success) {
 
-                        console.log("data mat hang", reponser.data);
                         var html = '';
                         $('#Ma_mathang').empty();
                         $.each(reponser.data, function (index, value) {
@@ -2119,7 +2099,7 @@
         }
         // Hàm lấy thêm dịch vụ hóa đơn theo list
         function Themdichvuhd(ma_danhmuc) {
-            console.log("Ma danh muc", ma_danhmuc);
+
             var Ma_thuehoca = $("#Ma_thuehoca").val();
             var formData = new FormData();
             formData.append("Ma_nguoithue", Ma_thuehoca);
@@ -2193,14 +2173,14 @@
         // hàm tính tiền cho khách 
         function Tinhtienthua()
         {
-            console.log("Tinhtienthua function called");
+
             var html='';
             var giamgia= $("#discount-input").val();
             var tienmat = $("#tienmat").val();
             var chuyenkhoan = $("#chuyenkhoan").val();
             var tongtien = tongtienthanhtoan;
             tienthua =tongtien- tienmat - giamgia- chuyenkhoan;
-            console.log("Tien thua",tienthua);
+     
             if (tienthua < 0)
             {
                 html = `<h6 class="fs-2">Tiền khách thừa: <span class="text-danger">${formatCurrency(tienthua)}</span></h6>`;
