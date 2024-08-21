@@ -57,7 +57,7 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var data = await _context.Danhmuc.Where(x => x.Mathang.Ten_mathang == "Dịch vụ" && x.Id == user.Id).Select(x => new DanhmucVM
+                var data = await _context.Danhmuc.Where(x => x.Id == user.Id).Select(x => new DanhmucVM
                 {
                     Ma_danhmuc = x.Ma_danhmuc,
                     Ten_danhmuc = x.Ten_danhmuc,
@@ -308,6 +308,59 @@ namespace Projecthoca.Service.Responser
                     return true;
                 }
                 return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        // thêm danh mục hóa đơn theo list danh mục trong hóa đơn
+
+        public async Task<bool> Themdanhmuchoadonlst(DanhmuchdVM danhmuchoadon)
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var danhmuc = await _context.Danhmuc.Where(x => x.Ma_danhmuc == danhmuchoadon.Ma_danhmuc).FirstOrDefaultAsync();
+                var kvc = await _context.Khuvuccau.Where(x => x.Ma_Khuvuccau == danhmuchoadon.Ma_khuvuccau).FirstOrDefaultAsync();
+                if (danhmuc == null)
+                {
+                    return false;
+                }
+                var _dmhd = new Danhmuchoadon();
+                _dmhd.Ma_thuehoca = danhmuchoadon.Ma_nguoithue;
+                _dmhd.Ma_danhmuc = danhmuchoadon.Ma_danhmuc;
+                _dmhd.Soluong = 1;
+                _dmhd.thanhtien = danhmuc.Gia * _dmhd.Soluong;
+                await _context.danhmuchoadons.AddAsync(_dmhd);
+                var _thongbao = new Thongbao();
+                _thongbao.NgayDang = DateTime.Now.ToString();
+                _thongbao.NoiDung = "Bạn đã thêm dịch vụ " + danhmuc.Ten_danhmuc + " vào hóa đơn" + " tại khu vực " + kvc.Ten_Khuvuccau;
+                _thongbao.Id = user.Id;
+                _thongbao.Trangthai = false;
+                await _context.Thongbaos.AddAsync(_thongbao);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> Capnhatgiatien(int danhmuchanghoa,int Soluong)
+        {
+            try
+            {
+                var data=await _context.danhmuchoadons.Where(x => x.Ma_danhmuchoadon == danhmuchanghoa).FirstOrDefaultAsync();
+                if(data == null )
+                {
+                    return false;
+                }
+                data.Soluong= Soluong;
+                data.thanhtien = data.thanhtien * Soluong;
+                await _context.SaveChangesAsync();
+                return true;
             }
             catch (Exception ex)
             {
