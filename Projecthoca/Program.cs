@@ -41,7 +41,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
             options.Cookie.Expiration = TimeSpan.FromDays(1);
             options.SlidingExpiration = true;
         });
-
+builder.Services.AddMemoryCache();
 builder.Services.AddScoped<INguoidung, NguoidungReponser>();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<IHoca, HocaReponser>();
