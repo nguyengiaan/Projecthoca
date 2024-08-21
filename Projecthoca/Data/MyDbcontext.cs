@@ -40,6 +40,8 @@ namespace Projecthoca.Data
         public DbSet<Mathang> Mathangs { get; set; }
 
         public DbSet<Donvitinh> Donvitinhs { get; set; }
+
+        public DbSet <Quanlyhanghoa> Quanlyhanghoas { get; set; }
         #endregion
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -168,6 +170,13 @@ namespace Projecthoca.Data
             modelBuilder.Entity<Donvitinh>().ToTable("Donvitinh").HasKey(x => x.Ma_donvitinh);
             modelBuilder.Entity<Donvitinh>().Property(e => e.Ten_donvitinh).HasMaxLength(100);
             modelBuilder.Entity<Donvitinh>().HasOne(x => x.Nguoidung).WithMany(x => x.Donvitinhs).HasForeignKey(x => x.Id);
+            //table Quanlyhanghoa
+            modelBuilder.Entity<Quanlyhanghoa>().ToTable("Quanlyhanghoa").HasKey(x => x.Ma_sanpham);
+            modelBuilder.Entity<Quanlyhanghoa>().Property(e => e.Ten_sanpham).HasMaxLength(100);
+            modelBuilder.Entity<Quanlyhanghoa>().Property(e => e.Ten_donvitinh).HasMaxLength(100);
+            modelBuilder.Entity<Quanlyhanghoa>().Property(e => e.Id).HasMaxLength(100);
+            modelBuilder.Entity<Quanlyhanghoa>().HasOne(x => x.Nguoidung).WithMany(x => x.Quanlyhanghoas).HasForeignKey(x => x.Id);
+
         }
 
     }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using Projecthoca.Data;
 using Projecthoca.Models.Enitity;
 using Projecthoca.Models.EnitityVM;
@@ -13,12 +14,14 @@ namespace Projecthoca.Service.Responser
         private readonly MyDbcontext _context;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IMemoryCache _cache;
 
-        public KhuvuccauReponser(MyDbcontext context, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor)
+        public KhuvuccauReponser(MyDbcontext context, UserManager<ApplicationUser> userManager, IHttpContextAccessor httpContextAccessor, IMemoryCache cache)
         {
             _context = context;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _cache= cache;
         }
         public async Task<bool> Themkhuvuccau(KhuvuccauVM khuvuccau)
         {
@@ -194,7 +197,9 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
+                
                 var data = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).FirstOrDefaultAsync();
+                
                 if (data != null)
                 {
                     data.trangthai = "Dabamgio";
@@ -247,6 +252,7 @@ namespace Projecthoca.Service.Responser
                     Ma_khuvuc = x.Ma_khuvuccau,
                     Trangthai = x.trangthai,
                 }).ToListAsync();
+     
                 return data;
             }
             catch (Exception ex)

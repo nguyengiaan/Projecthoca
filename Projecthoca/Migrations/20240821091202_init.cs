@@ -467,33 +467,33 @@ namespace Projecthoca.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
-            migrationBuilder.CreateTable(
-                name: "Danhmuchoadon",
-                columns: table => new
-                {
-                    Ma_danhmuchoadon = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Ma_thuehoca = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Soluong = table.Column<int>(type: "int", maxLength: 2147483647, nullable: false),
-                    Ma_danhmuc = table.Column<string>(type: "nvarchar(max)", maxLength: 2147483647, nullable: false),
-                    thanhtien = table.Column<int>(type: "int", maxLength: 2147483647, nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Danhmuchoadon", x => x.Ma_danhmuchoadon);
-                    table.ForeignKey(
-                        name: "FK_Danhmuchoadon_Danhmuc_Ma_danhmuc",
-                        column: x => x.Ma_danhmuc,
-                        principalTable: "Danhmuc",
-                        principalColumn: "Ma_danhmuc",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Danhmuchoadon_Thuehoca_Ma_thuehoca",
-                        column: x => x.Ma_thuehoca,
-                        principalTable: "Thuehoca",
-                        principalColumn: "Ma_thuehoca",
-                        onDelete: ReferentialAction.Cascade);
-                });
+          migrationBuilder.CreateTable(
+    name: "Danhmuchoadon",
+    columns: table => new
+    {
+        Ma_danhmuchoadon = table.Column<int>(type: "int", nullable: false)
+            .Annotation("SqlServer:Identity", "1, 1"),
+        Ma_thuehoca = table.Column<string>(type: "nvarchar(450)", nullable: false),
+        Soluong = table.Column<int>(type: "int", maxLength: 2147483647, nullable: false),
+        Ma_danhmuc = table.Column<string>(type: "nvarchar(450)", nullable: false), // Ensure this matches the type and length of Danhmuc.Ma_danhmuc
+        thanhtien = table.Column<int>(type: "int", maxLength: 2147483647, nullable: false)
+    },
+    constraints: table =>
+    {
+        table.PrimaryKey("PK_Danhmuchoadon", x => x.Ma_danhmuchoadon);
+        table.ForeignKey(
+            name: "FK_Danhmuchoadon_Danhmuc_Ma_danhmuc",
+            column: x => x.Ma_danhmuc,
+            principalTable: "Danhmuc",
+            principalColumn: "Ma_danhmuc",
+            onDelete: ReferentialAction.Cascade);
+        table.ForeignKey(
+            name: "FK_Danhmuchoadon_Thuehoca_Ma_thuehoca",
+            column: x => x.Ma_thuehoca,
+            principalTable: "Thuehoca",
+            principalColumn: "Ma_thuehoca",
+            onDelete: ReferentialAction.Cascade);
+    });
 
             migrationBuilder.CreateTable(
                 name: "Giachothuehc",
@@ -714,6 +714,7 @@ namespace Projecthoca.Migrations
                 table: "Tongsokg",
                 column: "Ma_thuehoca");
         }
+
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
