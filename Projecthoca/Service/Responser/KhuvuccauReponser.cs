@@ -197,13 +197,15 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                
+                var cacheKey = "Danhsachbamgio";
                 var data = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).FirstOrDefaultAsync();
                 
                 if (data != null)
                 {
                     data.trangthai = "Dabamgio";
                     await _context.SaveChangesAsync();
+            
+                    _cache.Set(cacheKey, data);
                     return true;
                 }
                 else
@@ -440,5 +442,6 @@ namespace Projecthoca.Service.Responser
                 return null;
             }
         }
+   
     }
 }

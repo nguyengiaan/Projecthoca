@@ -56,15 +56,7 @@ public class TimerBackgroundService : BackgroundService
                     _logger.LogError(ex, "Lỗi khi đếm thời gian.");
                 }
 
-                try
-                {
-                    // Thêm khoảng thời gian trễ 1 giây
-                    await Task.Delay(1000, stoppingToken);
-                }
-                catch (TaskCanceledException)
-                {
-                    // Bộ đếm thời gian đã bị hủy
-                }
+            
             }
         }
 
