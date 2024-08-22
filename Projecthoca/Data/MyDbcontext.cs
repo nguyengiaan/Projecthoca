@@ -27,8 +27,7 @@ namespace Projecthoca.Data
 
         public DbSet<Danhmuchoadon> danhmuchoadons { get; set; }
 
-
-   
+        public DbSet<Quanlyhanghoa> Quanlyhanghoa { get; set; }
 
         public DbSet<Giachothuehc> Giachothuehcs { get; set; }
 
@@ -36,7 +35,7 @@ namespace Projecthoca.Data
 
         public DbSet<Phieuxuatkho> Phieuxuatkhos { get; set; }
 
-        public DbSet<Phieunhapkho> phieunhapkhos { get; set; }
+        public DbSet<Phieunhapkho> Phieunhapkhos { get; set; }
 
         public DbSet<Mathang> Mathangs { get; set; }
 
@@ -48,6 +47,16 @@ namespace Projecthoca.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            // Table Qunanlyhanghoa
+             modelBuilder.Entity<Quanlyhanghoa>()
+                .ToTable("Quanlyhanghoa")
+                .HasKey(x => x.Ma_sanpham);
+
+            modelBuilder.Entity<Quanlyhanghoa>()
+                .HasOne(x => x.Nguoidung)
+                .WithMany(x=>x.Quanlyhanghoas)
+                .HasForeignKey(x => x.Id)
+                .OnDelete(DeleteBehavior.Restrict);
 
             // Table Hoca
             modelBuilder.Entity<Hoca>().ToTable("Hoca").HasKey(x => x.Ma_hoca);

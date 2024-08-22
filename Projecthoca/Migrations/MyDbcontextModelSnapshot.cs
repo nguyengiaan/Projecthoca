@@ -1029,7 +1029,8 @@ namespace Projecthoca.Migrations
                 {
                     b.HasOne("Projecthoca.Models.Enitity.ApplicationUser", "Nguoidung")
                         .WithMany("Quanlyhanghoas")
-                        .HasForeignKey("Id");
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Nguoidung");
                 });

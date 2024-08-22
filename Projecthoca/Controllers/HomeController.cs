@@ -7,6 +7,7 @@ using Projecthoca.Models.Enitity;
 using Projecthoca.Models.EnitityVM;
 using System.Diagnostics;
 
+
 namespace Projecthoca.Controllers
 {
     public class HomeController : Controller
@@ -16,7 +17,7 @@ namespace Projecthoca.Controllers
 
         public HomeController(MyDbcontext context, UserManager<ApplicationUser> userManager)
         {
-            _context=context;
+            _context = context;
             _userManager = userManager;
         }
 
@@ -35,8 +36,8 @@ namespace Projecthoca.Controllers
         public IActionResult Dangnhap()
         {
             return View();
-        } 
-        public async Task <IActionResult> Hocau()
+        }
+        public async Task<IActionResult> Hocau()
         {
             var userId = _userManager.GetUserId(User);
             var data = await _context.Hoca
@@ -44,12 +45,12 @@ namespace Projecthoca.Controllers
                           .Select(h => new HocaVM
                           {
                               Ten_hoca = h.Ten_hoca,
-                              Id= h.Id,
+                              Id = h.Id,
                               Kieuhoca = h.Kieuhoca,
                               Ma_hoca = h.Ma_hoca
                           })
                           .FirstOrDefaultAsync();
-  
+
 
             return View(data);
         }
@@ -83,6 +84,38 @@ namespace Projecthoca.Controllers
         {
             return View();
         }
+
+        // GET: Quanlyhanghoa
+public async Task<IActionResult> Quanlyhanghoa()
+{
+    try
+    {
+        // Lấy danh sách sản phẩm từ cơ sở dữ liệu
+        var products = await _context.Quanlyhanghoa.ToListAsync();
+        
+        // Chuyển đổi danh sách sản phẩm thành danh sách QuanlyhanghoaVM
+        var productVMs = products.Select(p => new QuanlyhanghoaVM
+        {
+            Ma_sanpham = p.Ma_sanpham,
+            Ten_sanpham = p.Ten_sanpham,
+            Ten_donvitinh = p.Ten_donvitinh,
+            Giaban = p.Giaban
+        }).ToList();
+        
+        if (productVMs == null)
+        {
+            return View();
+        }
+        return View(productVMs);
+    }
+    catch (Exception ex)
+    {
+        // Log the exception (ex)
+        // Example: _logger.LogError(ex, "An error occurred while retrieving products.");
+        return StatusCode(500, "Internal server error. Please try again later.");
+    }
+}
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

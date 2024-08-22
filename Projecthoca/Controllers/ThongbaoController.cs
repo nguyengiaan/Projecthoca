@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Projecthoca.Migrations;
+
 using Projecthoca.Service.Interface;
 
 namespace Projecthoca.Controllers

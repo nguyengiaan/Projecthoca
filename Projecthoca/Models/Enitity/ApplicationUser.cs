@@ -22,10 +22,10 @@ namespace Projecthoca.Models.Enitity
 
         public List<Phieunhapkho> phieunhapkhos { get; set; }
 
+        public List<Quanlyhanghoa> Quanlyhanghoas { get; set; }
+
         public List<Donvitinh> Donvitinhs { get; set; }
         public List<Mathang> Mathangs { get; set; }
-
-        public List<Quanlyhanghoa> Quanlyhanghoas { get; set; }
         public ApplicationUser()
         {
             Hoccas = new List<Hoca>();

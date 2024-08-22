@@ -1,0 +1,233 @@
+@{
+    Layout = "_Layout";
+}
+
+@model IEnumerable<Projecthoca.Models.EnitityVM.QuanlyhanghoaVM>
+
+<h2>Quản Lý Hàng Hóa</h2>
+
+@if (Model.Any())
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Tên Sản Phẩm</th>
+                <th>Đơn Vị Tính</th>
+                <th>Giá Bán</th>
+                <th>Hành Động</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Ten_sanpham</td>
+                    <td>@item.Ten_donvitinh</td>
+                    <td>@item.Giaban</td>
+                    <td>
+                        <button class="btn btn-danger btn-delete" data-id="@item.Ma_sanpham">Xóa</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Không có sản phẩm</p>
+}
+
+<!-- Button to trigger modal -->
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#sanphamModal">
+    Thêm Sản Phẩm
+</button>
+
+<!-- Modal for adding new product -->
+<div class="modal fade" id="sanphamModal" tabindex="-1" role="dialog" aria-labelledby="sanphamModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="sanphamModalLabel">Thêm Sản Phẩm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="sanphamForm">
+                    <div class="form-group">
+                        <label for="Ma_sanpham">Mã Sản Phẩm:</label>
+                        <input readonly type="text" id="Ma_sanpham" name="Ma_sanpham" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="Ten_sanpham">Tên Sản Phẩm:</label>
+                        <input type="text" id="Ten_sanpham" name="Ten_sanpham" class="form-control" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Ten_donvitinh">Đơn Vị Tính:</label>
+                        <select id="Ten_donvitinh" name="Ten_donvitinh" class="form-control" required>
+                            <option value="">Chọn đơn vị tính</option>
+                            <!-- Options will be dynamically populated via AJAX -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="Giaban">Giá Bán:</label>
+                        <input type="number" id="Giaban" name="Giaban" class="form-control" required />
+                    </div>
+                    <button type="submit" class="btn btn-primary" id="btnsubmitsp">Thêm Sản Phẩm</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="result"></div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js"></script>
+
+    <script>
+       $(document).ready(function () {
+    // Load units of measurement (đơn vị tính) using AJAX
+    $.ajax({
+        type: "GET",
+        url: "/Danhmuc/Danhsachdvt",
+        success: function (response) {
+            if (response.success) {
+                $('#Ten_donvitinh').empty().append('<option value="">Chọn đơn vị tính</option>');
+                $.each(response.data, function (index, value) {
+                    $('#Ten_donvitinh').append(`<option value="${value.ten_donvitinh}">${value.ten_donvitinh}</option>`);
+                });
+            } else {
+                Swal.fire({
+                    title: "Thông báo lỗi",
+                    text: response.message,
+                    icon: "error"
+                });
+            }
+        },
+        error: function () {
+            Swal.fire({
+                title: "Lỗi",
+                text: "Đã xảy ra lỗi khi lấy danh sách đơn vị tính. Vui lòng thử lại.",
+                icon: "error"
+            });
+        }
+    });
+
+    initializeProductCodeCounter();
+
+    // Variable to store temporary product code
+    var tempProductCode;
+
+    // Handle modal open event to generate product code
+    $('#sanphamModal').on('show.bs.modal', function () {
+        tempProductCode = generateProductCode();
+        $('#Ma_sanpham').val(tempProductCode);
+    });
+
+    // Handle form submission
+    $('#btnsubmitsp').on('click', function (event) {
+        event.preventDefault();
+        themhanghoa();
+    });
+
+    // Handle delete action
+    $(document).on('click', '.btn-delete', function () {
+        var maSanpham = $(this).data('id');
+        xoaSanpham(maSanpham);
+    });
+
+    
+
+    // Function to initialize or retrieve the product code counter from local storage
+    function initializeProductCodeCounter() {
+        if (localStorage.getItem('productCodeCounter') === null) {
+            // Initialize the counter if not already set
+            localStorage.setItem('productCodeCounter', '1');
+        }
+    }
+
+    // Function to generate product code
+    function generateProductCode() {
+        // Retrieve the current product code counter
+        var counter = parseInt(localStorage.getItem('productCodeCounter'), 10);
+
+        // Format the counter with leading zeros
+        var formattedCounter = counter.toString().padStart(4, '0');
+        return 'SP' + formattedCounter;
+    }
+
+    // Function to increment the product code counter
+    function incrementProductCodeCounter() {
+        var counter = parseInt(localStorage.getItem('productCodeCounter'), 10);
+        var newCounter = counter + 1;
+        localStorage.setItem('productCodeCounter', newCounter);
+    }
+
+    // Function to add new product
+    function themhanghoa() {
+        var formData = new FormData($('#sanphamForm')[0]);
+        $.ajax({
+            type: 'POST',
+            url: "/Quanlyhanghoa/Create",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (response.success) {
+                    incrementProductCodeCounter(); // Increment counter only on successful creation
+                    Swal.fire('Thành công!', response.message, 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Lỗi!', response.message, 'error');
+                }
+            },
+            error: function () {
+                Swal.fire('Lỗi!', 'Đã xảy ra lỗi. Vui lòng thử lại.', 'error');
+            }
+        });
+    }
+
+    // Function to delete product
+    function xoaSanpham(Ma_sanpham) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn muốn xóa?',
+            text: "Hành động này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Vâng, xóa nó!',
+            cancelButtonText: 'Hủy bỏ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+                    url: "/Quanlyhanghoa/Delete",
+                    data: { Ma_sanpham: Ma_sanpham },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Đã xóa!', response.message, 'success').then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Lỗi!', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Lỗi!', 'Đã xảy ra lỗi. Vui lòng thử lại.', 'error');
+                    }
+                });
+            }
+        });
+    }
+});
+
+    </script>
+}
