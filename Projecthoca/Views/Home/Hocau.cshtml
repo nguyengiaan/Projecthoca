@@ -74,7 +74,7 @@
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">Số lượng</label>
-                        <input type="number" class="form-control" id="Soluong">
+                        <input type="number" class="form-control" id="Soluonggio">
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">Trạng thái</label>
@@ -113,7 +113,7 @@
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">Số lượng</label>
-                        <input type="number" class="form-control" id="soluong" value="1">
+                        <input type="number" class="form-control" id="soluongdm" value="1">
                     </div>
 
                 </form>
@@ -320,7 +320,7 @@
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">Tên khách hàng</label>
-                        <input type="text" class="form-control" id="Tenkhachhang">
+                        <input type="text" class="form-control" id="Tenkhachhang" value="Khách lẻ">
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">Ngày câu</label>
@@ -1407,7 +1407,7 @@
             var form = $("#formthemdv")[0];
             var Ma_thuehoca = $("#Ma_thuehoca").val();
             var Ma_danhmuc = $("#Ma_danhmucdv").val();
-            var soluong = $("#soluong").val();
+            var soluong = $("#soluongdm").val();
             var formData = new FormData();
             formData.append("Ma_thuehoca", Ma_thuehoca);
             formData.append("Ma_danhmuc", Ma_danhmuc);
@@ -1516,6 +1516,7 @@
                 }
             });
         }
+        // hiển thị cá trong danh sách hóa đơn
         function Tongsokghd(khuvucId) {
             $.ajax({
                 type: "POST",
@@ -1528,8 +1529,8 @@
                                         <tr>
                                             <td>Cá câu</td>
                                             <td>Kí</td>
-                                            <td>${response.data.soluong}</td>
-                                             <td>${response.data.sokg} Kí</td>
+                                                    <td>${response.data.sokg}</td>
+                                                             <td>${formatCurrency(response.data.tongsotien)} </td>
                                             <td>${formatCurrency(response.data.tongsotien)}</td>
 
                                                     <td><button class="btn btn-danger" data-id="" onclick="" disabled>Xóa</button></td>
@@ -1572,7 +1573,7 @@
             var form = $("#formthemtg")[0];
             var Ma_thuehoca = $("#Ma_thuehoca").val();
             var Ma_giahoca = $("#Ma_giahoca").val();
-            var Soluong = $("#Soluong").val();
+            var Soluong = $("#Soluonggio").val();
             var Trangthai = $("#Trangthai").val();
             var formData = new FormData();
             formData.append("Ma_giahoca", Ma_giahoca);

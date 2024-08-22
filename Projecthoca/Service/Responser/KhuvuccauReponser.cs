@@ -197,15 +197,15 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var cacheKey = "Danhsachbamgio";
+                var cachekey = "Danhsachbamgiolist";
                 var data = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).FirstOrDefaultAsync();
-                
                 if (data != null)
                 {
                     data.trangthai = "Dabamgio";
                     await _context.SaveChangesAsync();
-            
-                    _cache.Set(cacheKey, data);
+                    var list = _cache.GetOrCreate(cachekey, entry => new List<BamgioVM>());
+                    list.Add(new BamgioVM { Ma_khuvuc = data.Ma_khuvuccau, Trangthai = data.trangthai });
+                    _cache.Set(cachekey, list);
                     return true;
                 }
                 else
@@ -249,12 +249,13 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
+            
                 var data = await _context.Thuehoca.Where(x => x.trangthai == "Dabamgio").Select(x => new BamgioVM
                 {
                     Ma_khuvuc = x.Ma_khuvuccau,
                     Trangthai = x.trangthai,
                 }).ToListAsync();
-     
+    
                 return data;
             }
             catch (Exception ex)
@@ -272,6 +273,11 @@ namespace Projecthoca.Service.Responser
                 {
                     data.trangthai = "Dungthoigian";
                     await _context.SaveChangesAsync();
+                    if(_cache.TryGetValue("Danhsachbamgiolist",out List<BamgioVM>list))
+                    {
+                        var updatedList = list.Where(a => a.Ma_khuvuc != data.Ma_khuvuccau).ToList();
+                        _cache.Set("Danhsachbamgiolist", updatedList);
+                    }
                     return true;
                 }
                 else

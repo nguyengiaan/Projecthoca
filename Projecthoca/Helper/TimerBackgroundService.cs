@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Projecthoca.Helper;
+using Projecthoca.Models.EnitityVM;
 using Projecthoca.Service.Interface;
 using System;
 using System.Linq;
@@ -13,13 +15,15 @@ public class TimerBackgroundService : BackgroundService
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<TimerBackgroundService> _logger;
     private CancellationTokenSource _timerCancellationTokenSource;
-
-    public TimerBackgroundService(IHubContext<Timehub> hubContext, IServiceScopeFactory scopeFactory, ILogger<TimerBackgroundService> logger)
+    private readonly IMemoryCache _cache;
+   
+    public TimerBackgroundService(IHubContext<Timehub> hubContext, IServiceScopeFactory scopeFactory, ILogger<TimerBackgroundService> logger, IMemoryCache cache)
     {
         _hubContext = hubContext;
         _scopeFactory = scopeFactory;
         _logger = logger;
         _timerCancellationTokenSource = new CancellationTokenSource();
+        _cache = cache;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -32,23 +36,19 @@ public class TimerBackgroundService : BackgroundService
 
         using (var scope = _scopeFactory.CreateScope())
         {
+            var cacheKey = "Danhsachbamgiolist";
             var _kvc = scope.ServiceProvider.GetRequiredService<IKhuvuccau>();
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
-                    var data = await _kvc.Danhsachbamgio();
-                    if (data != null && data.Count > 0)
+                    if (_cache.TryGetValue(cacheKey, out  List<BamgioVM> list))
                     {
-                        await Parallel.ForEachAsync(data, stoppingToken, async (a, token) =>
+                        foreach (var item in list)
                         {
-                            await _kvc.Demthoigian(a.Ma_khuvuc);
-                        });
-                    }
-                    else
-                    {
-                        StopTimer();
+                            await _kvc.Demthoigian(item.Ma_khuvuc);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -56,8 +56,10 @@ public class TimerBackgroundService : BackgroundService
                     _logger.LogError(ex, "Lỗi khi đếm thời gian.");
                 }
 
-            
+                // Thêm một delay để giảm tải CPU và tránh vòng lặp vô hạn nhanh chóng
+                await Task.Delay(1000, stoppingToken);
             }
+
         }
 
         _logger.LogInformation("Dịch vụ nền đã dừng.");

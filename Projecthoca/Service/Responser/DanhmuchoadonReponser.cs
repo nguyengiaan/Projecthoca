@@ -353,12 +353,13 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var data=await _context.danhmuchoadons.Where(x => x.Ma_danhmuchoadon == danhmuchanghoa).FirstOrDefaultAsync();
-                if(data == null )
+                var dm = await _context.Danhmuc.Where(x => x.Ma_danhmuc == data.Ma_danhmuc).FirstOrDefaultAsync();
+                if (data == null )
                 {
                     return false;
                 }
                 data.Soluong= Soluong;
-                data.thanhtien = data.thanhtien * Soluong;
+                data.thanhtien = dm.Gia * Soluong;
                 await _context.SaveChangesAsync();
                 return true;
             }
