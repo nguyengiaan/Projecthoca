@@ -13,7 +13,7 @@ namespace Projecthoca.Service.Interface
         public Task<bool> Demthoigian(string Ma_khuvuc);
         public Task<bool> UpdateBamgio(string Ma_khuvuc);
         public Task<bool> KiemtraBamgio(string Ma_khuvuc);
-        public Task<List<BamgioVM>> Danhsachbamgio();
+        public Task<bool> Danhsachbamgio();
         public Task<bool> Dadungtg(string Ma_khuvuc);
         public Task<bool> Deletekvc(string Ma_khuvuc);
         public Task<bool> Xoakhachthue(string Ma_khuvuc);

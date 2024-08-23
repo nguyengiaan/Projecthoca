@@ -1,0 +1,62 @@
+﻿﻿@{
+    Layout = "_Layout";
+}
+@model Projecthoca.Models.EnitityVM.DanhmucVM
+<!-- Danh sách Danh mục-->
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3  ">
+            <div class="row">
+                <div class="col-md-10 col-12">
+                    <h4 class="m-0 font-weight-bold text-primary">Danh sách Danh mục</h4>
+                </div>
+                <div class="col-md-2 col-12">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#Themdanhmuc"> <span class="fs-20">Thêm danh mục</span> </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã danh mục</th>
+                            <th>Tên danh mục</th>
+                            <th>Giá</th>
+                            <th>Miêu tả</th>
+                            <th>Đơn vị tính</th>
+
+                            <th>Xóa</th>
+                            <th>Sửa</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Mã danh mục</th>
+                            <th>Tên danh mục</th>
+                            <th>Giá</th>
+                            <th>Miêu tả</th>
+                            <th>Đơn vị tính</th>
+                            <th>Xóa</th>
+                            <th>Sửa</th>
+                        </tr>
+                    </tfoot>
+                    <tbody id="tblbody">
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-sm-12 col-md-5">
+                        <div class="col-sm-12 col-md-7">
+                            <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+                                <nav aria-label="Page navigation example" id="pagination">
+
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @section Scripts {
+
+        }
