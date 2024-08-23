@@ -74,7 +74,7 @@
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">Số lượng</label>
-                        <input type="number" class="form-control" id="Soluonggio">
+                        <input type="number" class="form-control" id="Soluonggio" value="1">
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">Trạng thái</label>
@@ -107,8 +107,8 @@
                         <input type="hidden" class="form-control" id="Ma_danhmuchoadon" value="">
                     </div>
                     <div class="form-group">
-                        <label class="col-form-label">Tên danh mục</label>
-                        <select id="Ma_danhmucdv" class="form-control">
+                     
+                        <select id="Ma_danhmucdv" class="mw-100" >
                         </select>
                     </div>
                     <div class="form-group">
@@ -481,9 +481,33 @@
     <link rel="stylesheet" href="~/css/hoca.css">
     <link rel="stylesheet" href="~/css/Formchitietcau.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js"></script>
+    <link href="~/Content/css/select2.css" rel="stylesheet" />
+    <link href="~/Content/css/select2.min.css" rel="stylesheet" />
+    <script src="~/Scripts/select2.js"></script>
+    <script src="~/Scripts/select2.min.js"></script>
     <style>
-     
+    /* Kích thước mặc định cho màn hình lớn */
+.select2-container--default .select2-selection--single {
+    height: 38px;
+    width: 446px;
+}
+
+/* Điều chỉnh chiều cao của phần tử input trong Select2 */
+.select2-container--default .select2-selection--single .select2-selection__rendered {
+    line-height: 50px;
+
+
+}
+
+/* Điều chỉnh chiều cao của phần tử dropdown */
+.select2-container--default .select2-results>.select2-results__options {
+    max-height: 200px;
+    max-width: 440px;
+}
+
+
+
+
 
         .chongoi {
             cursor: pointer;
@@ -621,16 +645,17 @@
             .chosen-container .chosen-results li {
                 font-size: 16px; /* Điều chỉnh font-size theo ý muốn */
             }
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css" rel="stylesheet" / >
+    
     </style>
 
 }
 @section Scripts {
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/6.0.1/signalr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lottie-web/5.9.6/lottie.min.js"></script>
-   
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+  
+
     <script>
         var kvc;
         var tongtienthanhtoan = 0;
@@ -680,9 +705,13 @@
         });
         //--------------------------------------------------------------------------
         $(document).ready(function () {
+            $('#Ma_danhmucdv').select2({
+                placeholder: "Chọn danh mục",
+                 allowClear: true,
+                dropdownParent: $('#Themdichvu')
+            });
             selectbancau();
             Danhsachdv();
-            $('#Ma_danhmucdv').chosen();
             Danhsachcahd();
             $(document).on("click", "#Themthoigianbtn", function () {
                 $("#Xemdichvu").modal("hide");
@@ -712,7 +741,7 @@
                 $('#Xemca').modal('hide');
             });
             Danhsachhs();
-            $(document).on("click touchstart", ".chongoi", function () {
+            $(document).on("click", ".chongoi", function () {
                 var khuVucId_kv = $(this).attr("id");
     
                 // Khởi tạo modal và hiển thị nó
@@ -721,16 +750,22 @@
                 $("#Idkhuvuccau_kv").val(khuVucId_kv);
             });
             $(document).on("contextmenu touchstart", ".Khuvuc", function (e) {
-        
                 e.preventDefault();
+
                 var khuVucId = $(this).data("id");
                 Kiemtrakv(khuVucId);
                 Kiemtrabamgio(khuVucId);
                 kvc = khuVucId;
+
+                // Tính toán tọa độ chính xác
+                var x = e.pageX || e.originalEvent.touches[0].pageX;
+                var y = e.pageY || e.originalEvent.touches[0].pageY;
+
+                // Hiển thị menu ngữ cảnh
                 $("#contextMenu").css({
                     display: "block",
-                    left: e.pageX,
-                    top: e.pageY
+                    left: x,
+                    top: y
                 }).data("id", khuVucId);
             });
             $(document).click(function () {
@@ -1388,10 +1423,10 @@
                         console.log(response.data);
                         $.each(response.data, function (index, value) {
                             var str = '';
-                            var str = `  <option value="${value.ma_danhmuc}">${value.ten_danhmuc}</option>`
+                            var str = `  <option value="${value.ma_danhmuc}" >${value.ten_danhmuc}</option>`
 
                             $('#Ma_danhmucdv').append(str);
-                            $('#Ma_danhmucdv').trigger("chosen:updated");
+                            $('#Ma_danhmucdv').trigger('change');;
                         });
                     } else {
                         Swal.fire({
@@ -1463,7 +1498,7 @@
 
                                                       <td>${value.ten_danhmuc}</td>
                                                         <td>${value.dvt}</td>
-                                                                                 <td><input class="form-control text-center" id="Soluong" type="number" value="${value.soluong}" data-id="${value.ma_danhmuchoadon}"></td>
+                                                                                         <td><input class="form-control text-center form-control-sm" id="Soluong" type="number" value="${value.soluong}" data-id="${value.ma_danhmuchoadon}"></td>
                                                         <td>${formatCurrency(value.gia)}</td>
                                                       <td>${formatCurrency(value.thanhtien)}</td>
                                                        <td><button class="btn btn-danger" data-id="${value.ma_danhmuchoadon}" onclick="Xoadanhmuchoadon('${value.ma_danhmuchoadon}')" >Xóa</button></td>
