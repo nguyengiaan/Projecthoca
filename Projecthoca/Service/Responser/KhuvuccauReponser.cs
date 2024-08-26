@@ -203,9 +203,7 @@ namespace Projecthoca.Service.Responser
                 {
                     data.trangthai = "Dabamgio";
                     await _context.SaveChangesAsync();
-                    var list = _cache.GetOrCreate(cachekey, entry => new List<BamgioVM>());
-                    list.Add(new BamgioVM { Ma_khuvuc = data.Ma_khuvuccau, Trangthai = data.trangthai });
-                    _cache.Set(cachekey, list);
+                    await Danhsachbamgio();
                     return true;
                 }
                 else
@@ -245,22 +243,18 @@ namespace Projecthoca.Service.Responser
             }
         }
 
-        public async Task<List<BamgioVM>> Danhsachbamgio()
+        public async Task<bool> Danhsachbamgio()
         {
             try
             {
-            
-                var data = await _context.Thuehoca.Where(x => x.trangthai == "Dabamgio").Select(x => new BamgioVM
-                {
-                    Ma_khuvuc = x.Ma_khuvuccau,
-                    Trangthai = x.trangthai,
-                }).ToListAsync();
-    
-                return data;
+                var _key= "Danhsachbamgiolist_1";
+                var data = await _context.Thuehoca.Where(x => x.trangthai == "Dabamgio").ToListAsync();
+                _cache.Set(_key, data);
+                return true ;
             }
             catch (Exception ex)
             {
-                return null;
+                return false;
             }
         }
 
@@ -273,11 +267,7 @@ namespace Projecthoca.Service.Responser
                 {
                     data.trangthai = "Dungthoigian";
                     await _context.SaveChangesAsync();
-                    if(_cache.TryGetValue("Danhsachbamgiolist",out List<BamgioVM>list))
-                    {
-                        var updatedList = list.Where(a => a.Ma_khuvuc != data.Ma_khuvuccau).ToList();
-                        _cache.Set("Danhsachbamgiolist", updatedList);
-                    }
+                    await Danhsachbamgio();
                     return true;
                 }
                 else
@@ -325,6 +315,7 @@ namespace Projecthoca.Service.Responser
                     _context.Thuehoca.Remove(data);
                     data1.Trangthai = "Chuacokhach";
                     _context.SaveChanges();
+                    await Danhsachbamgio();
                     return true;
                 }
                 else
@@ -380,6 +371,7 @@ namespace Projecthoca.Service.Responser
                     kvcu.Trangthai = "Chuacokhach";
                     data.Ma_khuvuccau = chuyenban.Ma_khuvucmoi;
                     await _context.SaveChangesAsync();
+                    await Danhsachbamgio();
                     return true;
                 }
                 else

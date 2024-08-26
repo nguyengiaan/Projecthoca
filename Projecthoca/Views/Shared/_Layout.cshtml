@@ -16,12 +16,13 @@
     <link href="~/Admin_Style/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
           rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/css/select2.min.css" rel="stylesheet" />
+
   
     <!-- Include jQuery -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0/dist/js/select2.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js"></script>
+
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.min.css">
     <!-- Custom styles for this template-->
@@ -99,11 +100,11 @@
                 <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseReport"
                    aria-expanded="true" aria-controls="collapseReport">
                     <i class="fas fa-bullhorn"></i>
-                    <span>Báo cáo</span>
+                    <span>Quản lý phiếu</span>
                 </a>
                 <div id="collapseReport" class="collapse" aria-labelledby="headingReport" data-parent="#accordionSidebar">
                     <div class="bg-white py-2 collapse-inner rounded">
-                        <h6 class="collapse-header">Báo cáo</h6>
+                        <h6 class="collapse-header">Nhập và xuất</h6>
                         <a class="collapse-item" href="/Home/Quanlyphieuxuatkho">Quản lý phiếu xuất kho</a>
                         <a class="collapse-item" href="/Home/Quanlynhapkho">Quản lý phiếu nhập kho</a>
                     </div>
@@ -121,6 +122,21 @@
                         <a class="collapse-item" href="/Home/Quanlydonvitinh">Cài đặt đơn vị tính</a>
                         <a class="collapse-item" href="/Home/Quanlymathang">Cài đặt mặt hàng</a>
                         @* <a class="collapse-item" href="/Home/Quanlyhanghoa">Cài đặt sản phẩm</a> *@
+                    </div>
+                </div>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapsebaocao"
+                   aria-expanded="true" aria-controls="collapsebaocao">
+                    <i class="fas fa-clipboard-list"></i>
+                    <span>Báo cáo</span>
+                </a>
+                <div id="collapsebaocao" class="collapse" aria-labelledby="collapsebaocao" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <h6 class="collapse-header">Báo cáo</h6>
+                        <a class="collapse-item" href="/Home/Baocaoxuathang">Báo cáo phiếu nhập</a>
+                        <a class="collapse-item" href="/Home/Quanlymathang">Báo cáo phiếu xuất</a>
+                        <a class="collapse-item" href="/Home/Quanlyhanghoa">Tồn kho</a>
                     </div>
                 </div>
             </li>
