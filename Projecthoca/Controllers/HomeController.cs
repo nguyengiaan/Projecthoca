@@ -96,6 +96,7 @@ public async Task<IActionResult> Quanlyhanghoa()
         // Chuyển đổi danh sách sản phẩm thành danh sách QuanlyhanghoaVM
         var productVMs = products.Select(p => new QuanlyhanghoaVM
         {
+            Ma_sanpham = p.Ma_sanpham,
             Ten_sanpham = p.Ten_sanpham,
             Ten_donvitinh = p.Ten_donvitinh,
             Giaban = p.Giaban

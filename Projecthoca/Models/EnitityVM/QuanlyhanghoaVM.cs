@@ -8,6 +8,8 @@ namespace Projecthoca.Models.EnitityVM
 {
 public class QuanlyhanghoaVM
     {
+         [Required(ErrorMessage = "Mã sản phẩm là bắt buộc.")]
+        public string Ma_sanpham { get; set; }
         [Required(ErrorMessage = "Tên sản phẩm là bắt buộc.")]
         public string Ten_sanpham { get; set; }
 

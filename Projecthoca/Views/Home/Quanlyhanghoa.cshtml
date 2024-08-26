@@ -14,6 +14,7 @@
                 <th>Tên Sản Phẩm</th>
                 <th>Đơn Vị Tính</th>
                 <th>Giá Bán</th>
+                <th>Hành Động</th>
             </tr>
         </thead>
         <tbody>
@@ -23,6 +24,9 @@
                     <td>@item.Ten_sanpham</td>
                     <td>@item.Ten_donvitinh</td>
                     <td>@item.Giaban</td>
+                    <td>
+                        <button class="btn btn-danger btn-delete" data-id="@item.Ma_sanpham">Xóa</button>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -38,8 +42,9 @@ else
     Thêm Sản Phẩm
 </button>
 
-<!-- Modal -->
-<div class="modal fade" id="sanphamModal" tabindex="-1" role="dialog" aria-labelledby="sanphamModalLabel" aria-hidden="true">
+<!-- Modal for adding new product -->
+<div class="modal fade" id="sanphamModal" tabindex="-1" role="dialog" aria-labelledby="sanphamModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -51,14 +56,19 @@ else
             <div class="modal-body">
                 <form id="sanphamForm">
                     <div class="form-group">
+                        <label for="Ma_sanpham">Mã Sản Phẩm:</label>
+                        <input readonly type="text" id="Ma_sanpham" name="Ma_sanpham" class="form-control" required />
+                    </div>
+                    <div class="form-group">
                         <label for="Ten_sanpham">Tên Sản Phẩm:</label>
                         <input type="text" id="Ten_sanpham" name="Ten_sanpham" class="form-control" required />
                     </div>
+
                     <div class="form-group">
                         <label for="Ten_donvitinh">Đơn Vị Tính:</label>
                         <select id="Ten_donvitinh" name="Ten_donvitinh" class="form-control" required>
                             <option value="">Chọn đơn vị tính</option>
-                            <!-- Options sẽ được thêm vào bằng AJAX -->
+                            <!-- Options will be dynamically populated via AJAX -->
                         </select>
                     </div>
                     <div class="form-group">
@@ -78,70 +88,146 @@ else
 <div id="result"></div>
 
 @section Scripts {
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.12.4/dist/sweetalert2.all.min.js"></script>
+
     <script>
-        $(document).ready(function () {
-            // Gọi AJAX để lấy danh sách đơn vị tính
-            $.ajax({
-                type: "GET",
-                url: "/Danhmuc/Danhsachdvt",
-                success: function (response) {
-                    $('#Ten_donvitinh').empty(); // Đảm bảo ID khớp
-                    if (response.success) {
-                        $.each(response.data, function (index, value) {
-                            var str = `<option value="${value.ten_donvitinh}">${value.ten_donvitinh}</option>`;
-                            $('#Ten_donvitinh').append(str);
-                        });
-                    } else {
-                        Swal.fire({
-                            title: "Thông báo lỗi",
-                            text: response.message,
-                            icon: "error"
-                        });
-                    }
-                },
-                error: function (xhr, status, error) {
-                    Swal.fire({
-                        title: "Lỗi",
-                        text: "Đã xảy ra lỗi khi lấy danh sách đơn vị tính. Vui lòng thử lại.",
-                        icon: "error"
-                    });
-                }
-            });
-
-            // Xử lý gửi form
-            $(document).on('click', '#btnsubmitsp', function (event) {
-                event.preventDefault();
-                themhanghoa();
-            });
-        });
-
-        function themhanghoa() {
-            var formData = new FormData();
-            formData.append("Ten_sanpham", $('#Ten_sanpham').val());
-            formData.append("Ten_donvitinh", $('#Ten_donvitinh').val());
-            formData.append("Giaban", $('#Giaban').val());
-
-            $.ajax({
-                type: 'POST',
-                url: "/Quanlyhanghoa/Create",
-                data: formData,
-                contentType: false,  // Không đặt loại nội dung, để cho trình duyệt tự động thiết lập
-                processData: false,  // Không xử lý dữ liệu thành chuỗi
-                success: function (response) {
-                    if (response.success) {
-                        $('#result').html('<p class="text-success">' + response.message + '</p>');
-                        location.reload(); // Tải lại trang để cập nhật dữ liệu
-                    } else {
-                        $('#result').html('<p class="text-danger">' + response.message + '</p>');
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error(error);
-                    $('#result').html('<p class="text-danger">Đã xảy ra lỗi. Vui lòng thử lại.</p>');
-                }
+       $(document).ready(function () {
+    // Load units of measurement (đơn vị tính) using AJAX
+    $.ajax({
+        type: "GET",
+        url: "/Danhmuc/Danhsachdvt",
+        success: function (response) {
+            if (response.success) {
+                $('#Ten_donvitinh').empty().append('<option value="">Chọn đơn vị tính</option>');
+                $.each(response.data, function (index, value) {
+                    $('#Ten_donvitinh').append(`<option value="${value.ten_donvitinh}">${value.ten_donvitinh}</option>`);
+                });
+            } else {
+                Swal.fire({
+                    title: "Thông báo lỗi",
+                    text: response.message,
+                    icon: "error"
+                });
+            }
+        },
+        error: function () {
+            Swal.fire({
+                title: "Lỗi",
+                text: "Đã xảy ra lỗi khi lấy danh sách đơn vị tính. Vui lòng thử lại.",
+                icon: "error"
             });
         }
+    });
+
+    initializeProductCodeCounter();
+
+    // Variable to store temporary product code
+    var tempProductCode;
+
+    // Handle modal open event to generate product code
+    $('#sanphamModal').on('show.bs.modal', function () {
+        tempProductCode = generateProductCode();
+        $('#Ma_sanpham').val(tempProductCode);
+    });
+
+    // Handle form submission
+    $('#btnsubmitsp').on('click', function (event) {
+        event.preventDefault();
+        themhanghoa();
+    });
+
+    // Handle delete action
+    $(document).on('click', '.btn-delete', function () {
+        var maSanpham = $(this).data('id');
+        xoaSanpham(maSanpham);
+    });
+
+    
+
+    // Function to initialize or retrieve the product code counter from local storage
+    function initializeProductCodeCounter() {
+        if (localStorage.getItem('productCodeCounter') === null) {
+            // Initialize the counter if not already set
+            localStorage.setItem('productCodeCounter', '1');
+        }
+    }
+
+    // Function to generate product code
+    function generateProductCode() {
+        // Retrieve the current product code counter
+        var counter = parseInt(localStorage.getItem('productCodeCounter'), 10);
+
+        // Format the counter with leading zeros
+        var formattedCounter = counter.toString().padStart(4, '0');
+        return 'SP' + formattedCounter;
+    }
+
+    // Function to increment the product code counter
+    function incrementProductCodeCounter() {
+        var counter = parseInt(localStorage.getItem('productCodeCounter'), 10);
+        var newCounter = counter + 1;
+        localStorage.setItem('productCodeCounter', newCounter);
+    }
+
+    // Function to add new product
+    function themhanghoa() {
+        var formData = new FormData($('#sanphamForm')[0]);
+        $.ajax({
+            type: 'POST',
+            url: "/Quanlyhanghoa/Create",
+            data: formData,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                if (response.success) {
+                    incrementProductCodeCounter(); // Increment counter only on successful creation
+                    Swal.fire('Thành công!', response.message, 'success').then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire('Lỗi!', response.message, 'error');
+                }
+            },
+            error: function () {
+                Swal.fire('Lỗi!', 'Đã xảy ra lỗi. Vui lòng thử lại.', 'error');
+            }
+        });
+    }
+
+    // Function to delete product
+    function xoaSanpham(Ma_sanpham) {
+        Swal.fire({
+            title: 'Bạn có chắc chắn muốn xóa?',
+            text: "Hành động này không thể hoàn tác!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Vâng, xóa nó!',
+            cancelButtonText: 'Hủy bỏ'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    type: 'POST',
+                    url: "/Quanlyhanghoa/Delete",
+                    data: { Ma_sanpham: Ma_sanpham },
+                    success: function (response) {
+                        if (response.success) {
+                            Swal.fire('Đã xóa!', response.message, 'success').then(() => {
+                                location.reload();
+                            });
+                        } else {
+                            Swal.fire('Lỗi!', response.message, 'error');
+                        }
+                    },
+                    error: function () {
+                        Swal.fire('Lỗi!', 'Đã xảy ra lỗi. Vui lòng thử lại.', 'error');
+                    }
+                });
+            }
+        });
+    }
+});
+
     </script>
 }
