@@ -23,6 +23,7 @@ namespace Projecthoca.Controllers
 
         public IActionResult Index()
         {
+            
             return View();
         }
         public IActionResult Quanlytaikhoan()
@@ -84,9 +85,9 @@ namespace Projecthoca.Controllers
         {
             return View();
         }
-
+       
         // GET: Quanlyhanghoa
-public async Task<IActionResult> Quanlyhanghoa()
+        public async Task<IActionResult> Quanlyhanghoa()
 {
     try
     {
@@ -121,5 +122,6 @@ public async Task<IActionResult> Quanlyhanghoa()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        
     }
 }

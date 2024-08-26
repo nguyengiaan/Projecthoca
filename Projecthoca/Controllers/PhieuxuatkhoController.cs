@@ -105,30 +105,30 @@ namespace Projecthoca.Controllers
         }
         // Contronller mã nhập
 
-        [HttpPost]
-        public async Task<IActionResult> Themphieunhapkho(PhieunhapkhoVM pnk)
-        {
-            try
-            {
-                var errorList = ModelState.Values.SelectMany(m => m.Errors).Select(e => e.ErrorMessage).ToList();
-                if (!ModelState.IsValid)
-                {
-                    return Json(new { success = false, message = errorList });
-                }
-                var data = await _phieuxuatkho.Themphieunhapkho(pnk);
-                if (data)
-                {
-                    return Json(new { success = true, message = "Thêm thành công" });
-                }
-                else
-                {
-                    return Json(new { success = false, message = "Thêm thất bại" });
-                }
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
-        }
+        // [HttpPost]
+        // public async Task<IActionResult> Themphieunhapkho(PhieunhapkhoVM pnk)
+        // {
+        //     try
+        //     {
+        //         var errorList = ModelState.Values.SelectMany(m => m.Errors).Select(e => e.ErrorMessage).ToList();
+        //         if (!ModelState.IsValid)
+        //         {
+        //             return Json(new { success = false, message = errorList });
+        //         }
+        //         var data = await _phieuxuatkho.Themphieunhapkho(pnk);
+        //         if (data)
+        //         {
+        //             return Json(new { success = true, message = "Thêm thành công" });
+        //         }
+        //         else
+        //         {
+        //             return Json(new { success = false, message = "Thêm thất bại" });
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return Json(new { success = false, message = ex.Message });
+        //     }
+        // }
     }
 }

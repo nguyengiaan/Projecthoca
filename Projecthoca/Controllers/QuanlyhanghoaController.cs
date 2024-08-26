@@ -111,7 +111,7 @@ public async Task<IActionResult> GetAll(int page = 1, int pagesize = 10)
             .Skip((page - 1) * pagesize)
             .Take(pagesize)
             .Select(p => new QuanlyhanghoaVM
-            {
+            {   Ma_sanpham = p.Ma_sanpham,
                 Ten_sanpham = p.Ten_sanpham,
                 Ten_donvitinh = p.Ten_donvitinh,
                 Giaban = p.Giaban

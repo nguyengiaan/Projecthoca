@@ -1,15 +1,19 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Projecthoca.Models.EnitityVM;
 using Projecthoca.Service.Interface;
-
+using Microsoft.AspNetCore.Identity; // Thêm namespace này nếu bạn sử dụng Identity
+using Microsoft.AspNetCore.Http; // Thêm namespace này để sử dụng HttpContext
 namespace Projecthoca.Controllers
 {
     public class Quanlynguoidung : Controller
     {
+        
         private readonly INguoidung _nguoidung;
+      
         public Quanlynguoidung(INguoidung nguoidung)
         {
             _nguoidung= nguoidung;
+          
         }
         [HttpPost]
         public async Task<IActionResult> Dangkytaikhoan (NguoidungVM nguoidung)
@@ -73,6 +77,7 @@ namespace Projecthoca.Controllers
                 var data= await _nguoidung.Dangnhap(user);
                 if (data.StatusCode==1)
                 {
+                    
                     return Json(new { success = true ,messeger=data.Message });
                 }
                 else
@@ -91,5 +96,6 @@ namespace Projecthoca.Controllers
             await _nguoidung.LogoutAsync();
             return RedirectToAction("Dangnhap", "Home");
         }
+        
     }
 }

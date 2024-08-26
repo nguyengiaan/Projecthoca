@@ -13,9 +13,9 @@ namespace Projecthoca.Service.Interface
         public Task<(bool ckeck,int tongtienchk,int tongtienmat,int tongthanhtien,int tongtatca)> Tongtientatca();
 
         // INTERFACE NHẬP KHO
-        public Task<(List<PhieunhapkhoVM> ds, int totalpages)> Danhsachphieunhap(int page, int pagesize);
+        // public Task<(List<PhieunhapkhoVM> ds, int totalpages)> Danhsachphieunhap(int page, int pagesize);
 
-        public Task<bool> Themphieunhapkho(PhieunhapkhoVM phieunhapkho);
+        // public Task<bool> Themphieunhapkho(PhieunhapkhoVM phieunhapkho);
 
 
     }

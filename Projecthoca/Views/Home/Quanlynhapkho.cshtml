@@ -1,7 +1,9 @@
 ﻿@{
     Layout = "_Layout";
 }
+
 @model Projecthoca.Models.EnitityVM.DanhmucVM
+
 <style>
     .container {
         display: flex;
@@ -139,12 +141,12 @@
                 <div class="container">
                     <div class="form-container">
                         <form id="formnhapkho" enctype="multipart/form-data">
-                            @* <div class="form-group">
+                            <div class="form-group">
                                 <label for="Ma_danhmuc">Mã danh mục</label>
                                 <input asp-for="Ma_danhmuc" type="text" id="Ma_danhmuc" readonly>
-                            </div> *@
+                            </div>
                             <div class="form-group position-relative">
-                                <label for="Ten_danhmuc">Tên danh mục</label>
+                                <label for="Ten_danhmuc">Tên sản phẩm</label>
                                 <input asp-for="Ten_danhmuc" type="text" id="Ten_danhmuc" oninput="filterDanhMucList()"
                                     placeholder="Nhập tên danh mục..." autocomplete="off">
 
@@ -184,11 +186,12 @@
                             <table>
                                 <thead>
                                     <tr>
-                                        @* <th>Mã danh mục</th> *@
-                                        <th>Tên danh mục</th>
+                                        <th>Mã sản phẩm</th>
+                                        <th>Tên sản phẩm</th>
                                         <th>Đơn vị tính</th>
                                         <th>Số lượng</th>
                                         <th>Đơn giá</th>
+                                        <th>Thành tiền</th>
                                         <th>Xóa</th>
                                         <th>Sửa</th>
                                     </tr>
@@ -234,6 +237,9 @@
                             <th>Tên người nhập</th>
                             <th>Ngày nhập phiếu</th>
                             <th>Xem phiếu</th>
+                            <th>Xóa phiếu</th>
+                            <th>Sửa phiếu</th>
+                           
                         </tr>
                     </thead>
                     <tbody id="dataTableBody">
@@ -266,6 +272,7 @@
                                 <th>Đơn vị tính</th>
                                 <th>Số lượng</th>
                                 <th>Đơn giá</th>
+                                <th>Thành tiền</th>
                             </tr>
                         </thead>
                         <tbody id="chiTietTableBody">
@@ -281,55 +288,15 @@
         </div>
     </div>
 </div>
-<!-- Modal chỉnh sửa phiếu nhập -->
-<div class="modal fade" id="ChinhSuaPhieuModal" tabindex="-1" role="dialog" aria-labelledby="ChinhSuaPhieuModalLabel" aria-hidden="true">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="ChinhSuaPhieuModalLabel">Chỉnh sửa chi tiết phiếu nhập</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <form id="formChinhSuaPhieu">
-                    <div class="form-group">
-                        <label for="editMaHang">Mã hàng</label>
-                        <input type="text" class="form-control" id="editMaHang" readonly>
-                    </div>
-                    <div class="form-group">
-                        <label for="editTenHang">Tên hàng</label>
-                        <input type="text" class="form-control" id="editTenHang">
-                    </div>
-                    <div class="form-group">
-                        <label for="editDonViTinh">Đơn vị tính</label>
-                        <input type="text" class="form-control" id="editDonViTinh">
-                    </div>
-                    <div class="form-group">
-                        <label for="editSoLuong">Số lượng</label>
-                        <input type="number" class="form-control" id="editSoLuong">
-                    </div>
-                    <div class="form-group">
-                        <label for="editDonGia">Đơn giá</label>
-                        <input type="number" class="form-control" id="editDonGia">
-                    </div>
-                    <div id="danhMucList" class="table-container">
-                        <!-- Danh mục sẽ được nạp vào đây -->
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-                <button type="button" class="btn btn-primary" id="saveChanges">Lưu thay đổi</button>
-            </div>
-        </div>
-    </div>
-</div>
+
 
 
 @section Scripts {
     <script>
-        
+     
+
+
+
         $(document).ready(function () {
             var phieuNhaps = []; // Mảng lưu trữ các phiếu nhập
             var editingPhieuIndex = -1; // Biến để lưu vị trí phiếu đang sửa
@@ -338,7 +305,7 @@
             $(document).on('click', '.btnSuaPhieu', function () {
                 var maPhieu = $(this).data('phieu');
                 var phieu = phieuNhaps.find(p => p.maPhieu === maPhieu);
-
+       
                 // Hiển thị danh sách chi tiết phiếu trong modal chỉnh sửa
                 $('#tblbodyModalEdit').empty();
                 phieu.chiTietPhieu.forEach(function (item) {
@@ -349,6 +316,7 @@
                         <td>${item.donViTinh}</td>
                         <td>${item.soLuong}</td>
                         <td>${item.donGia}</td>
+                       
                         <td><button class="btn btn-danger btnXoaModalEdit">Xóa</button></td>
                         <td><button class="btn btn-warning btnSuaModalEdit">Sửa</button></td>
                     </tr>`;
@@ -367,40 +335,7 @@
                 editingPhieuIndex = phieuNhaps.indexOf(phieu); // Lưu chỉ số phiếu đang sửa
             });
 
-            // Cập nhật dữ liệu phiếu nhập khi nhấn nút "Cập nhật phiếu nhập"
-            $('#btnCapNhatPhieu').click(function () {
-                if (editingPhieuIndex === -1) return; // Nếu không có phiếu nào đang sửa
-
-                // Cập nhật thông tin phiếu
-                var updatedPhieu = {
-                    maPhieu: $('#EditMaDanhmuc').val(),
-                    tenNguoiNhap: "Tên người nhập", // Bạn có thể lấy từ input
-                    ngayNhapPhieu: new Date().toLocaleDateString(), // Ngày hiện tại
-                    chiTietPhieu: []
-                };
-
-                $('#tblbodyModalEdit tr').each(function () {
-                    @* var maHang = $(this).find('td:eq(0)').text(); *@
-                    var tenHang = $(this).find('td:eq(1)').text();
-                    var donViTinh = $(this).find('td:eq(2)').text();
-                    var soLuong = $(this).find('td:eq(3)').text();
-                    var donGia = $(this).find('td:eq(4)').text();
-
-                    updatedPhieu.chiTietPhieu.push({ maHang, tenHang, donViTinh, soLuong, donGia });
-                });
-
-                // Cập nhật dữ liệu phiếu trong mảng
-                phieuNhaps[editingPhieuIndex] = updatedPhieu;
-
-                // Cập nhật dữ liệu trong bảng ngoài
-                var row = $('#dataTableBody').find(`button[data-phieu="${updatedPhieu.maPhieu}"]`).closest('tr');
-                row.find('td:eq(1)').text(updatedPhieu.tenNguoiNhap);
-                row.find('td:eq(2)').text(updatedPhieu.ngayNhapPhieu);
-
-                // Đóng modal chỉnh sửa phiếu nhập
-                $('#ChinhSuaPhieuModal').modal('hide');
-            });
-
+           
             // Xử lý sự kiện khi nhấn nút Xóa trong modal chỉnh sửa
             $(document).on('click', '.btnXoaModalEdit', function () {
                 $(this).closest('tr').remove(); // Xóa dòng tương ứng
@@ -460,7 +395,7 @@
             }
         });
 
-    // Hàm xử lý khi chọn một mục từ danh sách
+    @* // Hàm xử lý khi chọn một mục từ danh sách
 function selectItem(ten_danhmuc, gia, soluong, donvitinh) {
     // Gán giá trị cho các input
     $('#Ten_danhmuc').val(ten_danhmuc);      // Gán tên danh mục
@@ -470,7 +405,7 @@ function selectItem(ten_danhmuc, gia, soluong, donvitinh) {
 
     // Ẩn danh sách danh mục sau khi chọn
     $('#danhMucList').hide();
-}
+} *@
 
 
 
@@ -482,22 +417,23 @@ function filterDanhMucList() {
 
     $.ajax({
         type: "POST",
-        url: "/Quanlyhanghoa/GetAll",
+        url: "/Danhmuc/Danhsachdanhmuc",
         data: { page: page, pagesize: pagesize },
         success: function (response) {
             $('#tblbody').empty();
             if (response.success) {
-                var filteredItems = response.dssp.filter(function (item) {
-                    return item.ten_sanpham.toLowerCase().includes(searchText);
+                var filteredItems = response.dsdm.filter(function (item) {
+                    return item.ten_danhmuc.toLowerCase().includes(searchText);
                 });
 
                 if (filteredItems.length > 0) {
                     $.each(filteredItems, function (index, value) {
                         var str = `
-                        <tr onclick="selectItem('${value.ten_sanpham}', '${value.giaban}', '${value.ten_donvitinh}')">
-                            <td>${value.ten_sanpham}</td>
-                            <td>${value.ten_donvitinh}</td>
-                           <td> ${value.giaban}</td>
+                        <tr onclick="selectItem('${value.ma_danhmuc}', '${value.ten_danhmuc}', '${value.gia}', '${value.donvitinh}')">
+                            <td>${value.ma_danhmuc}</td>
+                            <td>${value.ten_danhmuc}</td>
+                            <td>${value.donvitinh}</td>
+                           <td> $${value.gia}</td>
                         </tr>`;
                         $('#tblbody').append(str);
                     });
@@ -544,8 +480,9 @@ $('#Ten_danhmuc').on('keyup', function () {
 });
 
        // Hàm xử lý khi chọn một mục từ danh sách
-function selectItem(ten_danhmuc, gia, donvitinh) {
+function selectItem(ma_danhmuc,ten_danhmuc, gia, donvitinh) {
     // Gán giá trị cho các input
+    $('#Ma_danhmuc').val(ma_danhmuc);
     $('#Ten_danhmuc').val(ten_danhmuc);      // Gán tên danh mục
     $('#Gia').val(gia);                      // Gán giá
             
@@ -570,7 +507,7 @@ function selectItem(ten_danhmuc, gia, donvitinh) {
 
             // Hàm thêm dữ liệu vào bảng trong modal
             $('#btnThemVaoBangModal').click(function () {
-                @* var maDanhMuc = $('#Ma_danhmuc').val(); *@
+                var maDanhMuc = $('#Ma_danhmuc').val();
                 var tenDanhMuc = $('#Ten_danhmuc').val();
                 var gia = $('#Gia').val();
                 var soLuong = $('#Soluong').val();
@@ -580,11 +517,12 @@ function selectItem(ten_danhmuc, gia, donvitinh) {
                     // Thêm mới vào bảng nếu không có dòng nào đang sửa
                     var newRow = `
                     <tr>
-                        @* <td>${maDanhMuc}</td> *@
+                        <td>${maDanhMuc}</td>
                         <td>${tenDanhMuc}</td>
                         <td>${donViTinh}</td>
                         <td>${soLuong}</td>
                         <td>${gia}</td>
+                         <td>${(soLuong * gia).toFixed(2)}</td>
                         <td><button class="btn btn-danger btnXoaModal">Xóa</button></td>
                         <td><button class="btn btn-warning btnSuaModal">Sửa</button></td>
                     </tr>`;
@@ -622,6 +560,12 @@ function selectItem(ten_danhmuc, gia, donvitinh) {
                 $('#Gia').val(row.find('td:nth-child(4)').text());
             });
             $(document).ready(function () {
+    $(document).on('click', '#submitBtnpn', function () {
+        Themphieunhap();
+    });
+});
+
+            $(document).ready(function () {
                 // Mảng lưu trữ các phiếu nhập
                 var phieuNhaps = [];
 
@@ -640,9 +584,9 @@ function selectItem(ten_danhmuc, gia, donvitinh) {
                         });
                         return; // Dừng hàm và không thực hiện thêm phiếu nhập
                     }
-
+ 
                     var maPhieu = generateMaPhieu(); // Tạo mã phiếu ngẫu nhiên
-                    var tenNguoiNhap = "Tên người nhập"; // Bạn có thể lấy từ input
+                    var tenNguoiNhap = "Hiệp"; // Bạn có thể lấy từ input
                     var ngayNhapPhieu = new Date().toLocaleDateString(); // Ngày hiện tại
 
                     // Lấy danh sách chi tiết phiếu từ modal thêm phiếu nhập
@@ -667,6 +611,8 @@ function selectItem(ten_danhmuc, gia, donvitinh) {
                 <td>${tenNguoiNhap}</td>
                 <td>${ngayNhapPhieu}</td>
                 <td><button class="btn btn-info btnXemPhieu" data-phieu="${maPhieu}">Xem phiếu</button></td>
+                <td><button class="btn btn-danger btnXoaPhieu" data-phieu="${maPhieu}">Xóa phiếu</button></td>
+                <td><button class="btn btn-warning btnSuaPhieu" data-phieu="${maPhieu}">Sửa phiếu</button></td> 
             </tr>`;
                     $('#dataTableBody').append(newRow);
 
@@ -675,12 +621,22 @@ function selectItem(ten_danhmuc, gia, donvitinh) {
                     $('#tblbodyModal').empty(); // Xóa các hàng trong bảng chi tiết
                     $('#Themphieunhap').modal('hide'); // Đóng modal thêm phiếu nhập
                 });
+  // Xử lý sự kiện khi nhấn nút Xóa phiếu
+    $(document).on('click', '.btnXoaPhieu', function () {
+        var maPhieu = $(this).data('phieu');
 
+        // Xóa phiếu khỏi mảng
+        phieuNhaps = phieuNhaps.filter(p => p.maPhieu !== maPhieu);
+
+        // Xóa phiếu khỏi bảng
+        $(this).closest('tr').remove();
+    });
                 // Xử lý sự kiện khi nhấn nút Xem phiếu
                 $(document).on('click', '.btnXemPhieu', function () {
                     var maPhieu = $(this).data('phieu');
                     var phieu = phieuNhaps.find(p => p.maPhieu === maPhieu);
-
+                  
+        
                     // Hiển thị danh sách chi tiết phiếu trong modal
                     $('#chiTietTableBody').empty(); // Xóa dữ liệu cũ
                     phieu.chiTietPhieu.forEach(function (item) {
@@ -691,7 +647,7 @@ function selectItem(ten_danhmuc, gia, donvitinh) {
                         <td>${item.donViTinh}</td>
                         <td>${item.soLuong}</td>
                         <td>${item.donGia}</td>
-
+   <td>${(item.soLuong * item.donGia).toFixed(2)}</td>
                     </tr>`;
                         $('#chiTietTableBody').append(chiTietRow);
                     });
@@ -707,6 +663,36 @@ function selectItem(ten_danhmuc, gia, donvitinh) {
 
             danhsachdanhmuc(1, 10);
         });
+function Themphieunhap() {
+    var data = {
+        Tennguoinhap: Tennguoinhap,
+        Maphieunhap: Maphieunhap,
+        Ngaynhap: Ngaynhap
+    };
+    $.ajax({
+        type: "POST",
+        url: "/PhieuNhap/Themphieunhap",
+        data: data,
+        success: function (response) {
+            if (response.success) {
+                Swal.fire({
+                    title: "Thành công",
+                    text: response.message,
+                    icon: "success"
+                });
+                // Cập nhật danh sách phiếu nhập
+                danhsachphieunhap(1, 10);
+            }
+            else {
+                Swal.fire({
+                    title: "Thông báo lỗi",
+                    text: response.message,
+                    icon: "error"
+                });
+            }
+        }
+    });
+}
 
 
     </script>

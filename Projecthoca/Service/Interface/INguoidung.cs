@@ -10,5 +10,6 @@ namespace Projecthoca.Service.Interface
         public Task<Status> Dangnhap(DangnhapVM user);
 
         public Task LogoutAsync();
+        
     }
 }

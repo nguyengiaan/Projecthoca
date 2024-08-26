@@ -114,7 +114,9 @@
                             imageAlt: "Loading",
                         });
                     },
+                   
                     success: function (res) {
+                       
                         if (res.success) {
                             window.location.href = '@Url.Action("Hocau", "Home", new { area = "" })';
                         } else {
@@ -128,7 +130,7 @@
                 });
             });
         });
-        
+       
     </script>
 </body>
 

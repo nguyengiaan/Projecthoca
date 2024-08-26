@@ -2049,45 +2049,37 @@
             window.print();
             document.body.innerHTML = originalContents;
         }
-        // hàm lấy hàng hóa hiển thị trong hóa đơn
-        function hienthihanghoa(Ma_mathang) {
+  // hàm lấy hàng hóa hiển thị trong hóa đơn
+        function hienthihanghoa(page, pagesize) {
        
-            $.ajax({
-                type: "POST",
-                url: "/Khuvuchoca/Danhmuchthd",
-
-                data: { Ma_mathang: Ma_mathang },
-                success:function(reponser)
-                {
-                    if (reponser.success) 
-                    { 
-                      
-        
-                         var html = '';
-                        $('#danhmuc-list').empty();
-                        $.each(reponser.data, function (index, value) {
-                            var str = `<tr>
-                                                      <td>${value.ma_danhmuc}</td>
-                                                                <td>${value.ten_danhmuc}</td>
-                                                            
-                                                        <td>${formatCurrency(value.gia)}</td>
-                                                              <td>${value.donvitinh}</td>
-                                                                       <td><button class="btn btn-success" data-id="${value.ma_danhmuc}" id="btnChondm" >Chọn</button></td>
-                                                     </tr>`;
-                            html += str; // Thêm chuỗi vào biến html
-                        });
-                        $('#danhmuc-list').html(html);
-                    }
-                    else
-                    {
-                        Swal.fire({
-                            title: "Thông báo lỗi",
-                            text: response.message,
-                            icon: "error"
-                        });
-                    }
-                }
-            })
+                               $.ajax({
+                        type: "POST",
+                        url: "/Quanlyhanghoa/GetAll",
+                        data: { page: page, pagesize: pagesize }, // Thêm dữ liệu này nếu cần
+                        success: function (response) {
+                            $('#danhmuc-list').empty();
+                            console.log(response.dssp);
+                            if (response.success) {
+                                $.each(response.dssp, function (index, value) {
+                                    var str = `<tr>
+                                     <td>${value.ma_sanpham}</td>
+                                                                              <td>${value.ten_sanpham}</td>
+                            <td>${value.ten_donvitinh}</td>
+                           <td> ${value.giaban}</td>
+                              <td><button class="btn btn-success" data-id="${value.ma_sanpham}" id="btnChondm" >Chọn</button></td>
+                                                                    </tr>`;
+                                    $('#danhmuc-list').append(str);
+                                    updatePagination(response.totalPages, response.pageindex)
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
         }
         // hàm lấy hàng hóa hiển thị trong hóa đơn
         function Mathanghthd() {
