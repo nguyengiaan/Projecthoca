@@ -1,0 +1,64 @@
+@media screen and (max-width: 480px) {
+    .container {
+        flex-direction: column;
+        /* Đặt các phần tử theo chiều dọc trên màn hình nhỏ */
+    }
+
+    .form-container,
+    .form-group1 {
+        padding: 0;
+        /* Xóa padding để tiết kiệm không gian */
+        width: 100%;
+        /* Đảm bảo các phần tử chiếm toàn bộ chiều rộng */
+    }
+
+    .form-group,
+    .search-container {
+        margin-bottom: 10px;
+        /* Giảm khoảng cách giữa các phần tử */
+    }
+
+    .table-container {
+        margin-top: 10px;
+        /* Giảm khoảng cách phía trên bảng */
+        overflow: auto;
+        /* Thêm cuộn nếu cần */
+    }
+
+    .table-container table {
+        font-size: 14px;
+        /* Giảm kích thước chữ trong bảng */
+        display: block;
+        /* Đảm bảo bảng hoạt động như một khối để có thể cuộn */
+        width: 100%;
+        /* Đảm bảo bảng chiếm toàn bộ chiều rộng của phần tử chứa nó */
+        min-width: 600px;
+        /* Đặt chiều rộng tối thiểu để bảng không bị co lại quá mức */
+    }
+
+    .table-container th,
+    .table-container td {
+        padding: 6px;
+        /* Giảm khoảng cách bên trong ô bảng */
+        word-wrap: break-word;
+        /* Đảm bảo văn bản không tràn ra ngoài ô */
+    }
+
+    .table-container th:nth-child(7),
+    .table-container th:nth-child(8),
+    .table-container td:nth-child(7),
+    .table-container td:nth-child(8) {
+        display: none;
+        /* Ẩn các cột "Xóa" và "Sửa" trên màn hình nhỏ */
+    }
+
+    #submitBtnpn,
+    #closeBtn {
+        width: 100%;
+        /* Đảm bảo nút chiếm toàn bộ chiều rộng */
+        font-size: 14px;
+        /* Giảm kích thước chữ nút */
+        padding: 10px;
+        /* Đảm bảo nút có đủ khoảng cách bên trong */
+    }
+}

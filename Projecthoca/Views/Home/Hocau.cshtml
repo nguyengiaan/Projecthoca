@@ -103,14 +103,27 @@
             </div>
             <div class="modal-body">
                 <form method="post" id="formthemdv" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <input type="hidden" class="form-control" id="Ma_danhmuchoadon" value="">
-                    </div>
-                    <div class="form-group">
+                    @* <div class="form-group">
+                        <input type="text" class="form-control" id="Ma_danhmuchoadon" value="">
+                    </div> *@
+                    @* <div class="form-group">
 
                         <select id="Ma_danhmucdv" class="mw-100">
                         </select>
-                    </div>
+                    </div> *@
+                    <div class="form-group position-relative">
+                                @* <label for="Ma_danhmuchoadon">Tên sản phẩm</label> *@
+                                <input type="text" id="Ma_danhmuchoadon" oninput="filterDichvuList()"
+                                    placeholder="Nhập tên dịch vụ..." autocomplete="off">
+
+                                <!-- Danh sách danh mục -->
+                                <div id="dichvuList" class="dropdown-menu" style="display: none; width: 100%;">
+                                    <table class="table table-hover">
+                                        <tbody id="tblbody"></tbody>
+                                    </table>
+                                </div>
+                     </div>
+
                     <div class="form-group">
                         <label class="col-form-label">Số lượng</label>
                         <input type="number" class="form-control" id="soluongdm" value="1">
@@ -489,6 +502,61 @@
     <script src="~/Scripts/select2.js"></script>
     <script src="~/Scripts/select2.min.js"></script>
     <style>
+
+        /* Style for the input field */
+#Ma_danhmuchoadon {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 14px;
+    outline: none;
+}
+
+#Ma_danhmuchoadon:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+}
+
+/* Style for the dropdown menu */
+#danhMucList {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+/* Style for the table in the dropdown menu */
+#danhMucList .table {
+    margin-bottom: 0;
+}
+
+#danhMucList .table-hover tbody tr {
+    cursor: pointer;
+}
+
+#danhMucList .table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Style for the table cells */
+#tblbody td {
+    padding: 10px;
+    vertical-align: middle;
+}
+
+/* Optional: Add padding and margin to the form group */
+.form-group {
+    margin-bottom: 20px;
+}
+
+
+
         /* Kích thước mặc định cho màn hình lớn */
         .select2-container--default .select2-selection--single {
             height: 38px;
@@ -711,11 +779,11 @@
         });
         //--------------------------------------------------------------------------
         $(document).ready(function () {
-            $('#Ma_danhmucdv').select2({
+            @* $('#Ma_danhmucdv').select2({
                 placeholder: "Chọn danh mục",
                 allowClear: true,
                 dropdownParent: $('#Themdichvu')
-            });
+            }); *@
             selectbancau();
             Danhsachdv();
             Danhsachcahd();
@@ -1803,6 +1871,8 @@
 
             $('#dsdv').append(totalStr);
         }
+
+       
         // bao gồm các button như giảm giá,tiền mặt và chuyển khoản
         function Cacbutton() {
             var totalStr = `
@@ -2093,39 +2163,6 @@
             window.print();
             document.body.innerHTML = originalContents;
         }
-<<<<<<< HEAD
-  // hàm lấy hàng hóa hiển thị trong hóa đơn
-        function hienthihanghoa(page, pagesize) {
-       
-                               $.ajax({
-                        type: "POST",
-                        url: "/Quanlyhanghoa/GetAll",
-                        data: { page: page, pagesize: pagesize }, // Thêm dữ liệu này nếu cần
-                        success: function (response) {
-                            $('#danhmuc-list').empty();
-                            console.log(response.dssp);
-                            if (response.success) {
-                                $.each(response.dssp, function (index, value) {
-                                    var str = `<tr>
-                                     <td>${value.ma_sanpham}</td>
-                                                                              <td>${value.ten_sanpham}</td>
-                            <td>${value.ten_donvitinh}</td>
-                           <td> ${value.giaban}</td>
-                              <td><button class="btn btn-success" data-id="${value.ma_sanpham}" id="btnChondm" >Chọn</button></td>
-                                                                    </tr>`;
-                                    $('#danhmuc-list').append(str);
-                                    updatePagination(response.totalPages, response.pageindex)
-                                });
-                            } else {
-                                Swal.fire({
-                                    title: "Thông báo lỗi",
-                                    text: response.message,
-                                    icon: "error"
-                                });
-                            }
-                        }
-                    });
-=======
         // hàm lấy hàng hóa hiển thị trong hóa đơn
         function hienthihanghoa(Ma_mathang) {
 
@@ -2162,7 +2199,6 @@
                     }
                 }
             })
->>>>>>> 91655702b887196bb3b8aceca0d1c025ff7e8f79
         }
         // hàm lấy hàng hóa hiển thị trong hóa đơn
         function Mathanghthd() {
@@ -2325,6 +2361,103 @@
         }
         // Thêm sự kiện keyup cho ô tìm kiếm
         document.getElementById("search").addEventListener("keyup", filterTable);
+        function filterDichvu() {
+    var searchText = $('#Ten_dichvu').val().toLowerCase(); // Lấy giá trị tìm kiếm và chuyển đổi thành chữ thường
+
+    $.ajax({
+        type: "GET",
+        url: "/Danhmuchoadon/Danhmucdv", // URL của bạn để lấy danh sách dịch vụ
+        success: function (response) {
+            $('#tblbodyDichvu').empty(); // Xóa các mục trước đó
+
+            if (response.success) {
+                var filteredItems = response.data.filter(function (item) {
+                    return item.ten_dichvu.toLowerCase().includes(searchText); // Lọc dựa trên giá trị tìm kiếm
+                });
+
+                if (filteredItems.length > 0) {
+                    $.each(filteredItems, function (index, value) {
+                        var str = `
+                            <tr onclick="selectDichvu('${value.ma_dichvu}', '${value.ten_dichvu}', '${value.gia}', '${value.donvitinh}')">
+                                <td>${value.ma_dichvu}</td>
+                                <td>${value.ten_dichvu}</td>
+                                <td>${value.donvitinh}</td>
+                                <td>$${value.gia}</td>
+                            </tr>`;
+                        $('#tblbodyDichvu').append(str);
+                    });
+                    $('#dichvuList').show();
+                } else {
+                    $('#dichvuList').hide();
+                }
+
+            } else {
+                Swal.fire({
+                    title: "Thông báo lỗi",
+                    text: response.message,
+                    icon: "error"
+                });
+            }
+        }
+    });
+}
+
+// Hàm xử lý khi chọn một dịch vụ từ danh sách
+function selectDichvu(maDichvu, tenDichvu, gia, donvitinh) {
+    $('#Ten_dichvu').val(tenDichvu);
+    $('#dichvuList').hide();
+}
+
+// Ẩn danh sách khi nhấp ra ngoài
+$(document).click(function (event) {
+    if (!$(event.target).closest('#Ten_dichvu, #dichvuList').length) {
+        $('#dichvuList').hide();
+    }
+});
+
+
+  // Hàm lọc danh mục dựa trên ô input
+        function filterDichvuList() {
+            var searchText = $('#Ten_danhmuc').val().toLowerCase();
+
+            $.ajax({
+                type: "GET",
+                url: "/Danhmuchoadon/Danhmucdv",
+                success: function (response) {
+                    $('#tblbody').empty();
+                    if (response.success) {
+                        var filteredItems = response.data.filter(function (item) {
+                            return item.ten_danhmuc.toLowerCase().includes(searchText);
+                        });
+
+                        if (filteredItems.length > 0) {
+                            $.each(filteredItems, function (index, value) {
+                                var str = `
+                                                            <tr onclick="selectItem('${value.ma_danhmuc}', '${value.ten_danhmuc}', '${value.gia}', '${value.donvitinh}')">
+                                                                <td>${value.ma_danhmuc}</td>
+                                                                <td>${value.ten_danhmuc}</td>
+                                                                <td>${value.donvitinh}</td>
+                                                               <td> $${value.gia}</td>
+                                                            </tr>`;
+                                $('#tblbody').append(str);
+                            });
+                            $('#danhMucList').show();
+                        } else {
+                            $('#danhMucList').hide();
+                        }
+
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                }
+            });
+        }
+
+
     </script>
 
 }
