@@ -36,6 +36,7 @@ namespace Projecthoca.Service.Responser
                              Donvitinh = x.Donvitinh,
                              Id = x.Id,
                              Ma_mathang = x.Mathang.Ten_mathang,
+                             Soluong = x.Soluong,
 
                          }).Where(x => x.Id == user.Id)
                          .Skip((page - 1) * pagesize)
@@ -115,7 +116,7 @@ namespace Projecthoca.Service.Responser
                 _dm.Ten_danhmuc = danhmuc.Ten_danhmuc;
                 _dm.Gia = danhmuc.Gia;
                 _dm.Donvitinh = danhmuc.Donvitinh;
-
+                _dm.Soluong = danhmuc.Soluong;
                 _dm.Id = user.Id;
                 await _context.Danhmuc.AddAsync(_dm);
                 await _context.SaveChangesAsync();
@@ -205,8 +206,8 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var data =await _context.Donvitinhs.FindAsync(madonvitinh);
-                if(data!=null)
+                var data = await _context.Donvitinhs.FindAsync(madonvitinh);
+                if (data != null)
                 {
                     _context.Donvitinhs.Remove(data);
                     await _context.SaveChangesAsync();
@@ -258,15 +259,15 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var data = await _context.Mathangs.Where(x=>x.Id==user.Id).Select(x => new MathangVM
+                var data = await _context.Mathangs.Where(x => x.Id == user.Id).Select(x => new MathangVM
                 {
                     Ma_mathang = x.Ma_mathang,
                     Ten_mathang = x.Ten_mathang,
-    
+
                 }).ToListAsync();
                 return data;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return null;
             }
@@ -274,9 +275,9 @@ namespace Projecthoca.Service.Responser
 
         public async Task<bool> Xoamathang(string mamathang)
         {
-           try
+            try
             {
-                var data=await _context.Mathangs.FindAsync(mamathang);
+                var data = await _context.Mathangs.FindAsync(mamathang);
                 if (data != null)
                 {
                     _context.Mathangs.Remove(data);
@@ -288,9 +289,73 @@ namespace Projecthoca.Service.Responser
                     return false;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
+            }
+        }
+        // cập nhật số lượng hàng hóa
+        public async Task<bool> Capnhatsoluong(string ma_khuvuc)
+        {
+            try
+            {
+                if (ma_khuvuc == null)
+                {
+                    return false;
+                }
+                var data = await (from kvc in _context.Khuvuccau
+                                  join nt in _context.Thuehoca on kvc.Ma_Khuvuccau equals nt.Khuvuccau.Ma_Khuvuccau
+                                  join dmhd in _context.danhmuchoadons on nt.Ma_thuehoca equals dmhd.Ma_thuehoca
+                                  join dm in _context.Danhmuc on dmhd.Ma_danhmuc equals dm.Ma_danhmuc
+                                  where kvc.Ma_Khuvuccau == ma_khuvuc
+                                  select new
+                                  {
+                                      dm.Ma_danhmuc,
+                                      dm.Soluong
+                                  }).ToListAsync();
+                if (data != null)
+                {
+                    foreach (var item in data)
+                    {
+                        var dm = await _context.Danhmuc.FindAsync(item.Ma_danhmuc);
+                        if (dm != null)
+                        {
+                            dm.Soluong -= item.Soluong;
+                            _context.Danhmuc.Update(dm);
+                        }
+                    }
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<List<DanhmucVM>> Laydanhsachdanhmuc()
+        {
+            try
+            {
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var data = await _context.Danhmuc.Where(x => x.Id == user.Id).Select(x => new DanhmucVM
+                {
+                    Ma_danhmuc = x.Ma_danhmuc,
+                    Ten_danhmuc = x.Ten_danhmuc,
+                    Gia = x.Gia,
+                    Donvitinh = x.Donvitinh,
+                    Id = x.Id,
+                    Ma_mathang = x.Mathang.Ten_mathang,
+                    Soluong = x.Soluong,
+
+                }).ToListAsync();
+                return data;
+            }
+            catch (Exception ex)
+            {
+                return null;
             }
         }
     }

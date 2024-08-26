@@ -10,7 +10,7 @@ namespace Projecthoca.Controllers
         private readonly IKhuvuccau _kvc;
         private readonly TimerBackgroundService _time;
 
-        public KhuvuchocaController(IKhuvuccau kvc,TimerBackgroundService time)
+        public KhuvuchocaController(IKhuvuccau kvc, TimerBackgroundService time)
         {
             _kvc = kvc;
             _time = time;
@@ -23,7 +23,7 @@ namespace Projecthoca.Controllers
                 var errorList = ModelState.Values.SelectMany(m => m.Errors).Select(e => e.ErrorMessage).ToList();
                 if (!ModelState.IsValid)
                 {
-                   return Json(new { status = false, message = errorList });
+                    return Json(new { status = false, message = errorList });
                 }
                 if (ModelState.IsValid)
                 {
@@ -39,9 +39,9 @@ namespace Projecthoca.Controllers
                 }
                 return Json(new { success = false, message = "Chúc bạn may mắn lần sau" });
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message});
+                return Json(new { success = false, message = ex.Message });
             }
         }
         [HttpPost]
@@ -102,7 +102,7 @@ namespace Projecthoca.Controllers
                 {
                     return Json(new { success = false });
                 }
-         
+
             }
             catch (Exception ex)
             {
@@ -111,28 +111,28 @@ namespace Projecthoca.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult>Laytoigian(string Ma_khuvvuc)
+        public async Task<IActionResult> Laytoigian(string Ma_khuvvuc)
         {
             try
             {
-                  var data = await _kvc.Laythoigian(Ma_khuvvuc);
-                if (data!=null)
+                var data = await _kvc.Laythoigian(Ma_khuvvuc);
+                if (data != null)
                 {
-                    return Json(new { success = true, Time=data});
+                    return Json(new { success = true, Time = data });
                 }
                 else
                 {
                     return Json(new { success = false });
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
             }
         }
 
         [HttpPost]
-        public async Task<IActionResult>UpdateBamgio(string Ma_khuvvuc)
+        public async Task<IActionResult> UpdateBamgio(string Ma_khuvvuc)
         {
             try
             {
@@ -146,7 +146,7 @@ namespace Projecthoca.Controllers
                     return Json(new { success = false });
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
             }
@@ -179,7 +179,7 @@ namespace Projecthoca.Controllers
             try
             {
                 var data = await _kvc.Dadungtg(Ma_khuvvuc);
-                if(data)
+                if (data)
                 {
                     return Json(new { success = true });
                 }
@@ -202,7 +202,7 @@ namespace Projecthoca.Controllers
                 var data = await _kvc.Deletekvc(Ma_khuvvuc);
                 if (data)
                 {
-                    return Json(new { success = true ,messeger="Xóa thành công"});
+                    return Json(new { success = true, messeger = "Xóa thành công" });
                 }
                 else
                 {
@@ -216,7 +216,7 @@ namespace Projecthoca.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult>Xoakhachhang(string Ma_khuvvuc)
+        public async Task<IActionResult> Xoakhachhang(string Ma_khuvvuc)
         {
             try
             {
@@ -242,7 +242,7 @@ namespace Projecthoca.Controllers
             try
             {
                 var data = await _kvc.Laykhachthue(Ma_khuvvuc);
-                if (data!=null)
+                if (data != null)
                 {
                     return Json(new { success = true, data = data });
                 }
@@ -258,12 +258,12 @@ namespace Projecthoca.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult>Chuyenbanthue(ChuyenbanVM chuyenban)
+        public async Task<IActionResult> Chuyenbanthue(ChuyenbanVM chuyenban)
         {
             try
             {
                 var data = await _kvc.Chuyenkhachthue(chuyenban);
-                if(data)
+                if (data)
                 {
                     return Json(new { success = true, messeger = "Chuyển thành công" });
                 }
@@ -272,7 +272,7 @@ namespace Projecthoca.Controllers
                     return Json(new { success = false, messeger = "hãy thêm khách hàng" });
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
             }
@@ -320,6 +320,25 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
-
+        [HttpPost]
+        public async Task<IActionResult> Danhsachkhuvucvang(string Ma_hocau)
+        {
+            try
+            {
+                var data = await _kvc.Danhsachkhuvucvang(Ma_hocau);
+                if (data != null)
+                {
+                    return Json(new { success = true, data = data });
+                }
+                else
+                {
+                    return Json(new { success = false, messeger = "Hãy thêm khu vực câu" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
     }
 }

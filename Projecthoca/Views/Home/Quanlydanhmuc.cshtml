@@ -3,7 +3,8 @@
 }
 @model Projecthoca.Models.EnitityVM.DanhmucVM
 <!--Modal thêm mặt hàng-->
-<div class="modal fade" id="Themmathang" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="Themmathang" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -28,7 +29,8 @@
     </div>
 </div>
 <!--Modal thêm đơn vị tính-->
-<div class="modal fade" id="Themdonvitinh" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="Themdonvitinh" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -41,7 +43,7 @@
                 <form method="post" id="formdonvitinh" enctype="multipart/form-data">
                     <div class="form-group">
                         <label class="col-form-label">Tên đơn vị tính</label>
-                        <input  type="text" class="form-control" id="Ten_donvitinh">
+                        <input type="text" class="form-control" id="Ten_donvitinh">
                     </div>
                 </form>
             </div>
@@ -53,7 +55,8 @@
     </div>
 </div>
 <!-- Modal Thêm danh mục-->
-<div class="modal fade" id="Themdanhmuc" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="Themdanhmuc" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -79,8 +82,9 @@
                     <div class="form-group">
                         <label class="col-form-label">Đơn vị tính</label>
                         <div class="d-flex">
-                            <select class="form-select pr-2" asp-for="Donvitinh" aria-label="Default select example" id="Donvitinh">
-                               
+                            <select class="form-select pr-2" asp-for="Donvitinh" aria-label="Default select example"
+                                id="Donvitinh">
+
                             </select>
                             <button class="btn btn-success" id="btndvt">+</button>
                         </div>
@@ -88,14 +92,15 @@
                     <div class="form-group">
                         <label class="col-form-label">Mặt hàng</label>
                         <div class="d-flex">
-                            <select class="form-select " asp-for="Ma_mathang" aria-label="Default select example" id="Ma_mathang">
-                       
+                            <select class="form-select " asp-for="Ma_mathang" aria-label="Default select example"
+                                id="Ma_mathang">
+
                             </select>
                             <button class="btn btn-success" id="btnmathang">+</button>
                         </div>
-                      
+
                     </div>
-      
+
                 </form>
             </div>
             <div class="modal-footer">
@@ -114,7 +119,8 @@
                     <h4 class="m-0 font-weight-bold text-primary">Danh sách Danh mục</h4>
                 </div>
                 <div class="col-md-2 col-12">
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#Themdanhmuc"> <span class="fs-20">Thêm danh mục</span> </button>
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#Themdanhmuc"> <span
+                            class="fs-20">Thêm danh mục</span> </button>
                 </div>
             </div>
         </div>
@@ -128,20 +134,14 @@
                             <th>Giá</th>
                             <th>Miêu tả</th>
                             <th>Đơn vị tính</th>
-                    
+                            <th>Số lượng</th>
                             <th>Xóa</th>
                             <th>Sửa</th>
                         </tr>
                     </thead>
                     <tfoot>
                         <tr>
-                            <th>Mã danh mục</th>
-                            <th>Tên danh mục</th>
-                            <th>Giá</th>
-                            <th>Miêu tả</th>
-                            <th>Đơn vị tính</th>
-                            <th>Xóa</th>
-                            <th>Sửa</th>
+
                         </tr>
                     </tfoot>
                     <tbody id="tblbody">
@@ -193,7 +193,7 @@
                         event.preventDefault();
                         Themmathang();
                     });
-                      Laymathang();
+                    Laymathang();
                 });
                 function Themdanhmuc() {
                     var form = $("#formThemdanhmuc")[0];
@@ -246,15 +246,15 @@
                             if (response.success) {
                                 $.each(response.dsdm, function (index, value) {
                                     var str = `<tr>
-                                                                                <td>${value.ma_danhmuc}</td>
-                                                                                        <td>${value.ten_danhmuc}</td>
-                                                                                         <td>${formatCurrency(value.gia)}</td>
-                                                                                    <td>${value.ma_mathang}</td>
-                                                                                        <td>${value.donvitinh}</td>
-                     
-                                                                                        <td><button class="btn btn-danger" data-id='${value.ma_danhmuc}' onclick="Xoadanhmuc('${value.ma_danhmuc}')">Xóa</button></td>
-                                                                                         <td><button class="btn btn-warning" data-id='${value.ma_danhmuc}' onclick="LaydmID('${value.ma_danhmuc}')" >Sửa</button></td>
-                                                                    </tr>`;
+                                                                                                    <td>${value.ma_danhmuc}</td>
+                                                                                                            <td>${value.ten_danhmuc}</td>
+                                                                                                             <td>${formatCurrency(value.gia)}</td>
+                                                                                                        <td>${value.ma_mathang}</td>
+                                                                                                            <td>${value.donvitinh}</td>
+                                                                                                            <td>${value.soluong}</td>
+                                                                                                            <td><button class="btn btn-danger" data-id='${value.ma_danhmuc}' onclick="Xoadanhmuc('${value.ma_danhmuc}')">Xóa</button></td>
+                                                                                                             <td><button class="btn btn-warning" data-id='${value.ma_danhmuc}' onclick="LaydmID('${value.ma_danhmuc}')" >Sửa</button></td>
+                                                                                        </tr>`;
                                     $('#tblbody').append(str);
                                     updatePagination(response.totalPages, response.pageindex)
                                 });
@@ -272,7 +272,7 @@
 
                     if (totalPages > 0) {
                         var str = `<nav aria-label="Page navigation example">
-                                                                        <ul class="pagination">`;
+                                                                                            <ul class="pagination">`;
                         if (totalPages > 1) {
                             if (currentPage > 1) {
                                 str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachdanhmuc(${currentPage - 1}, 10)">Previous</a></li>`;
@@ -389,78 +389,75 @@
                         }
                     });
                 }
-               //Thêm đon vị tính
-               function Themdonvitinh()
-               {
-                   var form = $("#formdonvitinh")[0];
-                   var data = new FormData();
-                   data.append("Ten_donvitinh", $("#Ten_donvitinh").val());
-                   $.ajax({
-                       type: "POST",
+                //Thêm đon vị tính
+                function Themdonvitinh() {
+                    var form = $("#formdonvitinh")[0];
+                    var data = new FormData();
+                    data.append("Ten_donvitinh", $("#Ten_donvitinh").val());
+                    $.ajax({
+                        type: "POST",
                         url: "/Danhmuc/Themdvt",
-                       data: data,
-                       processData: false,
-                       contentType: false,
-                       beforeSend: function () {
-                           Swal.fire({
-                               title: "Loading...",
-                               text: "Please wait",
-                               imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
-                               imageWidth: 100,
-                               imageHeight: 100,
-                               imageAlt: "Loading",
-                           });
-                       },
-                       success: function (response) {
-                           if (response.success) {
-                               Swal.fire({
-                                   title: "Thành công",
-                                   text: response.message,
-                                   icon: "success"
-                               });
-                               Laydvt();
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            Swal.fire({
+                                title: "Loading...",
+                                text: "Please wait",
+                                imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+                                imageWidth: 100,
+                                imageHeight: 100,
+                                imageAlt: "Loading",
+                            });
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                Laydvt();
                                 $("#Themdonvitinh").modal("hide");
                                 $('#Themdanhmuc').modal('show');
-                               form.reset();
-                           }
-                           else {
-                               Swal.fire({
-                                   title: "Thông báo lỗi",
-                                   text: response.message,
-                                   icon: "error"
-                               });
-                           }
-                       }
-                   });
-               }
-               //Lấy tất cả đơn vị tính
-               function Laydvt()
-                {
-                     $.ajax({
-                          type: "GET",
-                        url: "/Danhmuc/Danhsachdvt",
-                          success: function (response) {
-                              $('#Donvitinh').empty();
-                            if (response.success) {
-                                 $.each(response.data, function (index, value) {
-                                      var str = `<option value="${value.ten_donvitinh}">${value.ten_donvitinh}</option>`;
-                                      $('#Donvitinh').append(str);
-                                 });
+                                form.reset();
                             }
                             else {
-                                 Swal.fire({
-                                      title: "Thông báo lỗi",
-                                      text: response.message,
-                                      icon: "error"
-                                 });
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
                             }
-                          }
-                     });
+                        }
+                    });
                 }
-                
+                //Lấy tất cả đơn vị tính
+                function Laydvt() {
+                    $.ajax({
+                        type: "GET",
+                        url: "/Danhmuc/Danhsachdvt",
+                        success: function (response) {
+                            $('#Donvitinh').empty();
+                            if (response.success) {
+                                $.each(response.data, function (index, value) {
+                                    var str = `<option value="${value.ten_donvitinh}">${value.ten_donvitinh}</option>`;
+                                    $('#Donvitinh').append(str);
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+
                 //Thêm mặt hàng
-                function Themmathang()
-                {
+                function Themmathang() {
                     var form = $("#formmathang")[0];
                     var data = new FormData();
                     data.append("Ten_mathang", $("#Ten_mathang").val());
@@ -503,8 +500,7 @@
                     });
                 }
                 //Lấy mặt hàng
-                function Laymathang()
-                {
+                function Laymathang() {
                     $.ajax({
                         type: "GET",
                         url: "/Danhmuc/Danhsachmh",
@@ -526,6 +522,6 @@
                         }
                     });
                 }
-                
+
             </script>
         }

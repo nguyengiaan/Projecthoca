@@ -21,7 +21,7 @@ namespace Projecthoca.Service.Responser
             _context = context;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
-            _cache= cache;
+            _cache = cache;
         }
         public async Task<bool> Themkhuvuccau(KhuvuccauVM khuvuccau)
         {
@@ -247,10 +247,10 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var _key= "Danhsachbamgiolist_1";
+                var _key = "Danhsachbamgiolist_1";
                 var data = await _context.Thuehoca.Where(x => x.trangthai == "Dabamgio").ToListAsync();
                 _cache.Set(_key, data);
-                return true ;
+                return true;
             }
             catch (Exception ex)
             {
@@ -387,7 +387,7 @@ namespace Projecthoca.Service.Responser
         }
         // danh mục hiển thị trong hóa đơn
 
-        public async Task<List<DanhmucVM>> Danhmuchthd(string ?Timkiem)
+        public async Task<List<DanhmucVM>> Danhmuchthd(string? Timkiem)
         {
 
             try
@@ -407,7 +407,7 @@ namespace Projecthoca.Service.Responser
                 }
                 else
                 {
-                    var data =await _context.Danhmuc.Where(x=>x.Ten_danhmuc.Contains(Timkiem) && x.Id ==user.Id).Select(x => new DanhmucVM
+                    var data = await _context.Danhmuc.Where(x => x.Ten_danhmuc.Contains(Timkiem) && x.Id == user.Id).Select(x => new DanhmucVM
                     {
                         Ma_danhmuc = x.Ma_danhmuc,
                         Ten_danhmuc = x.Ten_danhmuc,
@@ -416,7 +416,8 @@ namespace Projecthoca.Service.Responser
                     }).ToListAsync();
                     return data;
                 }
-            }catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return null;
             }
@@ -428,7 +429,7 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var data=await _context.Mathangs.Where(x=>x.Id== user.Id).Select(x => new MathangVM
+                var data = await _context.Mathangs.Where(x => x.Id == user.Id).Select(x => new MathangVM
                 {
                     Ma_mathang = x.Ma_mathang,
                     Ten_mathang = x.Ten_mathang
@@ -440,6 +441,26 @@ namespace Projecthoca.Service.Responser
                 return null;
             }
         }
-   
+
+        public async Task<List<KhuvuccauVM>> Danhsachkhuvucvang(string Ma_hocau)
+        {
+            try
+            {
+                var data = await _context.Khuvuccau.Where(x => x.Ma_hoca == Ma_hocau && x.Trangthai == "Chuacokhach").Select(x => new KhuvuccauVM
+                {
+                    Ma_Khuvuccau = x.Ma_Khuvuccau,
+                    Ten_Khuvuccau = x.Ten_Khuvuccau,
+                    Idkhuvuccau = x.Idkhuvuccau,
+                    Ma_hoca = x.Ma_hoca,
+                    Trangthai = x.Trangthai,
+                    Timeout = x.Thuehocas.Select(th => th.Timeout).FirstOrDefault(),
+                }).ToListAsync();
+                return data;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
     }
 }

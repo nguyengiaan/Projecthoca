@@ -4,7 +4,7 @@ namespace Projecthoca.Models.EnitityVM
 {
     public class DanhmucVM
     {
-        public string?Ma_danhmuc { get; set; }
+        public string? Ma_danhmuc { get; set; }
         [Required(ErrorMessage = "Tên danh mục không được để trống")]
         public string Ten_danhmuc { get; set; }
         [Required(ErrorMessage = "Giá không được để trống")]
@@ -15,6 +15,8 @@ namespace Projecthoca.Models.EnitityVM
         [Required(ErrorMessage = "Mặt hàng không được để trống")]
         public string Ma_mathang { get; set; }
 
-        public string ?Id { get; set; }
+        public string? Id { get; set; }
+
+        public int Soluong { get; set; } = 10;
     }
 }

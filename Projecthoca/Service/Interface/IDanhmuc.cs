@@ -16,7 +16,7 @@ namespace Projecthoca.Service.Interface
         // hàm dùng để cài đặt đơn vị tính
         public Task<bool> Themdonvitinh(DonvitinhVM donvitinh);
 
-        public Task <List<DonvitinhVM>> Laydanhsachdvt() ;
+        public Task<List<DonvitinhVM>> Laydanhsachdvt();
 
         public Task<bool> Xoadonvitinh(string madonvitinh);
 
@@ -27,5 +27,10 @@ namespace Projecthoca.Service.Interface
         public Task<List<MathangVM>> Laydanhsachmh();
         // hàm xóa mặt hàng
         public Task<bool> Xoamathang(string mamathang);
+        // cập nhật số lượng hàng hóa
+        public Task<bool> Capnhatsoluong(string ma_khuvuc);
+
+        // hàm dùng để lấy tất cả danh mục trong phiếu nhập
+        public Task<List<DanhmucVM>> Laydanhsachdanhmuc();
     }
 }
