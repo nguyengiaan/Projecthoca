@@ -20,12 +20,12 @@ namespace Projecthoca.Service.Interface
         public Task<ThuehocaVM> Laykhachthue(string Ma_khuvuc);
         public Task<bool> Chuyenkhachthue(ChuyenbanVM chuyenban);
         // danh mục hiển thị trong hóa đơn
-        public Task<List<DanhmucVM>> Danhmuchthd(string ?Ma_mathang);
+        public Task<List<DanhmucVM>> Danhmuchthd(string? Ma_mathang);
 
         // mặt hàng hiển thị trong hóa đơn thẻ select
         public Task<List<MathangVM>> Mathanghthd();
 
-
+        public Task<List<KhuvuccauVM>> Danhsachkhuvucvang(string Ma_hocau);
     }
 
 }

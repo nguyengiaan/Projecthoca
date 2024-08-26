@@ -40,7 +40,7 @@ namespace Projecthoca.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Danhsachdanhmuc(int page,int pagesize)
+        public async Task<IActionResult> Danhsachdanhmuc(int page, int pagesize)
         {
             try
             {
@@ -119,16 +119,16 @@ namespace Projecthoca.Controllers
                     return Json(new { success = false, message = "Không tìm thấy danh mục" });
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return Json(new { success = false, message = ex.Message});
+                return Json(new { success = false, message = ex.Message });
             }
         }
-        
+
         // contronler đơn vị tính
 
         [HttpPost]
-        public async Task<IActionResult>Themdvt(DonvitinhVM dvt)
+        public async Task<IActionResult> Themdvt(DonvitinhVM dvt)
         {
             try
             {
@@ -170,7 +170,7 @@ namespace Projecthoca.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult>Xoadonvitinh(string ma_donvitinh)
+        public async Task<IActionResult> Xoadonvitinh(string ma_donvitinh)
         {
             try
             {
@@ -184,11 +184,32 @@ namespace Projecthoca.Controllers
                     return Json(new { success = false, message = "Xóa đơn vị tính không thành công" });
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return Json(new { success = false, message = ex.Message });
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> Capnhatsoluong(string ma_khuvuccau)
+        {
+            try
+            {
+                var data = await _danhmuc.Capnhatsoluong(ma_khuvuccau);
+                if (data)
+                {
+                    return Json(new { success = true, message = "Cập nhật số lượng thành công" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Cập nhật số lượng không thành công" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+        // controller nhà cung cấp
 
         // controller mặt hàng
         [HttpPost]
@@ -253,6 +274,25 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
-
+        [HttpGet]
+        public async Task<IActionResult> Laydanhsachhanghoa()
+        {
+            try
+            {
+                var data = await _danhmuc.Laydanhsachdanhmuc();
+                if (data != null)
+                {
+                    return Json(new { success = true, data = data });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Không có dữ liệu" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
     }
 }
