@@ -14,7 +14,7 @@ namespace Projecthoca.Data
         public DbSet<Danhmuc> Danhmuc { get; set; }
         public DbSet<Danhmucgia> Danhmucgia { get; set; }
         public DbSet<Hoadondanhmuc> Hoadondanhmuc { get; set; }
-        public DbSet<Hoca> Hoca { get; set;}
+        public DbSet<Hoca> Hoca { get; set; }
         public DbSet<Thuehoca> Thuehoca { get; set; }
 
         public DbSet<Khuvuccau> Khuvuccau { get; set; }
@@ -41,23 +41,25 @@ namespace Projecthoca.Data
 
         public DbSet<Donvitinh> Donvitinhs { get; set; }
 
-        public DbSet <Quanlyhanghoa> Quanlyhanghoas { get; set; }
-      
+        public DbSet<Quanlyhanghoa> Quanlyhanghoas { get; set; }
+
+        public DbSet<Danhsachhhkho> Danhsachhhkhos { get; set; }
+        #endregion
 
         
-        #endregion
+      
   
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
             // Table Qunanlyhanghoa
-             modelBuilder.Entity<Quanlyhanghoa>()
-                .ToTable("Quanlyhanghoa")
-                .HasKey(x => x.Ma_sanpham);
+            modelBuilder.Entity<Quanlyhanghoa>()
+               .ToTable("Quanlyhanghoa")
+               .HasKey(x => x.Ma_sanpham);
 
             modelBuilder.Entity<Quanlyhanghoa>()
                 .HasOne(x => x.Nguoidung)
-                .WithMany(x=>x.Quanlyhanghoas)
+                .WithMany(x => x.Quanlyhanghoas)
                 .HasForeignKey(x => x.Id)
                 .OnDelete(DeleteBehavior.Restrict);
 
@@ -70,9 +72,9 @@ namespace Projecthoca.Data
 
             // Table Thuehoca    
             modelBuilder.Entity<Thuehoca>().ToTable("Thuehoca").HasKey(x => x.Ma_thuehoca);
-         
+
             modelBuilder.Entity<Thuehoca>().Property(e => e.Ten_khachhang).HasMaxLength(int.MaxValue);
-          
+
             modelBuilder.Entity<Thuehoca>().Property(e => e.Ngaycau).HasMaxLength(int.MaxValue);
             modelBuilder.Entity<Thuehoca>().Property(e => e.Thoigianbatdau).HasMaxLength(int.MaxValue);
             modelBuilder.Entity<Thuehoca>().Property(e => e.Timeout).HasMaxLength(int.MaxValue);
@@ -155,16 +157,10 @@ namespace Projecthoca.Data
             modelBuilder.Entity<Phieuxuatkho>().Property(e => e.Tongtien).HasMaxLength(200);
             modelBuilder.Entity<Phieuxuatkho>().HasOne(x => x.Nguoidung).WithMany(x => x.phieuxuatkhos).HasForeignKey(x => x.Id);
             // table Phieunhapkho
-            // modelBuilder.Entity<Phieunhapkho>().ToTable("Phieunhapkho").HasKey(x => x.Ma_phieunhapkho);
-            // modelBuilder.Entity<Phieunhapkho>().Property(e => e.Ngaynhap).HasMaxLength(100);
-            // modelBuilder.Entity<Phieunhapkho>().Property(e => e.Nguoinhap).HasMaxLength(100);
-            // modelBuilder.Entity<Phieunhapkho>().Property(e => e.Tenkho).HasMaxLength(100);
-            // modelBuilder.Entity<Phieunhapkho>().Property(e => e.Diadiem).HasMaxLength(100);
-            // modelBuilder.Entity<Phieunhapkho>().Property(e => e.Donvitinh).HasMaxLength(100);
-            // modelBuilder.Entity<Phieunhapkho>().Property(e => e.Soluong).HasMaxLength(100);
-            // modelBuilder.Entity<Phieunhapkho>().Property(e => e.Dongia).HasMaxLength(100);
-            // modelBuilder.Entity<Phieunhapkho>().Property(e => e.Thanhtien).HasMaxLength(100);
-            // modelBuilder.Entity<Phieunhapkho>().HasOne(x => x.Nguoidung).WithMany(x => x.phieunhapkhos).HasForeignKey(x => x.Id);
+            modelBuilder.Entity<Phieunhapkho>().ToTable("Phieunhapkho").HasKey(x => x.Ma_phieunhapkho);
+            modelBuilder.Entity<Phieunhapkho>().Property(e => e.Ngaynhap).HasMaxLength(100);
+            modelBuilder.Entity<Phieunhapkho>().Property(e => e.Nguoinhap).HasMaxLength(100);
+            modelBuilder.Entity<Phieunhapkho>().HasOne(x => x.Nguoidung).WithMany(x => x.phieunhapkhos).HasForeignKey(x => x.Id);
             //table Mathang
             modelBuilder.Entity<Mathang>().ToTable("Mathang").HasKey(x => x.Ma_mathang);
             modelBuilder.Entity<Mathang>().Property(e => e.Ten_mathang).HasMaxLength(100);
@@ -179,6 +175,14 @@ namespace Projecthoca.Data
             modelBuilder.Entity<Quanlyhanghoa>().Property(e => e.Ten_donvitinh).HasMaxLength(100);
             modelBuilder.Entity<Quanlyhanghoa>().Property(e => e.Id).HasMaxLength(100);
             modelBuilder.Entity<Quanlyhanghoa>().HasOne(x => x.Nguoidung).WithMany(x => x.Quanlyhanghoas).HasForeignKey(x => x.Id);
+            // Danh sách hàng hóa kho
+            modelBuilder.Entity<Danhsachhhkho>().ToTable("Danhsachhhkho").HasKey(x => x.Ma_hanghoa);
+            modelBuilder.Entity<Danhsachhhkho>().Property(e => e.Ma_danhmuc).HasMaxLength(450);
+            modelBuilder.Entity<Danhsachhhkho>().Property(e => e.Ma_phieunhapkho).HasMaxLength(100);
+            modelBuilder.Entity<Danhsachhhkho>().Property(e => e.Soluong).HasMaxLength(100);
+            modelBuilder.Entity<Danhsachhhkho>().Property(e => e.Thanhtien).HasMaxLength(100);
+            modelBuilder.Entity<Danhsachhhkho>().HasOne(x => x.Danhmuc).WithMany(x => x.Danhsachhhkhos).HasForeignKey(x => x.Ma_danhmuc);
+            modelBuilder.Entity<Danhsachhhkho>().HasOne(x => x.Phieunhapkho).WithMany(x => x.Danhsachhhkhos).HasForeignKey(x => x.Ma_phieunhapkho);
 
         }
 
