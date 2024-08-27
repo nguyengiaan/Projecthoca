@@ -1,0 +1,109 @@
+@{
+    Layout = null; // Không sử dụng layout để màn hình in đơn giản hơn
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>In Hóa Đơn</title>
+    <link rel="stylesheet" href="~/css/printbill.css">
+</head>
+<body>
+    <div class="col-md-6">
+        <div class="bill-container">
+            <div class="customer-info">
+                <h2>Thông tin khách hàng</h2>
+                <div><span>Tên khu câu:</span><span class="value">Khu vực 7</span></div>
+                <div><span>Tên khách hàng:</span><span class="value">Vũ Văn A</span></div>
+                <div><span>Thời gian bắt đầu câu:</span><span class="value">23:08:00</span></div>
+                <div><span>Thời gian câu:</span><span class="value">03:07:55</span></div>
+            </div>
+
+            <div class="bill-details">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tên hàng</th>
+                            <th>ĐVT</th>
+                            <th>SL</th>
+                            <th>Đơn giá</th>
+                            <th>Thành tiền</th>
+                            <th>Xóa</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dsdv">
+                        <!-- Thông tin dịch vụ được thêm vào đây -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="bill-summary">
+                <div class="bill-total">
+                    <h2>Tổng thanh toán: <span id="tongthanhtoan-outside" style="color:orange;">0</span></h2>
+                </div>
+                <div class="Tienthoichokhach">
+                    <h2>Tiền thối lại cho khách: <span id="tongthanhtoan-outside" style="color:red;">0</span></h2>
+                </div>
+            </div>
+          <div class="mobile-buttons" id="mobile-buttons">
+                <button class="print-btn" onclick="printBill()">In</button>
+                <button class="exit-btn" onclick="exitPage()">Thoát</button>
+            </div>
+           
+        </div>
+        
+    </div>
+    <script>
+        window.onload = function() {
+            // Lấy dữ liệu từ localStorage
+            let billData = JSON.parse(localStorage.getItem("billData"));
+
+            // Kiểm tra nếu có dữ liệu
+            if (billData && billData.length > 0) {
+                let tableBody = document.getElementById("dsdv");
+
+                billData.forEach(item => {
+                    let newRow = `<tr>
+                                    <td>${item.tenHang}</td>
+                                    <td>${item.donViTinh}</td>
+                                    <td>${item.soLuong}</td>
+                                    <td>${item.donGia}</td>
+                                    <td>${item.thanhTien}</td>
+                                  </tr>`;
+                    tableBody.insertAdjacentHTML('beforeend', newRow);
+                });
+            }
+
+            // Kiểm tra nếu là thiết bị di động
+            if (isMobileDevice()) {
+                document.getElementById("mobile-buttons").style.display = "block";
+            } else {
+                // Nếu không phải thiết bị di động, in ngay lập tức
+                window.print();
+                // Sau khi in (hoặc hủy in), quay lại trang Hocau.cshtml
+                window.onafterprint = function() {
+                    window.location.href = '/Home/Hocau'; // Đường dẫn đến trang Hocau.cshtml
+                };
+            }
+        };
+
+        // Hàm kiểm tra thiết bị di động dựa trên kích thước màn hình hoặc user agent
+        function isMobileDevice() {
+            return (window.innerWidth <= 768) || /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // Hàm in hóa đơn
+        function printBill() {
+              document.getElementById("mobile-buttons").style.display = "none";
+            window.print();
+        }
+
+        // Hàm thoát và quay lại trang Hocau.cshtml
+        function exitPage() {
+            window.location.href = '/Home/Hocau'; // Đường dẫn đến trang Hocau.cshtml
+        }
+    </script>
+</body>
+</html>

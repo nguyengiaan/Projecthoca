@@ -64,6 +64,8 @@ namespace Projecthoca.Service.Responser
                              Tongtien = x.Tongtien,
                              Tienmat = x.Tienmat,
                              Chuyenkhoan = x.Chuyenkhoan,
+                             Trangthai = x.Trangthai,
+                             Chitiethoadon = x.Chitiethoadon,
                              Ma_khuvuc = x.Ten_khuvuc,
                          })
                          .Skip((page - 1) * pagesize)
@@ -83,6 +85,8 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var kvc= await _context.Khuvuccau.FindAsync(phieuxuatkho.Ma_khuvuc);
+           
+                
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
                 int nextNumber1 = 1;
                 var lastMaDV = await _context.Phieuxuatkhos
@@ -105,11 +109,11 @@ namespace Projecthoca.Service.Responser
                 data.Chuyenkhoan = phieuxuatkho.Chuyenkhoan;
                 data.Tongtien = phieuxuatkho.Tongtien;
                 data.Ten_khuvuc = kvc.Ten_Khuvuccau;
+                data.Trangthai = phieuxuatkho.Trangthai;
+                data.Chitiethoadon = phieuxuatkho.Chitiethoadon;
                 await _context.Phieuxuatkhos.AddAsync(data);
                 await _context.SaveChangesAsync();
                 return true;
-
-
             }
             catch (Exception ex)
             {

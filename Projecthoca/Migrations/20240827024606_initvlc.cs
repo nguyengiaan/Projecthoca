@@ -4,17 +4,16 @@
 
 namespace Projecthoca.Migrations
 {
-    public partial class up_46 : Migration
+    public partial class initvlc : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            
+
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropTable(
-                name: "Quanlyhanghoa");
+
         }
     }
 }
