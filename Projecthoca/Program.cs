@@ -14,7 +14,7 @@ builder.Services.AddDbContext<MyDbcontext>(options =>
         sqlServerOptionsAction: sqlOptions =>
         {
             sqlOptions.EnableRetryOnFailure(
-                maxRetryCount: 5, // Số lần thử lại tối đa
+                maxRetryCount: 100, // Số lần thử lại tối đa
                 maxRetryDelay: TimeSpan.FromSeconds(30), // Thời gian chờ tối đa giữa các lần thử lại
                 errorNumbersToAdd: null); // Có thể chỉ định mã lỗi cụ thể để thử lại
         }));

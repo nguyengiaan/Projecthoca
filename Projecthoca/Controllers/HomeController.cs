@@ -88,7 +88,10 @@ namespace Projecthoca.Controllers
         {
             return View();
         }
-
+        public IActionResult Baocaoxuathang()
+        {
+            return View();
+        }
         // GET: Quanlyhanghoa
         public async Task<IActionResult> Quanlyhanghoa()
         {
@@ -119,6 +122,8 @@ namespace Projecthoca.Controllers
                 return StatusCode(500, "Internal server error. Please try again later.");
             }
         }
+
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

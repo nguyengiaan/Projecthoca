@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using Projecthoca.Helper;
+using Projecthoca.Models.Enitity;
 using Projecthoca.Models.EnitityVM;
 using Projecthoca.Service.Interface;
 using System;
@@ -36,18 +37,18 @@ public class TimerBackgroundService : BackgroundService
 
         using (var scope = _scopeFactory.CreateScope())
         {
-            var cacheKey = "Danhsachbamgiolist";
+            var cacheKey = "Danhsachbamgiolist_1";
             var _kvc = scope.ServiceProvider.GetRequiredService<IKhuvuccau>();
 
             while (!stoppingToken.IsCancellationRequested)
             {
                 try
                 {
-                    if (_cache.TryGetValue(cacheKey, out  List<BamgioVM> list))
+                    if (_cache.TryGetValue(cacheKey, out  List<Thuehoca> list))
                     {
                         foreach (var item in list)
                         {
-                            await _kvc.Demthoigian(item.Ma_khuvuc);
+                            await _kvc.Demthoigian(item.Ma_khuvuccau);
                         }
                     }
                 }
