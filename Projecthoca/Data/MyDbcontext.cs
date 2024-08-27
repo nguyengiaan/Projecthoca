@@ -35,7 +35,7 @@ namespace Projecthoca.Data
 
         public DbSet<Phieuxuatkho> Phieuxuatkhos { get; set; }
 
-        // public DbSet<Phieunhapkho> Phieunhapkhos { get; set; }
+        public DbSet<Phieunhapkho> Phieunhapkhos { get; set; }
 
         public DbSet<Mathang> Mathangs { get; set; }
 
@@ -183,6 +183,9 @@ namespace Projecthoca.Data
             modelBuilder.Entity<Danhsachhhkho>().Property(e => e.Thanhtien).HasMaxLength(100);
             modelBuilder.Entity<Danhsachhhkho>().HasOne(x => x.Danhmuc).WithMany(x => x.Danhsachhhkhos).HasForeignKey(x => x.Ma_danhmuc);
             modelBuilder.Entity<Danhsachhhkho>().HasOne(x => x.Phieunhapkho).WithMany(x => x.Danhsachhhkhos).HasForeignKey(x => x.Ma_phieunhapkho);
+
+
+           
 
         }
 

@@ -172,8 +172,10 @@
                                 <tr>
                                     <th>Mã danh mục</th>
                                     <th>Tên danh mục</th>
+                                    <th>Tồn kho</th>
                                     <th>Giá</th>
                                     <th>ĐVT</th>
+                                    
                                     <th></th>
                                 </tr>
                             </thead>
@@ -2168,42 +2170,48 @@
             document.body.innerHTML = originalContents;
         }
         // hàm lấy hàng hóa hiển thị trong hóa đơn
-        function hienthihanghoa(Ma_mathang) {
-
-            $.ajax({
-                type: "POST",
-                url: "/Khuvuchoca/Danhmuchthd",
-
-                data: { Ma_mathang: Ma_mathang },
-                success: function (reponser) {
-                    if (reponser.success) {
-
-
-                        var html = '';
-                        $('#danhmuc-list').empty();
-                        $.each(reponser.data, function (index, value) {
-                            var str = `<tr>
-                                                            <td>${value.ma_danhmuc}</td>
-                                                                    <td>${value.ten_danhmuc}</td>
-
-                                                            <td>${formatCurrency(value.gia)}</td>
-                                                                    <td>${value.donvitinh}</td>
-                                                                            <td><button class="btn btn-success" data-id="${value.ma_danhmuc}" id="btnChondm" >Chọn</button></td>
-                                                            </tr>`;
-                            html += str; // Thêm chuỗi vào biến html
-                        });
-                        $('#danhmuc-list').html(html);
+       function hienthihanghoa(Ma_mathang) {
+    $.ajax({
+        type: "POST",
+        url: "/Khuvuchoca/Danhmuchthd",
+        data: { Ma_mathang: Ma_mathang },
+        success: function (reponser) {
+            if (reponser.success) {
+                var html = '';
+                $('#danhmuc-list').empty();
+                $.each(reponser.data, function (index, value) {
+                    var selectButton = ''; // Tạo một chuỗi rỗng cho nút "Chọn"
+                    
+                    // Nếu số lượng > 0, hiển thị nút "Chọn"
+                    if (value.soluong > 0) {
+                        selectButton = `<button class="btn btn-success" data-id="${value.ma_danhmuc}" id="btnChondm">Chọn</button>`;
                     }
-                    else {
-                        Swal.fire({
-                            title: "Thông báo lỗi",
-                            text: response.message,
-                            icon: "error"
-                        });
-                    }
-                }
-            })
+
+                    // Tạo chuỗi HTML cho từng hàng trong bảng
+                    var str = `<tr>
+                                <td>${value.ma_danhmuc}</td>
+                                <td>${value.ten_danhmuc}</td>
+                                <td>${value.soluong}</td>
+                                <td>${formatCurrency(value.gia)}</td>
+                                <td>${value.donvitinh}</td>
+                                <td>${selectButton}</td>
+                               </tr>`;
+                    
+                    html += str; // Thêm chuỗi vào biến html
+                });
+                $('#danhmuc-list').html(html); // Cập nhật nội dung bảng
+                console.log(reponser);
+            } else {
+                Swal.fire({
+                    title: "Thông báo lỗi",
+                    text: response.message,
+                    icon: "error"
+                });
+            }
         }
+    });
+}
+
         // hàm lấy hàng hóa hiển thị trong hóa đơn
         function Mathanghthd() {
             $.ajax({

@@ -400,6 +400,7 @@ namespace Projecthoca.Service.Responser
                         Ma_danhmuc = x.Ma_danhmuc,
                         Ten_danhmuc = x.Ten_danhmuc,
                         Gia = x.Gia,
+                        Soluong= x.Soluong,
                         Donvitinh = x.Donvitinh
 
                     }).ToListAsync();

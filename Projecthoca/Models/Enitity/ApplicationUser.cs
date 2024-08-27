@@ -20,7 +20,7 @@ namespace Projecthoca.Models.Enitity
 
         public List<Phieuxuatkho> phieuxuatkhos { get; set; }
 
-        // public List<Phieunhapkho> phieunhapkhos { get; set; }
+        public List<Phieunhapkho> phieunhapkhos { get; set; }
 
         public List<Quanlyhanghoa> Quanlyhanghoas { get; set; }
 
@@ -34,7 +34,7 @@ namespace Projecthoca.Models.Enitity
             Giahocas = new List<Giahoca>();
             Thongbaos = new List<Thongbao>();
             phieuxuatkhos = new List<Phieuxuatkho>();
-            // phieunhapkhos = new List<Phieunhapkho>();
+            phieunhapkhos = new List<Phieunhapkho>();
             Donvitinhs = new List<Donvitinh>();
             Mathangs = new List<Mathang>();
             Quanlyhanghoas = new List<Quanlyhanghoa>();
