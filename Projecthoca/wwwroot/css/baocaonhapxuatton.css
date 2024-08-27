@@ -1,0 +1,23 @@
+@media screen and (max-width: 480px) {
+    .container {
+        width: 95%; /* Điều chỉnh kích thước container cho màn hình nhỏ */
+        padding: 10px; /* Giảm khoảng cách padding để tiết kiệm không gian */
+    }
+
+    table {
+        font-size: 12px; /* Giảm kích thước font để phù hợp với màn hình nhỏ */
+        max-height: none; /* Bỏ giới hạn chiều cao bảng để nội dung không bị cắt */
+        display: block; /* Đảm bảo bảng vẫn có thể cuộn dọc nếu cần */
+        overflow-x: auto; /* Thêm cuộn ngang nếu cần */
+    }
+
+    th, td {
+        padding: 8px; /* Giảm khoảng cách padding trong các ô */
+        min-width: 70px; /* Giảm chiều rộng tối thiểu của các ô để tiết kiệm không gian */
+    }
+
+    button {
+        width: 100%; /* Làm nút rộng 100% để dễ bấm trên màn hình nhỏ */
+        font-size: 14px; /* Giảm kích thước font để phù hợp với màn hình nhỏ */
+    }
+}

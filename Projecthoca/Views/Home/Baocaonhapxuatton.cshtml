@@ -1,0 +1,171 @@
+@{
+    ViewData["Title"] = "Bảng Kê Kho";
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewData["Title"]</title>
+    <link href="~/css/baocaonhapxuatton.css" rel="stylesheet" />
+    <style>
+        /* Đặt tệp này trong thư mục wwwroot/css */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            width:100%;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            max-height: 400px; /* Giới hạn chiều cao bảng */
+            overflow-y: auto; /* Cuộn dọc nếu cần */
+            display: block; /* Để cuộn dọc hoạt động */
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+        }
+
+        thead {
+            background-color: #f4f4f4;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+        
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tableBody = document.querySelector('#bangKeKhoTable tbody');
+            const fileInput = document.getElementById('fileInput');
+            const loadDataBtn = document.getElementById('loadDataBtn');
+
+            // Function to add a row to the table
+            const addRow = (item) => {
+                const tr = document.createElement('tr');
+
+                // Calculate the ending inventory
+                const tonCuoiKy = (item.TonDauKy || 0) + (item.NhapTrongKy || 0) - (item.XuatTrongKy || 0);
+
+                tr.innerHTML = `
+                    <td>${item.MaHang || ''}</td>
+                    <td>${item.TenHang || ''}</td>
+                    <td>${item.DVT || ''}</td>
+                    <td>${item.TonDauKy || ''}</td>
+                    <td>${item.NhapTrongKy || ''}</td>
+                    <td>${item.XuatTrongKy || ''}</td>
+                    <td>${tonCuoiKy}</td>
+                `;
+                tableBody.appendChild(tr);
+            };
+
+            // Function to handle file input and process the Excel file
+            const handleFile = (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const sheetName = workbook.SheetNames[0];
+                    const sheet = workbook.Sheets[sheetName];
+                    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+                    tableBody.innerHTML = ''; // Clear existing rows
+                    // Skip the header row
+                    rows.slice(1).forEach(row => {
+                        if (row.length > 0) {
+                            // Map each row to an object with the appropriate keys
+                            const item = {
+                                MaHang: row[0] || '',
+                                TenHang: row[1] || '',
+                                DVT: row[2] || '',
+                                TonDauKy: Number(row[3]) || 0,
+                                NhapTrongKy: Number(row[4]) || 0,
+                                XuatTrongKy: Number(row[5]) || 0
+                            };
+                            addRow(item);
+                        }
+                    });
+                };
+                reader.readAsArrayBuffer(file);
+            };
+
+            loadDataBtn.addEventListener('click', () => {
+                fileInput.click(); // Trigger file input click
+            });
+
+            fileInput.addEventListener('change', handleFile);
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Bảng Kê Kho</h1>
+        <input type="file" id="fileInput" accept=".xlsx, .xls" style="display: none;">
+        <button id="loadDataBtn">Tải Dữ Liệu</button>
+        <table id="bangKeKhoTable">
+            <thead>
+                <tr>
+                    <th>Mã hàng</th>
+                    <th>Tên hàng</th>
+                    <th>ĐVT</th>
+                    <th>Tồn đầu kỳ</th>
+                    <th>Nhập trong kỳ</th>
+                    <th>Xuất trong kỳ</th>
+                    <th>Tồn cuối kỳ</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Dữ liệu sẽ được thêm vào đây bằng JavaScript -->
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>

@@ -1487,6 +1487,10 @@
                 }
             });
         }
+
+
+
+        
         function Danhsachdv() {
             $.ajax({
                 type: "GET",
@@ -2436,8 +2440,7 @@ $(document).click(function (event) {
                                                             <tr onclick="selectItem('${value.ma_danhmuc}', '${value.ten_danhmuc}', '${value.gia}', '${value.donvitinh}')">
                                                                 <td>${value.ma_danhmuc}</td>
                                                                 <td>${value.ten_danhmuc}</td>
-                                                                <td>${value.donvitinh}</td>
-                                                               <td> $${value.gia}</td>
+                                                               
                                                             </tr>`;
                                 $('#tblbody').append(str);
                             });

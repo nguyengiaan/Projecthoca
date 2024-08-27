@@ -1,0 +1,25 @@
+@media (max-width: 480px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+    .row {
+        margin-bottom: 15px;
+    }
+    .col-md-3, .col-md-2 {
+        margin-bottom: 10px;
+    }
+    .btn {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    table {
+        font-size: 12px; /* Giảm kích thước font cho bảng */
+    }
+    th, td {
+        padding: 8px; /* Giảm padding của các ô trong bảng */
+    }
+    .table-responsive {
+        overflow-x: auto;
+    }
+}

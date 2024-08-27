@@ -2,51 +2,274 @@
     Layout = "_Layout";
 }
 @model Projecthoca.Models.EnitityVM.DanhmucVM
-<!-- Danh sách Danh mục-->
-<div class="container-fluid">
-    <div class="card shadow mb-4">
-        <div class="card-header py-3  ">
-            <div class="row">
-                <div class="col-md-10 col-12">
-                    <h4 class="m-0 font-weight-bold text-primary">Danh sách Danh mục</h4>
-                </div>
-                <div class="col-md-2 col-12">
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#Themdanhmuc"> <span class="fs-20">Thêm danh mục</span> </button>
-                </div>
-            </div>
+@{
+    ViewData["Title"] = "Xem tồn kho";
+}
+ <link href="~/css/baocaoxuathang.css" rel="stylesheet" />
+ 
+<style>
+    /* Tùy chỉnh cho container chính */
+    .container {
+        background-color: #f8f9fa;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Tùy chỉnh cho tiêu đề */
+    h2 {
+        color: #343a40;
+        margin-bottom: 20px;
+    }
+
+    /* Tùy chỉnh cho các thẻ label và input */
+    label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        display: block;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select.form-control {
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        padding: 8px 12px;
+    }
+
+    /* Tùy chỉnh cho nút bấm */
+    button.btn {
+        border-radius: 4px;
+        font-size: 16px;
+        padding: 10px 20px;
+        margin-left: 5px;
+    }
+
+    button.btn-primary {
+        background-color: #007bff;
+        border: none;
+        color: white;
+    }
+
+    button.btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+    button.btn-secondary {
+        background-color: #6c757d;
+        border: none;
+        color: white;
+    }
+
+    button.btn-secondary:hover {
+        background-color: #5a6268;
+    }
+
+    /* Tùy chỉnh cho bảng */
+    table.table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    table.table th,
+    table.table td {
+        padding: 12px;
+        text-align: left;
+    }
+
+    table.table thead {
+        background-color: #007bff;
+        color: white;
+    }
+
+    table.table tbody tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    table.table tbody tr:hover {
+        background-color: #e9ecef;
+    }
+
+    /* Tùy chỉnh cho phần nhập liệu và tìm kiếm */
+    .input-group {
+        margin-bottom: 15px;
+    }
+
+    .input-group input {
+        border-radius: 4px;
+        border: 1px solid #ced4da;
+        padding: 8px;
+    }
+
+    /* Tùy chỉnh cho phần cuộn bảng */
+    .table-container {
+        max-height: 400px; /* Chiều cao tối đa của bảng */
+        overflow-y: auto;  /* Cho phép cuộn dọc khi nội dung vượt quá chiều cao tối đa */
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Báo cáo tồn kho</h2>
         </div>
-        <div class="card-body">
-            <div class="table-responsive">
-                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-3">
+            <label for="TuThang">Từ tháng</label>
+            <input type="date" class="form-control" id="TuThang" placeholder="Chọn tháng và năm">
+        </div>
+        <div class="col-md-3">
+            <label for="DenNgay">Đến ngày</label>
+            <input type="date" class="form-control" id="DenNgay">
+        </div>
+        <div class="col-md-2">
+            <label for="MaSanPham">Mã sản phẩm</label>
+            <input type="text" class="form-control" id="MaSanPham" placeholder="%">
+        </div>
+        <div class="col-md-2">
+            <label for="SearchInput">Tìm kiếm</label>
+            <input type="text" class="form-control" id="SearchInput" placeholder="Tìm theo mã hoặc tên sản phẩm">
+        </div>
+        <div class="col-md-2 d-flex align-items-end">
+            <button class="btn btn-primary" onclick="BaoCao()">Báo cáo</button>
+            <button class="btn btn-secondary" onclick="InAn()">In ấn</button>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="table-container">
+                <table class="table table-bordered table-hover">
                     <thead>
                         <tr>
-                            <th>Mã danh mục</th>
-                            <th>Tên danh mục</th>
+                            <th>Mã sản phẩm</th>
+                            <th>Tên sản phẩm</th>
+                            <th>ĐVT</th>
+                            <th>Nhà cung cấp</th>
+                            <th>Số lượng tồn</th>
                             <th>Giá</th>
-                            <th>Miêu tả</th>
-                            <th>Đơn vị tính</th>
-
-                            <th>Xóa</th>
-                            <th>Sửa</th>
                         </tr>
                     </thead>
-                  
-                    <tbody id="tblbody">
+                    <tbody id="tableBody">
+                        <!-- Dữ liệu sẽ được thêm vào bằng JavaScript -->
                     </tbody>
                 </table>
-                <div class="row">
-                    <div class="col-sm-12 col-md-5">
-                        <div class="col-sm-12 col-md-7">
-                            <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
-                                <nav aria-label="Page navigation example" id="pagination">
-
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            </div>
+            <div class="mt-3">
+                <strong>Tổng số lượng tồn: </strong><span id="totalQuantity">0</span>
+            </div>
+            <div>
+                <strong>Tổng tiền: </strong><span id="totalAmount">0</span>
             </div>
         </div>
-        @section Scripts {
+    </div>
+</div>
 
+
+
+@section Scripts {
+    <script>
+  const products = [
+             { maSanPham: 'BUL-005931_A', tenSanPham: 'Quần nam dài jeans', donViTinh: 'Cái', nhaCungCap: 'Kaki', soLuongTon: 7, gia: 5700000 },
+    { maSanPham: 'BEG-001929_A', tenSanPham: 'Quần nam dài jeans', donViTinh: 'Cái', nhaCungCap: 'Không rõ', soLuongTon: 34, gia: 500000 },
+    { maSanPham: 'BTS-001999_A', tenSanPham: 'Quần nữ dài kaki', donViTinh: 'Cái', nhaCungCap: 'Không rõ', soLuongTon: 19, gia: 450000 },
+    { maSanPham: 'SHO-002340_B', tenSanPham: 'Giày thể thao nam', donViTinh: 'Đôi', nhaCungCap: 'Nike', soLuongTon: 15, gia: 1200000 },
+    { maSanPham: 'BAG-007856_C', tenSanPham: 'Túi xách nữ', donViTinh: 'Cái', nhaCungCap: 'Chanel', soLuongTon: 10, gia: 3500000 },
+    { maSanPham: 'JAC-003678_A', tenSanPham: 'Áo khoác mùa đông', donViTinh: 'Cái', nhaCungCap: 'Adidas', soLuongTon: 22, gia: 2000000 },
+    { maSanPham: 'SWE-005489_B', tenSanPham: 'Áo sweater nam', donViTinh: 'Cái', nhaCungCap: 'Zara', soLuongTon: 18, gia: 700000 },
+    { maSanPham: 'DRE-009021_C', tenSanPham: 'Đầm dự tiệc', donViTinh: 'Cái', nhaCungCap: 'H&M', soLuongTon: 8, gia: 1200000 },
+    { maSanPham: 'SKI-004567_A', tenSanPham: 'Váy ngắn', donViTinh: 'Cái', nhaCungCap: 'Uniqlo', soLuongTon: 25, gia: 450000 },
+    { maSanPham: 'HAT-002356_B', tenSanPham: 'Mũ lưỡi trai', donViTinh: 'Cái', nhaCungCap: 'New Era', soLuongTon: 30, gia: 250000 }
+        ];
+
+        // Hàm tạo bảng từ danh sách sản phẩm
+        function populateTable() {
+            let tableBody = $('#tableBody');
+            tableBody.empty(); // Xóa dữ liệu hiện có trong bảng
+
+            products.forEach(product => {
+                let row = `<tr>
+                    <td>${product.maSanPham}</td>
+                    <td>${product.tenSanPham}</td>
+                    <td>${product.donViTinh}</td>
+                    <td>${product.nhaCungCap}</td>
+                    <td class="quantity">${product.soLuongTon}</td>
+                    <td class="price">${product.gia.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
+                </tr>`;
+                tableBody.append(row);
+            });
+
+            calculateTotals(); // Tính tổng sau khi bảng được tạo
         }
+
+        // Hàm báo cáo
+        function BaoCao() {
+            var tuThangDate = new Date($('#TuThang').val());
+            var tuThang = `${tuThangDate.getMonth() + 1}/${tuThangDate.getFullYear()}`;
+            var denNgay = $('#DenNgay').val();
+            var maSanPham = $('#MaSanPham').val();
+            alert("Báo cáo từ tháng: " + tuThang + ", đến ngày: " + denNgay + ", mã sản phẩm: " + maSanPham);
+            // Sau khi lấy dữ liệu từ server, gọi populateTable() để hiển thị dữ liệu
+            populateTable(); // Hiển thị dữ liệu mẫu
+        }
+
+        // Hàm in ấn
+        function InAn() {
+            alert("In báo cáo tồn kho");
+            // Thực hiện các thao tác in ấn
+        }
+
+        // Hàm lọc bảng
+        function filterTable() {
+            var input = $('#SearchInput').val().toLowerCase();
+            $('#tableBody tr').each(function () {
+                var text = $(this).text().toLowerCase();
+                $(this).toggle(text.indexOf(input) > -1);
+            });
+            calculateTotals(); // Tính tổng sau khi lọc
+        }
+
+        // Hàm tính tổng số lượng tồn và tổng tiền
+       function calculateTotals() {
+    var totalQuantity = 0;
+    var totalAmount = 0;
+
+    // Duyệt qua từng hàng trong bảng để tính tổng số lượng và tổng tiền
+    $('#tableBody tr').each(function () {
+        var quantity = parseInt($(this).find('.quantity').text().replace('.', '').trim());
+        var priceText = $(this).find('.price').text().replace('₫', '').replace('.', '').trim();
+        var price = parseFloat(priceText);
+
+        if (!isNaN(quantity)) {
+            totalQuantity += quantity;
+        }
+        if (!isNaN(price)) {
+            totalAmount += price;
+        }
+    });
+
+    // Định dạng tổng tiền với dấu phẩy
+    totalAmount = totalAmount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+
+    $('#totalQuantity').text(totalQuantity);
+    $('#totalAmount').text(totalAmount);
+}
+
+
+        // Hàm chọn ngày
+        $(document).ready(function () {
+            populateTable(); // Hiển thị bảng ngay khi trang tải
+
+            $('#DenNgay').change(function () {
+                var selectedDate = $(this).val();
+                console.log("Ngày được chọn: " + selectedDate);
+            });
+
+            $('#SearchInput').on('keyup', filterTable);
+
+            calculateTotals();
+        });
+    </script>
+}

@@ -89,6 +89,10 @@ namespace Projecthoca.Controllers
         {
             return View();
         }
+         public IActionResult Baocaonhapxuatton()
+        {
+            return View();
+        }
         // GET: Quanlyhanghoa
         public async Task<IActionResult> Quanlyhanghoa()
 {
