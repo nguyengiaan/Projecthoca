@@ -135,9 +135,31 @@ namespace Projecthoca.Service.Responser
             }
         }
         // reponxer phiếu nhập kho 
-        public Task<(List<PhieunhapkhoVM> ds, int totalpages)> Danhsachphieunhap(int page, int pagesize)
+        public async Task<(List<PhieunhapkhoVM> ds, int totalpages)> Danhsachphieunhap(int page, int pagesize)
         {
-            throw new NotImplementedException();
+            try
+            {
+                var totalItems = _context.Phieunhapkhos.Count();
+                var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var px = await _context.Phieunhapkhos
+                         .Where(x => x.Id == user.Id) // Assuming UserId is the correct property
+                         .Select(x => new PhieunhapkhoVM
+                         {
+                             Ma_phieunhapkho = x.Ma_phieunhapkho,
+                             Ngaynhap = x.Ngaynhap,
+                             Nguoinhap = x.Nguoinhap,
+
+                         })
+                         .Skip((page - 1) * pagesize)
+                         .Take(pagesize)
+                         .ToListAsync();
+                return (px, totalpages);
+            }
+            catch (Exception ex)
+            {
+                return (null, 0);
+            }
         }
         public async Task<bool> Themphieunhapkho(List<DanhsachhhkhoVM> hanghoa)
         {
@@ -171,7 +193,7 @@ namespace Projecthoca.Service.Responser
                     dx.Thanhtien = a.Soluong * hh.Gia;
                     await _context.Danhsachhhkhos.AddAsync(dx);
                 }
-                
+
                 await _context.SaveChangesAsync();
                 return true;
             }
@@ -180,6 +202,51 @@ namespace Projecthoca.Service.Responser
                 return false;
             }
         }
+        public async Task<bool> Xoaphieunhapkho(string Ma_phieunhapkho)
+        {
+            try
+            {
+                var data = await _context.Phieunhapkhos.FindAsync(Ma_phieunhapkho);
+                if (data != null)
+                {
+                    _context.Phieunhapkhos.Remove(data);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
 
+        public async Task<List<XemhanghoakhoVM>> Xemphieukho(string Ma_phieunhapkho)
+        {
+            try
+            {
+                var data = await _context.Danhsachhhkhos.Where(x => x.Ma_phieunhapkho == Ma_phieunhapkho)
+                     .Select(x => new XemhanghoakhoVM
+                     {
+                         Ma_hanghoa = x.Ma_danhmuc,
+                         Ten_hanghoa = x.Danhmuc.Ten_danhmuc,
+                         Dvt = x.Danhmuc.Donvitinh,
+                         Soluong = x.Soluong,
+                         Gia = x.Danhmuc.Gia,
+                         Thanhtien = x.Danhmuc.Gia * x.Soluong
+                     }
+                ).ToListAsync();
+
+
+                return data;
+            }
+            catch(Exception ex)
+            {
+                return null;
+            }
+        }
+
+        }
     }
-}
+
+

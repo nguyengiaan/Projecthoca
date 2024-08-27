@@ -17,6 +17,8 @@ namespace Projecthoca.Service.Interface
 
         public Task<bool> Themphieunhapkho(List<DanhsachhhkhoVM> hanghoa);
 
+        public Task<bool> Xoaphieunhapkho(string Ma_phieunhapkho);
+        public Task<List<XemhanghoakhoVM>> Xemphieukho(string Ma_phieunhapkho);
 
     }
 }

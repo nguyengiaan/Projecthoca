@@ -130,5 +130,69 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Danhsachphieunhapkho(int page, int pagesize)
+        {
+            try
+            {
+                var data = await _phieuxuatkho.Danhsachphieunhap(page, pagesize);
+                if (data.ds != null)
+                {
+                    var totalItems = data.ds.Count;
+                    return Json(new { success = true, dsdm = data.ds, totalPages = data.totalpages, totalItems = totalItems, pageindex = page });
+                }
+                else
+                {
+                    return Json(new { success = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false });
+            }
+        }
+
+        [HttpPost] 
+        public async Task<IActionResult> Xoaphieunhap(string Ma_phieunhapkho)
+        {
+            try
+            {
+                var data = await _phieuxuatkho.Xoaphieunhapkho(Ma_phieunhapkho);
+                if (data)
+                {
+                    return Json(new { success = true, messeger = "Xóa thành công" });
+                }
+                else
+                {
+                    return Json(new { success = false, messeger = "Xóa thất bại" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, messeger = ex.Message });
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Xemphieukho(string Ma_phieukho)
+        {
+            try
+            {
+                var data = await _phieuxuatkho.Xemphieukho(Ma_phieukho);
+                if (data.Count > 0)
+                {
+                    return Json(new { success = true, data = data });
+                }
+                else
+                {
+                    return Json(new { success = false, });
+                }
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, ex = ex.Message });
+            }
+        }
     }
 }
