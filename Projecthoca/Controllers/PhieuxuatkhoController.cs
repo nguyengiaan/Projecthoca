@@ -16,7 +16,7 @@ namespace Projecthoca.Controllers
         [HttpPost]
         public async Task<IActionResult> Themphieuxuatkho(PhieuxuatkhoVM pxk)
         {
-           try
+            try
             {
                 var data = await _phieuxuatkho.Themphieuxuatkho(pxk);
                 if (data)
@@ -28,9 +28,9 @@ namespace Projecthoca.Controllers
                     return Json(new { success = false });
                 }
             }
-            catch(Exception ex )
+            catch (Exception ex)
             {
-                return Json(new { success = false ,});
+                return Json(new { success = false, });
             }
         }
 
@@ -41,8 +41,8 @@ namespace Projecthoca.Controllers
             {
                 var pageindex = page;
                 var data = await _phieuxuatkho.Danhsachphieu(page, pagesize);
-            
-               
+
+
 
                 if (data.ds != null)
                 {
@@ -67,7 +67,7 @@ namespace Projecthoca.Controllers
                 var data = await _phieuxuatkho.Xoaphieuxuat(Ma_phieuxuatkho);
                 if (data)
                 {
-                    return Json(new { success = true ,messeger="Xóa thành công"});
+                    return Json(new { success = true, messeger = "Xóa thành công" });
                 }
                 else
                 {
@@ -88,7 +88,7 @@ namespace Projecthoca.Controllers
                 var data = await _phieuxuatkho.Tongtientatca();
                 if (data.ckeck)
                 {
-                    return Json(new { success = true, tongtienck = data.tongtienchk,tongtienmat=data.tongtienmat,tongthanhtien=data.tongthanhtien,tongtien=data.tongtatca });
+                    return Json(new { success = true, tongtienck = data.tongtienchk, tongtienmat = data.tongtienmat, tongthanhtien = data.tongthanhtien, tongtien = data.tongtatca });
                 }
                 else
                 {
@@ -97,7 +97,7 @@ namespace Projecthoca.Controllers
             }
             catch (Exception ex)
             {
-                return Json(new { success = false,messeger=ex.Message });
+                return Json(new { success = false, messeger = ex.Message });
             }
 
 
@@ -106,7 +106,7 @@ namespace Projecthoca.Controllers
         // Contronller mã nhập
 
         [HttpPost]
-        public async Task<IActionResult> Themphieunhapkho(PhieunhapkhoVM pnk)
+        public async Task<IActionResult> Themphieunhapkho(List<DanhsachhhkhoVM> pnk)
         {
             try
             {

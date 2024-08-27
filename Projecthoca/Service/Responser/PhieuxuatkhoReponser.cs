@@ -23,26 +23,26 @@ namespace Projecthoca.Service.Responser
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public async Task<(bool ckeck,int tongtienchk, int tongtienmat, int tongthanhtien, int tongtatca)> Tongtientatca()
+        public async Task<(bool ckeck, int tongtienchk, int tongtienmat, int tongthanhtien, int tongtatca)> Tongtientatca()
         {
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var data= await _context.Phieuxuatkhos.Where(x=>x.Id==user.Id).ToListAsync();
+                var data = await _context.Phieuxuatkhos.Where(x => x.Id == user.Id).ToListAsync();
                 if (data == null)
                 {
-                    return (false,0, 0, 0, 0);
+                    return (false, 0, 0, 0, 0);
                 }
                 var tongtienchk = data.Sum(x => x.Chuyenkhoan);
                 var tongtienmat = data.Sum(x => x.Tienmat);
                 var tongthanhtien = data.Sum(x => x.Thanhtien);
                 var tongthanhton = data.Sum(x => x.Tongtien);
-                return (true,tongtienchk, tongtienmat, tongthanhtien, tongthanhton);
-                
+                return (true, tongtienchk, tongtienmat, tongthanhtien, tongthanhton);
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                return (false,0, 0, 0, 0);
+                return (false, 0, 0, 0, 0);
             }
         }
 
@@ -77,12 +77,11 @@ namespace Projecthoca.Service.Responser
             }
         }
 
-
         public async Task<bool> Themphieuxuatkho(PhieuxuatkhoVM phieuxuatkho)
         {
             try
             {
-                var kvc= await _context.Khuvuccau.FindAsync(phieuxuatkho.Ma_khuvuc);
+                var kvc = await _context.Khuvuccau.FindAsync(phieuxuatkho.Ma_khuvuc);
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
                 int nextNumber1 = 1;
                 var lastMaDV = await _context.Phieuxuatkhos
@@ -117,7 +116,6 @@ namespace Projecthoca.Service.Responser
             }
 
         }
-
         public async Task<bool> Xoaphieuxuat(string Ma_phieuxuatkho)
         {
             try
@@ -136,58 +134,52 @@ namespace Projecthoca.Service.Responser
                 return false;
             }
         }
-
-
         // reponxer phiếu nhập kho 
         public Task<(List<PhieunhapkhoVM> ds, int totalpages)> Danhsachphieunhap(int page, int pagesize)
         {
             throw new NotImplementedException();
         }
-
-        public async Task<bool> Themphieunhapkho(PhieunhapkhoVM phieunhapkho)
+        public async Task<bool> Themphieunhapkho(List<DanhsachhhkhoVM> hanghoa)
         {
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                // Id mã danh mục
-                int nextNumber2 = 1;
-                var lastMaDV2 = await _context.Danhmuc
-                              .OrderByDescending(x => x.Ma_danhmuc)
-                              .Select(x => x.Ma_danhmuc)
+                int nextNumber = 1;
+                var lastMaDV = await _context.Phieunhapkhos
+                              .OrderByDescending(x => x.Ma_phieunhapkho)
+                              .Select(x => x.Ma_phieunhapkho)
                               .FirstOrDefaultAsync();
-                if (lastMaDV2 != null)
+                if (lastMaDV != null)
                 {
-                    nextNumber2 = int.Parse(lastMaDV2.Substring(2)) + 1;
+                    nextNumber = int.Parse(lastMaDV.Substring(2)) + 1;
                 }
-                var madm1 = "DM" + nextNumber2.ToString("D4");
-                var data = new Phieunhapkho();
-                data.Ngaynhap = phieunhapkho.Ngaynhap;
-                data.Id = user.Id;
-                data.Nguoinhap = phieunhapkho.Nguoinhap;
-                data.Ten_danhmuc = phieunhapkho.Ten_danhmuc;
-                data.Tenkho = phieunhapkho.Tenkho;
-                data.Diadiem = phieunhapkho.Diadiem;
-                data.Donvitinh = phieunhapkho.Donvitinh;
-                data.Soluong = phieunhapkho.Soluong;
-                data.Dongia = phieunhapkho.Dongia;
-                data.Thanhtien = data.Dongia*data.Soluong;
-                var data1 = new Danhmuc();
-                data1.Ma_danhmuc = madm1;
-                data1.Ten_danhmuc = phieunhapkho.Ten_danhmuc;
-                data1.Donvitinh = phieunhapkho.Donvitinh;
-                data1.Soluong=phieunhapkho.Soluong;
-                data1.Ma_mathang = phieunhapkho.Ma_mathang;
-                data1.Gia = phieunhapkho.Dongia;
-                data1.Id = user.Id;
-                await _context.Phieunhapkhos.AddAsync(data);
-                await _context.Danhmuc.AddAsync(data1);
+                var madm = "NK" + nextNumber.ToString("D4");
+                var Phieunhapkho = new Phieunhapkho();
+                Phieunhapkho.Ma_phieunhapkho = madm;
+                Phieunhapkho.Nguoinhap = user.Hovaten;
+                Phieunhapkho.Ngaynhap = DateTime.Now;
+                Phieunhapkho.Id = user.Id;
+                await _context.Phieunhapkhos.AddAsync(Phieunhapkho);
+                foreach (var a in hanghoa)
+                {
+                    var hh = await _context.Danhmuc.FindAsync(a.Ma_danhmuc);
+                    var dx = new Danhsachhhkho();
+                    dx.Ma_phieunhapkho = Phieunhapkho.Ma_phieunhapkho;
+                    dx.Ma_danhmuc = a.Ma_danhmuc;
+                    dx.Soluong = a.Soluong;
+                    hh.Soluong = a.Soluong;
+                    dx.Thanhtien = a.Soluong * hh.Gia;
+                    await _context.Danhsachhhkhos.AddAsync(dx);
+                }
+                
                 await _context.SaveChangesAsync();
                 return true;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return false;
             }
         }
+
     }
 }

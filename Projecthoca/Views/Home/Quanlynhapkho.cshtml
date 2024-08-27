@@ -293,7 +293,7 @@
 
 @section Scripts {
     <script>
-
+        var danhMucList = []; // Mảng lưu trữ danh sách danh mục
         $(document).ready(function () {
             var phieuNhaps = []; // Mảng lưu trữ các phiếu nhập
             var editingPhieuIndex = -1; // Biến để lưu vị trí phiếu đang sửa
@@ -307,16 +307,16 @@
                 $('#tblbodyModalEdit').empty();
                 phieu.chiTietPhieu.forEach(function (item) {
                     var chiTietRow = `
-                                                        <tr>
+                                                                                                                                                                                                                                                                    <tr>
         @* <td>${item.maHang}</td> *@
-                                                            <td>${item.tenHang}</td>
-                                                            <td>${item.donViTinh}</td>
-                                                            <td>${item.soLuong}</td>
-                                                            <td>${item.donGia}</td>
+                                                                                                                                                                                                                                                                        <td>${item.tenHang}</td>
+                                                                                                                                                                                                                                                                        <td>${item.donViTinh}</td>
+                                                                                                                                                                                                                                                                        <td>${item.soLuong}</td>
+                                                                                                                                                                                                                                                                        <td>${item.donGia}</td>
 
-                                                            <td><button class="btn btn-danger btnXoaModalEdit">Xóa</button></td>
-                                                            <td><button class="btn btn-warning btnSuaModalEdit">Sửa</button></td>
-                                                        </tr>`;
+                                                                                                                                                                                                                                                                        <td><button class="btn btn-danger btnXoaModalEdit">Xóa</button></td>
+                                                                                                                                                                                                                                                                        <td><button class="btn btn-warning btnSuaModalEdit">Sửa</button></td>
+                                                                                                                                                                                                                                                                    </tr>`;
                     $('#tblbodyModalEdit').append(chiTietRow);
                 });
 
@@ -400,12 +400,12 @@
                         if (filteredItems.length > 0) {
                             $.each(filteredItems, function (index, value) {
                                 var str = `
-                                                            <tr onclick="selectItem('${value.ma_danhmuc}', '${value.ten_danhmuc}', '${value.gia}', '${value.donvitinh}')">
-                                                                <td>${value.ma_danhmuc}</td>
-                                                                <td>${value.ten_danhmuc}</td>
-                                                                <td>${value.donvitinh}</td>
-                                                               <td> $${value.gia}</td>
-                                                            </tr>`;
+                                                                                                                                                                                                                                                                        <tr onclick="selectItem('${value.ma_danhmuc}', '${value.ten_danhmuc}', '${value.gia}', '${value.donvitinh}')">
+                                                                                                                                                                                                                                                                            <td>${value.ma_danhmuc}</td>
+                                                                                                                                                                                                                                                                            <td>${value.ten_danhmuc}</td>
+                                                                                                                                                                                                                                                                            <td>${value.donvitinh}</td>
+                                                                                                                                                                                                                                                                           <td> $${value.gia}</td>
+                                                                                                                                                                                                                                                                        </tr>`;
                                 $('#tblbody').append(str);
                             });
                             $('#danhMucList').show();
@@ -478,16 +478,22 @@
                 if (editingModalRowIndex === -1) {
                     // Thêm mới vào bảng nếu không có dòng nào đang sửa
                     var newRow = `
-                                                        <tr>
-                                                            <td>${maDanhMuc}</td>
-                                                            <td>${tenDanhMuc}</td>
-                                                            <td>${donViTinh}</td>
-                                                            <td>${soLuong}</td>
-                                                            <td>${gia}</td>
-                                                             <td>${(soLuong * gia).toFixed(2)}</td>
-                                                            <td><button class="btn btn-danger btnXoaModal">Xóa</button></td>
-                                                            <td><button class="btn btn-warning btnSuaModal">Sửa</button></td>
-                                                        </tr>`;
+                                                                                                                                                                                                                                                                    <tr>
+                                                                                                                                                                                                                                                                        <td>${maDanhMuc}</td>
+                                                                                                                                                                                                                                                                        <td>${tenDanhMuc}</td>
+                                                                                                                                                                                                                                                                        <td>${donViTinh}</td>
+                                                                                                                                                                                                                                                                        <td>${soLuong}</td>
+                                                                                                                                                                                                                                                                        <td>${gia}</td>
+                                                                                                                                                                                                                                                                         <td>${(soLuong * gia).toFixed(2)}</td>
+                                                                                                                                                                                                                                                                        <td><button class="btn btn-danger btnXoaModal" data-id="${maDanhMuc}">Xóa</button></td>
+                                                                                                                                                                                                                                                                        <td><button class="btn btn-warning btnSuaModal" data-id="${maDanhMuc}">Sửa</button></td>
+                                                                                                                                                                                                                                                                    </tr>`;
+                    var danhMuc = {
+                        Ma_danhmuc: maDanhMuc,
+                        soLuong: soLuong,
+                    };
+                    danhMucList.push(danhMuc);
+                    console.log(danhMucList);
                     $('#tblbodyModal').append(newRow);
                 } else {
                     // Cập nhật dữ liệu dòng đang sửa trong modal
@@ -498,6 +504,7 @@
                     editingRow.find('td:nth-child(4)').text(soLuong);
                     editingRow.find('td:nth-child(5)').text(gia);
                     editingModalRowIndex = -1;
+                    capNhatPhieunhap(maDanhMuc, soLuong);
                 }
 
                 // Reset form sau khi thêm hoặc sửa
@@ -506,90 +513,36 @@
 
             // Hàm xử lý khi nhấn nút Xóa trong modal
             $(document).on('click', '.btnXoaModal', function () {
+                var maPhieu = $(this).data('id');
                 $(this).closest('tr').remove(); // Xóa dòng tương ứng
+                xoaPhieuNhap(maPhieu);
+
             });
 
             // Hàm xử lý khi nhấn nút Sửa trong modal
             $(document).on('click', '.btnSuaModal', function () {
-                var row = $(this).closest('tr');
-                editingModalRowIndex = row.index(); // Lưu vị trí dòng đang sửa
-
-                // Đổ dữ liệu từ dòng vào form để sửa
-        @* $('#Ma_danhmuc').val(row.find('td:nth-child(1)').text()); *@
-                    $('#Ten_danhmuc').val(row.find('td:nth-child(1)').text());
-                $('#Donvitinh').val(row.find('td:nth-child(2)').text());
-                $('#Soluong').val(row.find('td:nth-child(3)').text());
-                $('#Gia').val(row.find('td:nth-child(4)').text());
+                var data = $(this).data('id');
+                danhMucList.findIndex(p => p.Ma_danhmuc === data);
+                var editingRow = $('#tblbodyModal tr').eq(editingModalRowIndex);
+                $('#Ma_danhmuc').val(editingRow.find('td:nth-child(1)').text());
+                $('#Ten_danhmuc').val(editingRow.find('td:nth-child(2)').text());
+                $('#Donvitinh').val(editingRow.find('td:nth-child(3)').text());
+                $('#Soluong').val(editingRow.find('td:nth-child(4)').text());
+                $('#Gia').val(editingRow.find('td:nth-child(5)').text());
+                editingModalRowIndex = $(this).closest('tr').index();
             });
-            $(document).ready(function () {
-                $(document).on('click', '#submitBtnpn', function () {
-                    Themphieunhap();
-                });
-            });
-
             $(document).ready(function () {
                 // Mảng lưu trữ các phiếu nhập
                 var phieuNhaps = [];
 
                 // Hàm xử lý khi nhấn nút Thêm phiếu nhập
-                $('#submitBtnpn').click(function () {
-                    // Kiểm tra số lượng hàng trong bảng chi tiết của modal
-                    var rowCount = $('#tblbodyModal tr').length;
-
-                    if (rowCount === 0) {
-                        // Nếu bảng không có hàng nào, hiện thông báo
-                        Swal.fire({
-                            title: 'Chưa thêm dữ liệu',
-                            text: 'Danh sách phiếu nhập trống. Vui lòng thêm dữ liệu vào bảng trước khi thêm phiếu nhập.',
-                            icon: 'warning',
-                            confirmButtonText: 'OK'
-                        });
-                        return; // Dừng hàm và không thực hiện thêm phiếu nhập
-                    }
-
-                    var maPhieu = generateMaPhieu(); // Tạo mã phiếu ngẫu nhiên
-                    var tenNguoiNhap = "Hiệp"; // Bạn có thể lấy từ input
-                    var ngayNhapPhieu = new Date().toLocaleDateString(); // Ngày hiện tại
-
-                    // Lấy danh sách chi tiết phiếu từ modal thêm phiếu nhập
-                    var chiTietPhieu = [];
-                    $('#tblbodyModal tr').each(function () {
-                        var maHang = $(this).find('td:eq(0)').text();
-                        var tenHang = $(this).find('td:eq(1)').text();
-                        var donViTinh = $(this).find('td:eq(2)').text();
-                        var soLuong = $(this).find('td:eq(4)').text();
-                        var donGia = $(this).find('td:eq(3)').text();
-
-                        chiTietPhieu.push({ maHang, tenHang, donViTinh, soLuong, donGia });
-                    });
-
-                    // Lưu phiếu nhập vào mảng
-                    phieuNhaps.push({ maPhieu, tenNguoiNhap, ngayNhapPhieu, chiTietPhieu });
-
-                    // Thêm dữ liệu vào bảng ngoài
-                    var newRow = `
-                                                <tr>
-                                                    <td>${maPhieu}</td>
-                                                    <td>${tenNguoiNhap}</td>
-                                                    <td>${ngayNhapPhieu}</td>
-                                                    <td><button class="btn btn-info btnXemPhieu" data-phieu="${maPhieu}">Xem phiếu</button></td>
-                                                    <td><button class="btn btn-danger btnXoaPhieu" data-phieu="${maPhieu}">Xóa phiếu</button></td>
-                                                    <td><button class="btn btn-warning btnSuaPhieu" data-phieu="${maPhieu}">Sửa phiếu</button></td> 
-                                                </tr>`;
-                    $('#dataTableBody').append(newRow);
-
-                    // Reset form trong modal sau khi thêm
-                    $('#formnhapkho')[0].reset();
-                    $('#tblbodyModal').empty(); // Xóa các hàng trong bảng chi tiết
-                    $('#Themphieunhap').modal('hide'); // Đóng modal thêm phiếu nhập
-                });
-                // Xử lý sự kiện khi nhấn nút Xóa phiếu
+                $(document).on('click', '#submitBtnpn', function () {
+                    Themphieunhap();
+                });                // Xử lý sự kiện khi nhấn nút Xóa phiếu
                 $(document).on('click', '.btnXoaPhieu', function () {
                     var maPhieu = $(this).data('phieu');
-
                     // Xóa phiếu khỏi mảng
                     phieuNhaps = phieuNhaps.filter(p => p.maPhieu !== maPhieu);
-
                     // Xóa phiếu khỏi bảng
                     $(this).closest('tr').remove();
                 });
@@ -603,14 +556,14 @@
                     $('#chiTietTableBody').empty(); // Xóa dữ liệu cũ
                     phieu.chiTietPhieu.forEach(function (item) {
                         var chiTietRow = `
-                                                        <tr>
-                                                            <td>${item.maHang}</td>
-                                                            <td>${item.tenHang}</td>
-                                                            <td>${item.donViTinh}</td>
-                                                            <td>${item.soLuong}</td>
-                                                            <td>${item.donGia}</td>
-                                       <td>${(item.soLuong * item.donGia).toFixed(2)}</td>
-                                                        </tr>`;
+                                                                                                                                                                                                                                                                    <tr>
+                                                                                                                                                                                                                                                                        <td>${item.maHang}</td>
+                                                                                                                                                                                                                                                                        <td>${item.tenHang}</td>
+                                                                                                                                                                                                                                                                        <td>${item.donViTinh}</td>
+                                                                                                                                                                                                                                                                        <td>${item.soLuong}</td>
+                                                                                                                                                                                                                                                                        <td>${item.donGia}</td>
+                                                                                                                                                                                                                                                   <td>${(item.soLuong * item.donGia).toFixed(2)}</td>
+                                                                                                                                                                                                                                                                    </tr>`;
                         $('#chiTietTableBody').append(chiTietRow);
                     });
 
@@ -618,21 +571,15 @@
                     $('#ChiTietPhieuModal').modal('show');
                 });
             });
-
             function generateMaPhieu() {
                 return 'PN' + Math.floor(Math.random() * 10000); // Tạo mã phiếu ngẫu nhiên
             }
         });
         function Themphieunhap() {
-            var data = {
-                Tennguoinhap: Tennguoinhap,
-                Maphieunhap: Maphieunhap,
-                Ngaynhap: Ngaynhap
-            };
             $.ajax({
                 type: "POST",
-                url: "/PhieuNhap/Themphieunhap",
-                data: data,
+                url: "/Phieuxuatkho/Themphieunhapkho",
+                data: { pnk: danhMucList },
                 success: function (response) {
                     if (response.success) {
                         Swal.fire({
@@ -640,8 +587,9 @@
                             text: response.message,
                             icon: "success"
                         });
-                        // Cập nhật danh sách phiếu nhập
-                        danhsachphieunhap(1, 10);
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1000);
                     }
                     else {
                         Swal.fire({
@@ -653,7 +601,20 @@
                 }
             });
         }
+        function xoaPhieuNhap(Ma_danhmuc) {
+            var index = danhMucList.findIndex(p => p.Ma_danhmuc === Ma_danhmuc);
+            if (index !== -1) {
+                danhMucList.splice(index, 1);
+            }
+        }
+        function capNhatPhieunhap(ma_danhmuc, Soluong) {
+            var index = danhMucList.findIndex(p => p.Ma_danhmuc === ma_danhmuc);
+            if (index !== -1) {
+                danhMucList[index].Ma_danhmuc = ma_danhmuc;
+                danhMucList[index].soLuong = Soluong;
 
-
+            }
+            console.log(danhMucList);
+        }
     </script>
 }
