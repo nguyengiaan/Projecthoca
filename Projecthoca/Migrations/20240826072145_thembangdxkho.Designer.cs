@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projecthoca.Data;
 
@@ -11,9 +12,10 @@ using Projecthoca.Data;
 namespace Projecthoca.Migrations
 {
     [DbContext(typeof(MyDbcontext))]
-    partial class MyDbcontextModelSnapshot : ModelSnapshot
+    [Migration("20240826072145_thembangdxkho")]
+    partial class thembangdxkho
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -375,13 +377,12 @@ namespace Projecthoca.Migrations
 
                     b.Property<string>("Ma_danhmuc")
                         .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Ma_phieunhapkho")
-                        .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Ma_phieunhapkho")
+                        .HasMaxLength(100)
+                        .HasColumnType("int");
 
                     b.Property<int>("Soluong")
                         .HasMaxLength(100)
@@ -608,8 +609,11 @@ namespace Projecthoca.Migrations
 
             modelBuilder.Entity("Projecthoca.Models.Enitity.Phieunhapkho", b =>
                 {
-                    b.Property<string>("Ma_phieunhapkho")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("Ma_phieunhapkho")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Ma_phieunhapkho"), 1L, 1);
 
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -634,10 +638,6 @@ namespace Projecthoca.Migrations
                 {
                     b.Property<string>("Ma_phieuxuatkho")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Chitiethoadon")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Chuyenkhoan")
                         .HasMaxLength(200)
@@ -665,10 +665,6 @@ namespace Projecthoca.Migrations
                     b.Property<int>("Tongtien")
                         .HasMaxLength(200)
                         .HasColumnType("int");
-
-                    b.Property<string>("Trangthai")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("giamgia")
                         .HasMaxLength(200)

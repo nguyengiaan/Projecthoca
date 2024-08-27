@@ -32,13 +32,17 @@
 
 
 </head>
+  
 
 <body id="page-top">
 
     <!-- Page Wrapper -->
     <div id="wrapper">
 
+   @if (User.IsInRole("Admin"))
+                { 
         <!-- Sidebar -->
+      
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
@@ -68,7 +72,11 @@
 
             <!-- Divider -->
             <hr class="sidebar-divider">
+           @if (User.IsInRole("Admin"))
+                { 
+            <div>
 
+           
             <!-- Heading -->
             <div class="sidebar-heading">
                 Quản lý
@@ -91,6 +99,7 @@
                         </div>
                     </li>
                 }
+                
             <li class="nav-item">
                 <a class="nav-link collapsed" href="/Home/Quanlydanhmuc" >
                     <i class="fas fa-concierge-bell"></i>
@@ -148,8 +157,8 @@
                 </div>
             </li>
 
-
-
+            </div>
+                }
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
@@ -157,7 +166,9 @@
 
 
         </ul>
+        }
         <!-- End of Sidebar -->
+
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
 

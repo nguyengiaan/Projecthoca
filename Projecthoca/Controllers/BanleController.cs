@@ -20,7 +20,7 @@ namespace Projecthoca.Controllers
                 var data=await _bl.Themkhachhang(thuehocaVM);
                 if(data.kq)
                 {
-                   return Json(new { success = true, message = "Thêm khách hàng thành công" ,MaKhuvuc=data.ma_kvc, Mathuehoca= data.ma_thc});
+                   return Json(new { success = true, message = "Thêm khách hàng thành công" ,MaKhuvuc=data.ma_kvc, Mathuehoca= data.ma_thc , Tenkhachhang=data.ten_kh, Ngaymua=data.ngay_mua});
                 }
                 else
                 {

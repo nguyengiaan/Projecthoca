@@ -18,11 +18,21 @@ namespace Projecthoca.Service.Responser
             _userManager=userManager;
             _httpContextAccessor=httpContextAccessor;
         }
-        public async Task<(bool kq, string ma_kvc, string ma_thc)> Themkhachhang(ThuehocaVM thc)
+        public async Task<(bool kq, string ma_kvc, string ma_thc,string ten_kh, string ngay_mua)> Themkhachhang(ThuehocaVM thc)
         {
             try
             {
-
+                int nextNumber1 = 1;
+                var lastMaDV = await _context.Thuehoca
+                              .OrderByDescending(x => x.Ma_thuehoca)
+                              .Select(x => x.Ma_thuehoca)
+                              .FirstOrDefaultAsync();
+                int nextNumber = 1;
+                if (lastMaDV != null)
+                {
+                    nextNumber = int.Parse(lastMaDV.Substring(2)) + 1;
+                }
+                var mact = "CT" + nextNumber.ToString("D4");
                 
 
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
@@ -36,7 +46,8 @@ namespace Projecthoca.Service.Responser
                 await _context.Khuvuccau.AddAsync(kv);
                 await _context.SaveChangesAsync();
                 Thuehoca ct = new Thuehoca();
-                ct.Ma_thuehoca = Guid.NewGuid().ToString();
+                //ct.Ma_thuehoca = Guid.NewGuid().ToString();
+                ct.Ma_thuehoca =mact;
                 ct.Ma_khuvuccau = kv.Ma_Khuvuccau;
                 ct.Ten_khachhang = thc.Ten_khachhang;
                 ct.Ngaycau = DateTime.Now.ToString();
@@ -45,13 +56,13 @@ namespace Projecthoca.Service.Responser
                 ct.trangthai = "Khong";
                 await _context.Thuehoca.AddAsync(ct);
                 await _context.SaveChangesAsync();
-                return (true,kv.Ma_Khuvuccau, ct.Ma_thuehoca);
+                return (true,kv.Ma_Khuvuccau, ct.Ma_thuehoca, ct.Ten_khachhang, ct.Ngaycau);
 
 
             }
             catch (Exception ex)
             {
-                return (false,null,null);
+                return (false,null,null,null,null);
 
             }
         }

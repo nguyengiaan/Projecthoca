@@ -5,6 +5,6 @@ namespace Projecthoca.Service.Interface
 {
     public interface IBanle
     {
-        public Task<(bool kq,string ma_kvc, string ma_thc)> Themkhachhang(ThuehocaVM thuehoca);
+        public Task<(bool kq,string ma_kvc, string ma_thc, string ten_kh,string ngay_mua)> Themkhachhang(ThuehocaVM thuehoca);
     }
 }

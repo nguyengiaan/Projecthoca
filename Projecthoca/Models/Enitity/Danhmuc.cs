@@ -11,12 +11,15 @@
 
         public int Soluong { get; set; }
         public ApplicationUser Nguoidung { get; set; }
-        public Mathang Mathang { get; set; } 
+        public Mathang Mathang { get; set; }
         public List<Danhmuchoadon> Danhmuchoadons { get; set; }
         public List<Chitietlancau> Chitietlancaus { get; set; }
+
+        public List<Danhsachhhkho> Danhsachhhkhos { get; set; }
         public Danhmuc()
         {
             Danhmuchoadons = new List<Danhmuchoadon>();
+            Danhsachhhkhos = new List<Danhsachhhkho>();
         }
     }
 }

@@ -170,7 +170,7 @@
                         </table>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6" id = "in">
                         <div class="bill-container">
                             <div class="customer-info">
                                 <h2>Thông tin khách hàng</h2>
@@ -194,6 +194,32 @@
                                     </thead>
                                     <tbody id="dsdv">
                                         <!-- Thông tin dịch vụ được thêm vào đây -->
+                                    </tbody>
+                                    <tbody>
+                                              <tr >
+            <td colspan="6" style="text-align:right;">
+                <div class="d-flex align-items-center justify-content-end mb-2">
+                    <span class="fw-bold me-2">Giảm giá:</span>
+                    <input type="number" class="form-control hide-when-print border-secondary" style="max-width: 200px;" id="discount-input">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" style="text-align:right;">
+                <div class="d-flex align-items-center justify-content-end mb-2">
+                    <span class="fw-bold me-2">Tiền mặt:</span>
+                    <input type="number" class="form-control hide-when-print border-secondary" style="max-width: 200px;" id="tienmat">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" style="text-align:right;">
+                <div class="d-flex align-items-center justify-content-end mb-2">
+                    <span class="fw-bold me-2">Chuyển khoản:</span>
+                    <input type="number" class="form-control hide-when-print border-secondary" style="max-width: 200px;" id="chuyenkhoan">
+                </div>
+            </td>
+        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -219,13 +245,14 @@
 <!--Context menu-->
 <div id="contextMenu" class="context-menu">
     <ul>
-        <li><a href="#" id="Themkh">Cho khách thuê</a></li>
-        <li><a href="#" id="Bamgio">Bấm giờ</a></li>
-        <li><a href="#" id="Themdichvu">Xem dịch vụ</a></li>
-        <li><a href="#" id="Xemchitietca">Xem số cá </a></li>
-        <li><a href="#" id="Chuyenban">Chuyển bàn câu </a></li>
+        <li><a href="#" id="Themkh" style="text-decoration: none; color: black;">Cho khách thuê</a></li>
+        <li><a href="#" id="Bamgio" style="text-decoration: none; color: black;">Bấm giờ</a></li>
+        <li><a href="#" id="Themdichvu" style="text-decoration: none; color: black;">Xem dịch vụ</a></li>
+        <li><a href="#" id="Xemchitietca" style="text-decoration: none; color: black;">Xem số cá</a></li>
+        <li><a href="#" id="Chuyenban" style="text-decoration: none; color: black;">Chuyển bàn câu</a></li>
     </ul>
 </div>
+
 <!--Modal thêm chi tiết cá-->
 <div class="modal fade" id="Themchitietca" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog  modal-dialog-centered  ">
@@ -324,7 +351,7 @@
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">Tên khách hàng</label>
-                        <input type="text" class="form-control" id="Tenkhachhang" value="Khách lẻ">
+                        <input type="text" class="form-control" id="Tenkhachhang" value="Khách đi câu">
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">Ngày câu</label>
@@ -428,8 +455,11 @@
             <div class="row">
                 @if (Model != null && Model.Ten_hoca != null)
                 {
-                    <div class="col-md-10 col-12">
+                    <div class="col-md-10 col-12" style="display: flex; flex-direction: row; justify-content: space-between;">
+                        <div >
                         <h4 class="m-0 font-weight-bold text-primary">@Model.Ten_hoca</h4>
+                        </div>
+                       
                     </div>
 
                 }
@@ -554,25 +584,33 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .context-menu ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+       .context-menu ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
 
-        .context-menu ul li {
-            padding: 8px 12px;
-            cursor: pointer;
-        }
+.context-menu ul li {
+    padding: 0; /* Đặt padding cho thẻ <li> về 0 để không ảnh hưởng tới thẻ <a> */
+    margin-bottom: 0px;
+    background-color:white;
+   
+    transition: background-color 0.1s ease-in-out;
+}
 
-        .context-menu ul li a {
-            text-decoration: none;
-            color: #333;
-        }
+.context-menu ul li a {
+    display: block;
+    padding: 10px 20px; /* Đặt padding cho thẻ <a> để có khoảng cách trong */
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: black;
+    box-sizing: border-box; /* Đảm bảo padding không ảnh hưởng tới kích thước tổng của thẻ <a> */
+}
 
-        .context-menu ul li:hover {
-            background-color: #f1f1f1;
-        }
+.context-menu ul li:hover {
+    background-color: #dcdcdc; /* Hiệu ứng hover */
+}
 
         .Cokhach {
             background-image: url('../Admin_Style/img/2.jpg');
@@ -670,6 +708,7 @@
         var transferValue;
         var tongtiencuoicung;
         var tienthua;
+        var trangthai="Khách đi câu"
         document.addEventListener('DOMContentLoaded', function () {
             const animationPath = '../Admin_Style/img/animation.json';
             lottie.loadAnimation({
@@ -1191,6 +1230,7 @@
                 }
             });
         }
+        
         function Xoakhuvuc(KhuvucId) {
             var formData = new FormData();
             formData.append("Ma_khuvvuc", KhuvucId);
@@ -1219,6 +1259,8 @@
                 }
             });
         }
+       
+       
         function Xemkhkhuvuc(KhuvucId) {
             var formData = new FormData();
             formData.append("Ma_khuvvuc", KhuvucId);
@@ -1804,7 +1846,7 @@
             $('#dsdv').append(totalStr);
         }
         // bao gồm các button như giảm giá,tiền mặt và chuyển khoản
-        function Cacbutton() {
+        @* function Cacbutton() {
             var totalStr = `
                     <tr>
                         <td colspan="6" style="text-align:right;">
@@ -1842,7 +1884,7 @@
 
 
             $('#dsdv').append(totalStr);
-        }
+        } *@
         function parseCurrency(value) {
 
             return parseInt(value.replace(/[^0-9]/g, ''), 10);
@@ -1918,7 +1960,7 @@
                 }
             });
         }
-        function Themphieuxuat() {
+        function Themphieuxuat(htmlInvoice) {
 
             var formData = new FormData();
             formData.append("Thanhtien", tongtienthanhtoan);
@@ -1927,6 +1969,8 @@
             formData.append("Chuyenkhoan", transferValue);
             formData.append("Tongtien", tongtiencuoicung);
             formData.append("Ma_khuvuc", kvc);
+             formData.append("Trangthai", trangthai);
+             formData.append("Chitiethoadon", htmlInvoice);
             $.ajax({
                 url: "/Phieuxuatkho/Themphieuxuatkho",
                 type: "POST",
@@ -1981,7 +2025,7 @@
         }
         // in hóa đơn
         function Inhoadon() {
-            var printContents = document.querySelector("#Xemdichvu .modal-body").innerHTML;
+            var printContents = document.querySelector("#Xemdichvu #in").innerHTML;
             var originalContents = document.body.innerHTML;
 
             // Lấy giá trị các input, kiểm tra và chuyển đổi sang định dạng tiền tệ
@@ -2081,8 +2125,12 @@
                                     }
                                 </style>
                             `;
+            
             window.addEventListener('afterprint', function () {
-                Themphieuxuat();
+                // Gộp nội dung và kiểu in thành một chuỗi HTML
+               var htmlInvoice = printStyles + printContents;
+               // var dsdv = document.getElementById('dsdv').innerHTML;
+                Themphieuxuat(htmlInvoice);
                 Xoakhachang(kvc);
                 location.reload();
 
@@ -2234,9 +2282,9 @@
         function Tinhtienthua() {
 
             var html = '';
-            var giamgia = $("#discount-input").val();
-            var tienmat = $("#tienmat").val();
-            var chuyenkhoan = $("#chuyenkhoan").val();
+            var giamgia = $("#discount-input").val()||0;
+            var tienmat = $("#tienmat").val()||0;
+            var chuyenkhoan = $("#chuyenkhoan").val()||0;
             var tongtien = tongtienthanhtoan;
             tienthua = tongtien - tienmat - giamgia - chuyenkhoan;
 
