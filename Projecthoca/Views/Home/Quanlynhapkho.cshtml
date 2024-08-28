@@ -1,4 +1,4 @@
-﻿@{
+@{
     Layout = "_Layout";
 }
 
@@ -343,13 +343,16 @@
                 editingPhieuIndex = phieuNhaps.indexOf(phieu);
             });
 
-            // Event handlers for modal actions
+<<<<<<< HEAD
+=======
             $(document).on('click', '.btnXoaModal', function () {
                 var maPhieu = $(this).data('id');
-                $(this).closest('tr').remove();
+                $(this).closest('tr').remove(); // Xóa dòng tương ứng
                 xoaPhieuNhap(maPhieu);
-            });
 
+            });
+>>>>>>> 2afadeae29ae2d82824f1e9fcd33c1ee5477fd95
+            // Xử lý sự kiện khi nhấn nút Xóa trong modal chỉnh sửa
             $(document).on('click', '.btnXoaModalEdit', function () {
                 $(this).closest('tr').remove();
             });
@@ -384,86 +387,104 @@
                 $('#EditTenDanhmuc').val(tenDanhMuc);
                 $('#danhMucListEdit').hide();
             });
-
-            // Show category list
-            function showDanhMucList() {
-                $('#danhMucList').show();
-            }
-
-            // Hide category list when clicking outside
-            $(document).click(function (event) {
-                if (!$(event.target).closest('#Ten_danhmuc, #danhMucList').length) {
-                    $('#danhMucList').hide();
-                }
-            });
-
-            // Filter category list based on search input
-            function filterDanhMucList() {
-                var searchText = $('#Ten_danhmuc').val().toLowerCase();
-                $.ajax({
-                    type: "GET",
-                    url: "/Danhmuc/Laydanhsachhanghoa",
-                    success: function (response) {
-                        $('#tblbody').empty();
-                        if (response.success) {
-                            var filteredItems = response.data.filter(function (item) {
-                                return item.ten_danhmuc.toLowerCase().includes(searchText);
-                            });
-                            if (filteredItems.length > 0) {
-                                $.each(filteredItems, function (index, value) {
-                                    var str = `
-                                                <tr onclick="selectItem('${value.ma_danhmuc}', '${value.ten_danhmuc}', '${value.gia}', '${value.donvitinh}')">
-                                                    <td>${value.ma_danhmuc}</td>
-                                                    <td>${value.ten_danhmuc}</td>
-                                                    <td>${value.donvitinh}</td>
-                                                </tr>`;
-                                    $('#tblbody').append(str);
-                                });
-                                $('#danhMucList').show();
-                            } else {
-                                $('#danhMucList').hide();
-                            }
-                        } else {
-                            Swal.fire({
-                                title: "Thông báo lỗi",
-                                text: response.message,
-                                icon: "error"
-                            });
-                        }
-                    }
-                });
-            }
-
-            // Filter table based on search input
-            function filterTable() {
-                var searchText = $('#Ten_danhmuc').val().toLowerCase();
-                var rows = $('#tblbody tr');
-                rows.each(function () {
-                    var cells = $(this).find('td');
-                    var match = false;
-                    cells.each(function () {
-                        if ($(this).text().toLowerCase().includes(searchText)) {
-                            match = true;
-                        }
-                    });
-                    $(this).toggle(match);
-                });
-            }
-
-            // Handle search input keyup event
-            $('#Ten_danhmuc').on('keyup', function () {
-                filterDanhMucList();
-                filterTable();
-            });
-
-            // Handle category selection
-            function selectItem(ma_danhmuc, ten_danhmuc, gia, donvitinh) {
-                $('#Ma_danhmuc').val(ma_danhmuc);
-                $('#Ten_danhmuc').val(ten_danhmuc);
-                $('#Gia').val(gia);
-                $('#Donvitinh').val(donvitinh);
+        });
+        // Hàm hiển thị danh sách danh mục
+        function showDanhMucList() {
+            $('#danhMucList').show();
+        }
+        // Ẩn danh sách khi nhấp ra ngoài
+        $(document).click(function (event) {
+            if (!$(event.target).closest('#Ten_danhmuc, #danhMucList').length) {
                 $('#danhMucList').hide();
             }
+        });
+        // Hàm lọc danh mục dựa trên ô input
+        function filterDanhMucList() {
+            var searchText = $('#Ten_danhmuc').val().toLowerCase();
+
+            $.ajax({
+                type: "GET",
+                url: "/Danhmuc/Laydanhsachhanghoa",
+                success: function (response) {
+                    $('#tblbody').empty();
+                    if (response.success) {
+                        var filteredItems = response.data.filter(function (item) {
+                            return item.ten_danhmuc.toLowerCase().includes(searchText);
+                        });
+
+                        if (filteredItems.length > 0) {
+                            $.each(filteredItems, function (index, value) {
+                                var str = `
+                                                                                                                                                                                                                                                                            <tr onclick="selectItem('${value.ma_danhmuc}', '${value.ten_danhmuc}', '${value.gia}', '${value.donvitinh}')">
+                                                                                                                                                                                                                                                                                <td>${value.ma_danhmuc}</td>
+                                                                                                                                                                                                                                                                                <td>${value.ten_danhmuc}</td>
+                                                                                                                                                                                                                                                                                <td>${value.donvitinh}</td>
+<<<<<<< HEAD
+                                                                                                                                                                                                                                                                               <td> $${value.gia}</td>
+=======
+                                                                                                                                                                                                                                                                               <td> ${value.gia}</td>
+>>>>>>> 2afadeae29ae2d82824f1e9fcd33c1ee5477fd95
+                                                                                                                                                                                                                                                                            </tr>`;
+                                $('#tblbody').append(str);
+                            });
+                            $('#danhMucList').show();
+                        } else {
+                            $('#danhMucList').hide();
+                        }
+
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                }
+            });
+        }
+        // Hàm lọc các mục danh mục dựa trên ô tìm kiếm
+        function filterTable() {
+            var searchText = $('#Ten_danhmuc').val().toLowerCase();
+            var rows = $('#tblbody tr');
+
+            rows.each(function () {
+                var cells = $(this).find('td');
+                var match = false;
+
+                cells.each(function () {
+                    if ($(this).text().toLowerCase().includes(searchText)) {
+                        match = true;
+                    }
+                });
+
+                $(this).toggle(match);
+            });
+        }
+        // Thêm sự kiện keyup cho ô tìm kiếm
+        $('#Ten_danhmuc').on('keyup', function () {
+            filterDanhMucList();
+            filterTable();
+        });
+        // Hàm xử lý khi chọn một mục từ danh sách
+        function selectItem(ma_danhmuc, ten_danhmuc, gia, donvitinh) {
+            // Gán giá trị cho các input
+            $('#Ma_danhmuc').val(ma_danhmuc);
+            $('#Ten_danhmuc').val(ten_danhmuc);      // Gán tên danh mục
+            $('#Gia').val(gia);                      // Gán giá
+
+            $('#Donvitinh').val(donvitinh);          // Gán đơn vị tính
+
+            // Ẩn danh sách danh mục sau khi chọn
+            $('#danhMucList').hide();
+        }
+        // Ẩn danh sách khi nhấp ra ngoài
+        $(document).click(function (event) {
+            if (!$(event.target).closest('#Ten_danhmuc, #danhMucList').length) {
+                $('#danhMucList').hide();
+            }
+        });
+        $(document).ready(function () {
+            var editingModalRowIndex = -1; // Biến để lưu vị trí dòng đang sửa trong modal
 
             // Handle add to table button in modal
             $('#btnThemVaoBangModal').click(function () {
@@ -564,31 +585,74 @@
                 });
             });
 
-            // Function to delete a receipt
-            function xoaPhieuNhap(maPhieu) {
-                $.ajax({
-                    type: "POST",
-                    url: "/PhieuNhap/XoaPhieuNhap",
-                    data: { maPhieu: maPhieu },
-                    success: function (response) {
-                        if (response.success) {
-                            Swal.fire({
-                                title: "Thông báo",
-                                text: response.message,
-                                icon: "success"
-                            }).then(() => {
-                                Dsphieunhap(1, 10);
-                            });
-                        } else {
-                            Swal.fire({
-                                title: "Thông báo lỗi",
-                                text: response.message,
-                                icon: "error"
-                            });
-                        }
-                    }
-                });
             }
+            console.log(danhMucList);
+        }
+        function Dsphieunhap(page, pagesize) {
+            $.ajax({
+                type: "POST",
+                url: "/Phieuxuatkho/Danhsachphieunhapkho",
+                data: { page: page, pagesize: pagesize },
+                success: function (response) {
+                    if (response.success) {
+                        $('#dataTableBody').empty();
+                        response.dsdm.forEach(function (item) {
+                            var row = `
+<<<<<<< HEAD
+                                <tr>
+                                    <td>${item.ma_phieunhapkho}</td>
+                                    
+                                    <td>${item.nguoinhap}</td>
+                                    <td>${item.ngaynhap.split('T')[0]}</td>
+                                    <td>
+                                        <button class="btn btn-info btnXemPhieu" id="btnXemPhieu" data-id="${item.ma_phieunhapkho}">Xem</button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-danger btnXoaPhieu" id="btnXoaPhieu" data-id="${item.ma_phieunhapkho}">Xóa</button>
+                                    </td>
+                                </tr>`;
+=======
+                                    <tr>
+                                        <td>${item.ma_phieunhapkho}</td>
+                                        <td>${item.ngaynhap.split('T')[0]}</td>
+                                        <td>${item.nguoinhap}</td>
+                                        <td>
+                                            <button class="btn btn-info" id="btnXemPhieu" data-id="${item.ma_phieunhapkho}">Xem</button>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-danger" id="btnXoaPhieu" data-id="${item.ma_phieunhapkho}">Xóa</button>
+                                        </td>
+                                    </tr>`;
+>>>>>>> 2afadeae29ae2d82824f1e9fcd33c1ee5477fd95
+                            $('#dataTableBody').append(row);
+                        });
+                        updatePagination(response.totalPages, response.pageindex);
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Lỗi",
+                        text: "Đã xảy ra lỗi trong quá trình lấy dữ liệu. Vui lòng thử lại.",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+        $(document).ready(function () {
+    // Gọi hàm lọc khi người dùng nhập vào ô tìm kiếm
+    $('#searchBox').on('keyup', function () {
+        var searchValue = $(this).val().toLowerCase(); // Lấy giá trị từ ô tìm kiếm và chuyển về chữ thường
+        $('#dataTableBody tr').filter(function () {
+            $(this).toggle($(this).find('td:first').text().toLowerCase().indexOf(searchValue) > -1);
+        });
+    });
+});
 
             // Load receipts
             function Dsphieunhap(pageNumber, pageSize) {
