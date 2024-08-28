@@ -1,0 +1,249 @@
+﻿@{
+    Layout = "_Layout";
+}
+@model Projecthoca.Models.EnitityVM.NhanvienVM
+<div class="modal fade" id="Themtaikhoan" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm tài khoản nhân viên</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formThemtaikhoan" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="col-form-label">Họ và tên</label>
+                        <input asp-for="hovaten" type="text" class="form-control" id="hovaten">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Ngày sinh</label>
+                        <input asp-for="Ngaysinh" type="date" class="form-control" id="Ngaysinh">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Tên tài khoản</label>
+                        <input asp-for="UserName" type="text" class="form-control" id="UserName">
+                    </div>
+                    <div class="form-group">
+                        <label class="col-form-label">Mật khẩu tài khoản</label>
+                        <input asp-for="Password" type="password" class="form-control" id="Password">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-form-label">Địa chỉ</label>
+                        <input asp-for="diachi" type="text" class="form-control" id="diachi">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-form-label">Quyền</label>
+                        <select class="form-select" asp-for="Role" aria-label="Default select example" id="Role">
+                            <option value="Staff">Staff</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="submitBtntk">Thêm tài khoản</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeBtn">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Danh sách tài khoản-->
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3  ">
+            <div class="row">
+                <div class="col-md-10 col-12">
+                    <h4 class="m-0 font-weight-bold text-primary">Danh sách tài khoản</h4>
+                </div>
+                <div class="col-md-2 col-12">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#Themtaikhoan"> <span class="fs-20">Thêm tài khoản</span> </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã Người dùng</th>
+                            <th>Họ và tên</th>
+                            <th>Tên tài khoản</th>
+                            <th>Ngày sinh</th>
+                            <th>Địa chỉ</th>
+                            <th>Quyền</th>
+                            <th>Xóa</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Mã Người dùng</th>
+                            <th>Họ và tên</th>
+                            <th>Tên tài khoản</th>
+                            <th>Ngày sinh</th>
+                            <th>Địa chỉ</th>
+                            <th>Quyền</th>
+                            <th>Xóa</th>
+                        </tr>
+                    </tfoot>
+                    <tbody id="tblbody">
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-sm-12 col-md-5">
+                        <div class="col-sm-12 col-md-7">
+                            <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+                                <nav aria-label="Page navigation example" id="pagination">
+
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @section Scripts {
+            <script>
+                $(document).ready(function () {
+                    $("#submitBtntk").click(function () {
+                        Dangkytaikhoan();
+                    })
+                    danhsachnguoidung(1, 10);
+                    $(document).on('click', '#btnXoanv', function () {
+                        var id = $(this).data('id');
+                        Xoanhanvien(id);
+                    });
+                });
+                function Dangkytaikhoan() {
+                    var form = $("#formThemtaikhoan")[0];
+                    var data = new FormData(form);
+                    $.ajax({
+                        type: "POST",
+                        url: "/Quanlynguoidung/Dangkynhanvien",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            Swal.fire({
+                                title: "Loading...",
+                                text: "Please wait",
+                                imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+                                imageWidth: 100,
+                                imageHeight: 100,
+                                imageAlt: "Loading",
+                            });
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                danhsachnguoidung(1, 10);
+                                $("#Themtaikhoan").modal("hide");
+                                form.reset();
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                function danhsachnguoidung(page, pagesize) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Quanlynguoidung/Danhsachnv",
+                        data: { page: page, pagesize: pagesize }, // Thêm dữ liệu này nếu cần
+                        success: function (response) {
+                            $('#tblbody').empty();
+                            console.log(response.users);
+                            if (response.success) {
+                                $.each(response.users, function (index, value) {
+                                    var str = `<tr>
+                                                        <td>NVPV${index}</td>
+                                                        <td>${value.hovaten}</td>
+                                                        <td>${value.userName}</td>
+                                                        <td>${value.ngaysinh.split('T')[0]}</td>
+                                                        <td>${value.diachi}</td>
+                                                        <td>${value.role}</td>
+                                                        <td><button class="btn btn-danger" id="btnXoanv" data-id="${value.id}">Xóa</button></td>
+                                                    </tr>`;
+                                    $('#tblbody').append(str);
+                                    updatePagination(response.totalPages, response.pageindex)
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                function updatePagination(totalPages, currentPage) {
+
+                    if (totalPages > 0) {
+                        var str = `<nav aria-label="Page navigation example">
+                                                        <ul class="pagination">`;
+                        if (totalPages > 1) {
+                            if (currentPage > 1) {
+                                str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachnguoidung(${currentPage - 1}, 10)">Previous</a></li>`;
+                            }
+                            for (let i = 1; i <= totalPages; i++) {
+                                if (currentPage === i) {
+                                    str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
+                                } else {
+                                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachnguoidung(${i}, 10)">${i}</a></li>`;
+                                }
+                            }
+                            if (currentPage < totalPages) {
+                                str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachnguoidung(${currentPage + 1}, 10)">Next</a></li>`;
+                            }
+                        }
+                        str += `</ul></nav>`;
+                        $('#pagination').html(str);
+                    }
+                }
+                function Xoanhanvien(Id) {
+                    Swal.fire({
+                        title: 'Bạn có chắc chắn muốn xóa?',
+                        text: "Hành động này không thể hoàn tác!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#3085d6',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Xóa khứa này!',
+                        cancelButtonText: 'Mị không muốn xóa'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                type: 'POST',
+                                url: "/Quanlynguoidung/Xoanguoidung",
+                                data: { Id: Id },
+                                success: function (response) {
+                                    if (response.success) {
+                                        Swal.fire('Đã xóa!', response.messege, 'success').then(() => {
+                                            // Reload danh sách sau khi xóa thành công
+                                        });
+                                        danhsachnguoidung(1, 10);
+                                    } else {
+                                        Swal.fire('Lỗi!', response.messege, 'error');
+                                    }
+                                },
+                                error: function () {
+                                    Swal.fire('Lỗi!', 'Đã xảy ra lỗi. Vui lòng thử lại.', 'error');
+                                }
+                            });
+                        }
+                    });
+                }
+            </script>
+        }

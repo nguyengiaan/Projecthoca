@@ -8,6 +8,8 @@ namespace Projecthoca.Models.Enitity
         public string Hovaten { get; set; }
         public DateTime Ngaysinh { get; set;}
         public string Diachi { get; set;}
+
+        public string ?IdCustomer { get; set; }
         public List<Hoca> Hoccas { get; set;}
 
         public List<Danhmuc> Danhmucs { get; set; }

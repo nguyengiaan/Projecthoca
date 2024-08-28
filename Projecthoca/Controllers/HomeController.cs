@@ -40,19 +40,37 @@ namespace Projecthoca.Controllers
         public async Task<IActionResult> Hocau()
         {
             var userId = _userManager.GetUserId(User);
-            var data = await _context.Hoca
-                          .Where(h => h.Id == userId)
-                          .Select(h => new HocaVM
-                          {
-                              Ten_hoca = h.Ten_hoca,
-                              Id = h.Id,
-                              Kieuhoca = h.Kieuhoca,
-                              Ma_hoca = h.Ma_hoca
-                          })
-                          .FirstOrDefaultAsync();
+            var user = await _userManager.FindByIdAsync(userId);
+            if (User.IsInRole("Staff"))
+            {
+                var data1 = await _context.Hoca
+                        .Where(h => h.Id == user.IdCustomer)
+                        .Select(h => new HocaVM
+                        {
+                            Ten_hoca = h.Ten_hoca,
+                            Id = h.Id,
+                            Kieuhoca = h.Kieuhoca,
+                            Ma_hoca = h.Ma_hoca
+                        })
+                        .FirstOrDefaultAsync();
+                return View(data1);
+            }
+            else
+            {
+                var data = await _context.Hoca
+                      .Where(h => h.Id == userId)
+                      .Select(h => new HocaVM
+                      {
+                          Ten_hoca = h.Ten_hoca,
+                          Id = h.Id,
+                          Kieuhoca = h.Kieuhoca,
+                          Ma_hoca = h.Ma_hoca
+                      })
+                      .FirstOrDefaultAsync();
+                return View(data);
 
+            }
 
-            return View(data);
         }
 
         public IActionResult Quanlydanhmuc()
@@ -90,35 +108,39 @@ namespace Projecthoca.Controllers
         }
         // GET: Quanlyhanghoa
         public async Task<IActionResult> Quanlyhanghoa()
-{
-    try
-    {
-        // Lấy danh sách sản phẩm từ cơ sở dữ liệu
-        var products = await _context.Quanlyhanghoa.ToListAsync();
-        
-        // Chuyển đổi danh sách sản phẩm thành danh sách QuanlyhanghoaVM
-        var productVMs = products.Select(p => new QuanlyhanghoaVM
         {
-            Ma_sanpham = p.Ma_sanpham,
-            Ten_sanpham = p.Ten_sanpham,
-            Ten_donvitinh = p.Ten_donvitinh,
-            Giaban = p.Giaban
-        }).ToList();
-        
-        if (productVMs == null)
+            try
+            {
+                // Lấy danh sách sản phẩm từ cơ sở dữ liệu
+                var products = await _context.Quanlyhanghoa.ToListAsync();
+
+                // Chuyển đổi danh sách sản phẩm thành danh sách QuanlyhanghoaVM
+                var productVMs = products.Select(p => new QuanlyhanghoaVM
+                {
+                    Ma_sanpham = p.Ma_sanpham,
+                    Ten_sanpham = p.Ten_sanpham,
+                    Ten_donvitinh = p.Ten_donvitinh,
+                    Giaban = p.Giaban
+                }).ToList();
+
+                if (productVMs == null)
+                {
+                    return View();
+                }
+                return View(productVMs);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ex)
+                // Example: _logger.LogError(ex, "An error occurred while retrieving products.");
+                return StatusCode(500, "Internal server error. Please try again later.");
+            }
+        }
+
+        public IActionResult Quanlynhanvien()
         {
             return View();
         }
-        return View(productVMs);
-    }
-    catch (Exception ex)
-    {
-        // Log the exception (ex)
-        // Example: _logger.LogError(ex, "An error occurred while retrieving products.");
-        return StatusCode(500, "Internal server error. Please try again later.");
-    }
-}
-
 
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
