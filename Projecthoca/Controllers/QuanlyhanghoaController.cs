@@ -23,6 +23,46 @@ namespace Projecthoca.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
+        // Get all
+        [HttpPost]
+public async Task<IActionResult> GetAll(int page = 1, int pagesize = 10)
+{
+    try
+    {
+        var totalProducts = await _context.Quanlyhanghoa.CountAsync();
+        var products = await _context.Quanlyhanghoa
+            .OrderBy(p => p.Ma_sanpham)
+            .Skip((page - 1) * pagesize)
+            .Take(pagesize)
+            .Select(p => new QuanlyhanghoaVM
+            {
+                Ten_sanpham = p.Ten_sanpham,
+                Ten_donvitinh = p.Ten_donvitinh,
+                Giaban = p.Giaban
+            })
+            .ToListAsync();
+
+        var totalPages = (int)Math.Ceiling(totalProducts / (double)pagesize);
+
+        return Json(new
+        {
+            success = true,
+            dssp = products,
+            totalPages = totalPages,
+            pageindex = page
+        });
+    }
+    catch (Exception ex)
+    {
+        // Log the exception (ex)
+        // Example: _logger.LogError(ex, "An error occurred while retrieving products.");
+        return StatusCode(500, "Đã xảy ra lỗi khi lấy danh sách sản phẩm. Vui lòng thử lại.");
+    }
+}
+
+
+
+
         // GET: Quanlyhanghoa
         public async Task<IActionResult> Quanlyhanghoa()
         {
@@ -100,6 +140,42 @@ namespace Projecthoca.Controllers
                 return StatusCode(500, "Đã xảy ra lỗi trong khi tạo sản phẩm. Vui lòng thử lại sau.");
             }
         }
+//         [HttpPost]
+// public async Task<IActionResult> GetAll(int page = 1, int pagesize = 10)
+// {
+//     try
+//     {
+//         var totalProducts = await _context.Quanlyhanghoa.CountAsync();
+//         var products = await _context.Quanlyhanghoa
+//             .OrderBy(p => p.Ma_sanpham)
+//             .Skip((page - 1) * pagesize)
+//             .Take(pagesize)
+//             .Select(p => new QuanlyhanghoaVM
+//             {   Ma_sanpham = p.Ma_sanpham,
+//                 Ten_sanpham = p.Ten_sanpham,
+//                 Ten_donvitinh = p.Ten_donvitinh,
+//                 Giaban = p.Giaban
+//             })
+//             .ToListAsync();
+
+//         var totalPages = (int)Math.Ceiling(totalProducts / (double)pagesize);
+
+//         return Json(new
+//         {
+//             success = true,
+//             dssp = products,
+//             totalPages = totalPages,
+//             pageindex = page
+//         });
+//     }
+//     catch (Exception ex)
+//     {
+//         // Log the exception (ex)
+//         // Example: _logger.LogError(ex, "An error occurred while retrieving products.");
+//         return StatusCode(500, "Đã xảy ra lỗi khi lấy danh sách sản phẩm. Vui lòng thử lại.");
+//     }
+// }
+
 
         [HttpPost]
         public async Task<IActionResult> Delete(string Ma_sanpham)

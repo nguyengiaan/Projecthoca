@@ -64,6 +64,8 @@ namespace Projecthoca.Service.Responser
                              Tongtien = x.Tongtien,
                              Tienmat = x.Tienmat,
                              Chuyenkhoan = x.Chuyenkhoan,
+                             Trangthai = x.Trangthai,
+                             Chitiethoadon = x.Chitiethoadon,
                              Ma_khuvuc = x.Ten_khuvuc,
                          })
                          .Skip((page - 1) * pagesize)
@@ -76,6 +78,35 @@ namespace Projecthoca.Service.Responser
                 return (null, 0);
             }
         }
+
+        public async Task<PhieuxuatkhoVM> Xemphieuxuatkho(string Ma_phieuxuatkho)
+{
+    try
+    {
+            var data = await _context.Phieuxuatkhos
+            .Where(x => x.Ma_phieuxuatkho == Ma_phieuxuatkho)
+            .Select(x => new PhieuxuatkhoVM
+            {
+                Ma_phieuxuatkho = x.Ma_phieuxuatkho,
+                Ngayxuat = x.Ngayxuat,
+                Thanhtien = x.Thanhtien,
+                giamgia = x.giamgia,
+                Tongtien = x.Tongtien,
+                Tienmat = x.Tienmat,
+                Chuyenkhoan = x.Chuyenkhoan,
+                Trangthai = x.Trangthai,
+                Chitiethoadon = x.Chitiethoadon,
+                Ma_khuvuc = x.Ten_khuvuc
+            })
+            .FirstOrDefaultAsync();
+
+        return data;
+    }
+    catch (Exception)
+    {
+        return null;
+    }
+}
 
         public async Task<bool> Themphieuxuatkho(PhieuxuatkhoVM phieuxuatkho)
         {
@@ -104,11 +135,11 @@ namespace Projecthoca.Service.Responser
                 data.Chuyenkhoan = phieuxuatkho.Chuyenkhoan;
                 data.Tongtien = phieuxuatkho.Tongtien;
                 data.Ten_khuvuc = kvc.Ten_Khuvuccau;
+                data.Trangthai = phieuxuatkho.Trangthai;
+                data.Chitiethoadon = phieuxuatkho.Chitiethoadon;
                 await _context.Phieuxuatkhos.AddAsync(data);
                 await _context.SaveChangesAsync();
                 return true;
-
-
             }
             catch (Exception ex)
             {
@@ -116,6 +147,37 @@ namespace Projecthoca.Service.Responser
             }
 
         }
+       
+       public async Task<bool> Suaphieuxuatkho(PhieuxuatkhoVM phieuxuatkho)
+    {
+        try
+        {
+            var data = await _context.Phieuxuatkhos.FindAsync(phieuxuatkho.Ma_phieuxuatkho);
+            var kvc = await _context.Khuvuccau.FindAsync(phieuxuatkho.Ma_khuvuc);
+            if (data != null)
+            {
+                // Cập nhật các thuộc tính của phiếu xuất kho
+                data.Ngayxuat = phieuxuatkho.Ngayxuat ?? DateTime.MinValue;
+                data.Thanhtien = phieuxuatkho.Thanhtien;
+                data.giamgia = phieuxuatkho.giamgia;
+                data.Tienmat = phieuxuatkho.Tienmat;
+                data.Chuyenkhoan = phieuxuatkho.Chuyenkhoan;
+                data.Tongtien = phieuxuatkho.Tongtien;
+                data.Ten_khuvuc = kvc.Ten_Khuvuccau; // Nếu cần, có thể tra cứu tên khu vực tương ứng
+                data.Trangthai = phieuxuatkho.Trangthai;
+                data.Chitiethoadon = phieuxuatkho.Chitiethoadon;
+                _context.Phieuxuatkhos.Update(data);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            return false;
+        }
+        catch (Exception)
+        {
+            return false;
+        }
+    }
+      
         public async Task<bool> Xoaphieuxuat(string Ma_phieuxuatkho)
         {
             try
@@ -134,6 +196,8 @@ namespace Projecthoca.Service.Responser
                 return false;
             }
         }
+        
+        
         // reponxer phiếu nhập kho 
         public async Task<(List<PhieunhapkhoVM> ds, int totalpages)> Danhsachphieunhap(int page, int pagesize)
         {
@@ -233,7 +297,8 @@ namespace Projecthoca.Service.Responser
                          Dvt = x.Danhmuc.Donvitinh,
                          Soluong = x.Soluong,
                          Gia = x.Danhmuc.Gia,
-                         Thanhtien = x.Danhmuc.Gia * x.Soluong
+                         Thanhtien = x.Danhmuc.Gia * x.Soluong,
+                         Nhapcungcap = x.Danhmuc.Nhacungcap,
                      }
                 ).ToListAsync();
 

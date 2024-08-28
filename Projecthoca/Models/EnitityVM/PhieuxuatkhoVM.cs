@@ -15,6 +15,10 @@
 
         public int Tongtien { get; set; }
 
+        public string Trangthai { get; set; }
+
+        public string Chitiethoadon { get; set; }
+
         public string? Id { get; set; }
      
     }

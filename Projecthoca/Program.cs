@@ -5,6 +5,7 @@ using Projecthoca.Data;
 using Projecthoca.Helper;
 using Projecthoca.Models.Enitity;
 using Projecthoca.Service.Interface;
+
 using Projecthoca.Service.Responser;
 using System.Threading;
 var builder = WebApplication.CreateBuilder(args);
@@ -52,8 +53,10 @@ builder.Services.AddScoped<IChitietca, ChitietcaReponser>();
 builder.Services.AddScoped<IDanhmuchoadon, DanhmuchoadonReponser>();
 builder.Services.AddScoped<IThongbao, ThongbaoReponser>();
 builder.Services.AddScoped<IPhieuxuatkho, PhieuxuatkhoReponser>();
+builder.Services.AddScoped<IBanle, BanleReponser>();
 builder.Services.AddSingleton<TimerBackgroundService>();
 builder.Services.AddHostedService<TimerBackgroundService>();
+
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();

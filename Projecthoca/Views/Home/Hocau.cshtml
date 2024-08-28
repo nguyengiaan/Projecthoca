@@ -103,14 +103,27 @@
             </div>
             <div class="modal-body">
                 <form method="post" id="formthemdv" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <input type="hidden" class="form-control" id="Ma_danhmuchoadon" value="">
-                    </div>
-                    <div class="form-group">
+                    @* <div class="form-group">
+                        <input type="text" class="form-control" id="Ma_danhmuchoadon" value="">
+                    </div> *@
+                    @* <div class="form-group">
 
                         <select id="Ma_danhmucdv" class="mw-100">
                         </select>
-                    </div>
+                    </div> *@
+                    <div class="form-group position-relative">
+                                @* <label for="Ma_danhmuchoadon">Tên sản phẩm</label> *@
+                                <input type="text" id="Ma_danhmuchoadon" oninput="filterDichvuList()"
+                                    placeholder="Nhập tên dịch vụ..." autocomplete="off">
+
+                                <!-- Danh sách danh mục -->
+                                <div id="dichvuList" class="dropdown-menu" style="display: none; width: 100%;">
+                                    <table class="table table-hover">
+                                        <tbody id="tblbody"></tbody>
+                                    </table>
+                                </div>
+                     </div>
+
                     <div class="form-group">
                         <label class="col-form-label">Số lượng</label>
                         <input type="number" class="form-control" id="soluongdm" value="1">
@@ -159,8 +172,10 @@
                                 <tr>
                                     <th>Mã danh mục</th>
                                     <th>Tên danh mục</th>
+                                    <th>Tồn kho</th>
                                     <th>Giá</th>
                                     <th>ĐVT</th>
+                                    
                                     <th></th>
                                 </tr>
                             </thead>
@@ -170,7 +185,7 @@
                         </table>
                     </div>
 
-                    <div class="col-md-6">
+                    <div class="col-md-6" id = "in">
                         <div class="bill-container">
                             <div class="customer-info">
                                 <h2>Thông tin khách hàng</h2>
@@ -194,6 +209,32 @@
                                     </thead>
                                     <tbody id="dsdv">
                                         <!-- Thông tin dịch vụ được thêm vào đây -->
+                                    </tbody>
+                                    <tbody>
+                                              <tr >
+            <td colspan="6" style="text-align:right;">
+                <div class="d-flex align-items-center justify-content-end mb-2">
+                    <span class="fw-bold me-2">Giảm giá:</span>
+                    <input type="number" class="form-control hide-when-print border-secondary" style="max-width: 200px;" id="discount-input">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" style="text-align:right;">
+                <div class="d-flex align-items-center justify-content-end mb-2">
+                    <span class="fw-bold me-2">Tiền mặt:</span>
+                    <input type="number" class="form-control hide-when-print border-secondary" style="max-width: 200px;" id="tienmat">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" style="text-align:right;">
+                <div class="d-flex align-items-center justify-content-end mb-2">
+                    <span class="fw-bold me-2">Chuyển khoản:</span>
+                    <input type="number" class="form-control hide-when-print border-secondary" style="max-width: 200px;" id="chuyenkhoan">
+                </div>
+            </td>
+        </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -219,13 +260,14 @@
 <!--Context menu-->
 <div id="contextMenu" class="context-menu">
     <ul>
-        <li><a href="#" id="Themkh">Cho khách thuê</a></li>
-        <li><a href="#" id="Bamgio">Bấm giờ</a></li>
-        <li><a href="#" id="Themdichvu">Xem dịch vụ</a></li>
-        <li><a href="#" id="Xemchitietca">Xem số cá </a></li>
-        <li><a href="#" id="Chuyenban">Chuyển bàn câu </a></li>
+        <li><a href="#" id="Themkh" style="text-decoration: none; color: black;">Cho khách thuê</a></li>
+        <li><a href="#" id="Bamgio" style="text-decoration: none; color: black;">Bấm giờ</a></li>
+        <li><a href="#" id="Themdichvu" style="text-decoration: none; color: black;">Xem dịch vụ</a></li>
+        <li><a href="#" id="Xemchitietca" style="text-decoration: none; color: black;">Xem số cá</a></li>
+        <li><a href="#" id="Chuyenban" style="text-decoration: none; color: black;">Chuyển bàn câu</a></li>
     </ul>
 </div>
+
 <!--Modal thêm chi tiết cá-->
 <div class="modal fade" id="Themchitietca" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog  modal-dialog-centered  ">
@@ -324,7 +366,7 @@
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">Tên khách hàng</label>
-                        <input type="text" class="form-control" id="Tenkhachhang" value="Khách lẻ">
+                        <input type="text" class="form-control" id="Tenkhachhang" value="Khách đi câu">
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">Ngày câu</label>
@@ -428,8 +470,11 @@
             <div class="row">
                 @if (Model != null && Model.Ten_hoca != null)
                 {
-                    <div class="col-md-10 col-12">
+                    <div class="col-md-10 col-12" style="display: flex; flex-direction: row; justify-content: space-between;">
+                        <div >
                         <h4 class="m-0 font-weight-bold text-primary">@Model.Ten_hoca</h4>
+                        </div>
+                       
                     </div>
 
                 }
@@ -489,6 +534,61 @@
     <script src="~/Scripts/select2.js"></script>
     <script src="~/Scripts/select2.min.js"></script>
     <style>
+
+        /* Style for the input field */
+#Ma_danhmuchoadon {
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    font-size: 14px;
+    outline: none;
+}
+
+#Ma_danhmuchoadon:focus {
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25);
+}
+
+/* Style for the dropdown menu */
+#danhMucList {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #ffffff;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+/* Style for the table in the dropdown menu */
+#danhMucList .table {
+    margin-bottom: 0;
+}
+
+#danhMucList .table-hover tbody tr {
+    cursor: pointer;
+}
+
+#danhMucList .table-hover tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Style for the table cells */
+#tblbody td {
+    padding: 10px;
+    vertical-align: middle;
+}
+
+/* Optional: Add padding and margin to the form group */
+.form-group {
+    margin-bottom: 20px;
+}
+
+
+
         /* Kích thước mặc định cho màn hình lớn */
         .select2-container--default .select2-selection--single {
             height: 38px;
@@ -554,25 +654,33 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
-        .context-menu ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
+       .context-menu ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
 
-        .context-menu ul li {
-            padding: 8px 12px;
-            cursor: pointer;
-        }
+.context-menu ul li {
+    padding: 0; /* Đặt padding cho thẻ <li> về 0 để không ảnh hưởng tới thẻ <a> */
+    margin-bottom: 0px;
+    background-color:white;
+   
+    transition: background-color 0.1s ease-in-out;
+}
 
-        .context-menu ul li a {
-            text-decoration: none;
-            color: #333;
-        }
+.context-menu ul li a {
+    display: block;
+    padding: 10px 20px; /* Đặt padding cho thẻ <a> để có khoảng cách trong */
+    width: 100%;
+    height: 100%;
+    text-decoration: none;
+    color: black;
+    box-sizing: border-box; /* Đảm bảo padding không ảnh hưởng tới kích thước tổng của thẻ <a> */
+}
 
-        .context-menu ul li:hover {
-            background-color: #f1f1f1;
-        }
+.context-menu ul li:hover {
+    background-color: #dcdcdc; /* Hiệu ứng hover */
+}
 
         .Cokhach {
             background-image: url('../Admin_Style/img/2.jpg');
@@ -670,6 +778,7 @@
         var transferValue;
         var tongtiencuoicung;
         var tienthua;
+        var trangthai="Khách đi câu"
         document.addEventListener('DOMContentLoaded', function () {
             const animationPath = '../Admin_Style/img/animation.json';
             lottie.loadAnimation({
@@ -711,11 +820,11 @@
         });
         //--------------------------------------------------------------------------
         $(document).ready(function () {
-            $('#Ma_danhmucdv').select2({
+            @* $('#Ma_danhmucdv').select2({
                 placeholder: "Chọn danh mục",
                 allowClear: true,
                 dropdownParent: $('#Themdichvu')
-            });
+            }); *@
             selectbancau();
             Danhsachdv();
             Danhsachcahd();
@@ -1191,6 +1300,7 @@
                 }
             });
         }
+        
         function Xoakhuvuc(KhuvucId) {
             var formData = new FormData();
             formData.append("Ma_khuvvuc", KhuvucId);
@@ -1219,6 +1329,8 @@
                 }
             });
         }
+       
+       
         function Xemkhkhuvuc(KhuvucId) {
             var formData = new FormData();
             formData.append("Ma_khuvvuc", KhuvucId);
@@ -1419,6 +1531,10 @@
                 }
             });
         }
+
+
+
+        
         function Danhsachdv() {
             $.ajax({
                 type: "GET",
@@ -1504,7 +1620,7 @@
 
                                                             <td>${value.ten_danhmuc}</td>
                                                             <td>${value.dvt}</td>
-                                                                                                <td><input class="form-control text-center form-control-sm" id="Soluong" type="number" value="${value.soluong}" data-id="${value.ma_danhmuchoadon}"></td>
+                                                            <td><input class="form-control text-center form-control-sm" id="Soluong" type="number" value="${value.soluong}" data-id="${value.ma_danhmuchoadon}"></td>
                                                             <td>${formatCurrency(value.gia)}</td>
                                                             <td>${formatCurrency(value.thanhtien)}</td>
                                                             <td><button class="btn btn-danger" data-id="${value.ma_danhmuchoadon}" onclick="Xoadanhmuchoadon('${value.ma_danhmuchoadon}')" >Xóa</button></td>
@@ -1803,8 +1919,10 @@
 
             $('#dsdv').append(totalStr);
         }
+
+       
         // bao gồm các button như giảm giá,tiền mặt và chuyển khoản
-        function Cacbutton() {
+        @* function Cacbutton() {
             var totalStr = `
                     <tr>
                         <td colspan="6" style="text-align:right;">
@@ -1842,7 +1960,7 @@
 
 
             $('#dsdv').append(totalStr);
-        }
+        } *@
         function parseCurrency(value) {
 
             return parseInt(value.replace(/[^0-9]/g, ''), 10);
@@ -1918,7 +2036,7 @@
                 }
             });
         }
-        function Themphieuxuat() {
+        function Themphieuxuat(htmlInvoice) {
 
             var formData = new FormData();
             formData.append("Thanhtien", tongtienthanhtoan);
@@ -1927,6 +2045,8 @@
             formData.append("Chuyenkhoan", transferValue);
             formData.append("Tongtien", tongtiencuoicung);
             formData.append("Ma_khuvuc", kvc);
+             formData.append("Trangthai", trangthai);
+             formData.append("Chitiethoadon", htmlInvoice);
             $.ajax({
                 url: "/Phieuxuatkho/Themphieuxuatkho",
                 type: "POST",
@@ -1981,7 +2101,7 @@
         }
         // in hóa đơn
         function Inhoadon() {
-            var printContents = document.querySelector("#Xemdichvu .modal-body").innerHTML;
+            var printContents = document.querySelector("#Xemdichvu #in").innerHTML;
             var originalContents = document.body.innerHTML;
 
             // Lấy giá trị các input, kiểm tra và chuyển đổi sang định dạng tiền tệ
@@ -2081,8 +2201,12 @@
                                     }
                                 </style>
                             `;
+            
             window.addEventListener('afterprint', function () {
-                Themphieuxuat();
+                // Gộp nội dung và kiểu in thành một chuỗi HTML
+               var htmlInvoice = printStyles + printContents;
+               // var dsdv = document.getElementById('dsdv').innerHTML;
+                Themphieuxuat(htmlInvoice);
                 Xoakhachang(kvc);
                 location.reload();
 
@@ -2094,42 +2218,48 @@
             document.body.innerHTML = originalContents;
         }
         // hàm lấy hàng hóa hiển thị trong hóa đơn
-        function hienthihanghoa(Ma_mathang) {
-
-            $.ajax({
-                type: "POST",
-                url: "/Khuvuchoca/Danhmuchthd",
-
-                data: { Ma_mathang: Ma_mathang },
-                success: function (reponser) {
-                    if (reponser.success) {
-
-
-                        var html = '';
-                        $('#danhmuc-list').empty();
-                        $.each(reponser.data, function (index, value) {
-                            var str = `<tr>
-                                                            <td>${value.ma_danhmuc}</td>
-                                                                    <td>${value.ten_danhmuc}</td>
-
-                                                            <td>${formatCurrency(value.gia)}</td>
-                                                                    <td>${value.donvitinh}</td>
-                                                                            <td><button class="btn btn-success" data-id="${value.ma_danhmuc}" id="btnChondm" >Chọn</button></td>
-                                                            </tr>`;
-                            html += str; // Thêm chuỗi vào biến html
-                        });
-                        $('#danhmuc-list').html(html);
+       function hienthihanghoa(Ma_mathang) {
+    $.ajax({
+        type: "POST",
+        url: "/Khuvuchoca/Danhmuchthd",
+        data: { Ma_mathang: Ma_mathang },
+        success: function (reponser) {
+            if (reponser.success) {
+                var html = '';
+                $('#danhmuc-list').empty();
+                $.each(reponser.data, function (index, value) {
+                    var selectButton = ''; // Tạo một chuỗi rỗng cho nút "Chọn"
+                    
+                    // Nếu số lượng > 0, hiển thị nút "Chọn"
+                    if (value.soluong > 0) {
+                        selectButton = `<button class="btn btn-success" data-id="${value.ma_danhmuc}" id="btnChondm">Chọn</button>`;
                     }
-                    else {
-                        Swal.fire({
-                            title: "Thông báo lỗi",
-                            text: response.message,
-                            icon: "error"
-                        });
-                    }
-                }
-            })
+
+                    // Tạo chuỗi HTML cho từng hàng trong bảng
+                    var str = `<tr>
+                                <td>${value.ma_danhmuc}</td>
+                                <td>${value.ten_danhmuc}</td>
+                                <td>${value.soluong}</td>
+                                <td>${formatCurrency(value.gia)}</td>
+                                <td>${value.donvitinh}</td>
+                                <td>${selectButton}</td>
+                               </tr>`;
+                    
+                    html += str; // Thêm chuỗi vào biến html
+                });
+                $('#danhmuc-list').html(html); // Cập nhật nội dung bảng
+                console.log(reponser);
+            } else {
+                Swal.fire({
+                    title: "Thông báo lỗi",
+                    text: response.message,
+                    icon: "error"
+                });
+            }
         }
+         });
+    }
+
         // hàm lấy hàng hóa hiển thị trong hóa đơn
         function Mathanghthd() {
             $.ajax({
@@ -2234,21 +2364,26 @@
         function Tinhtienthua() {
 
             var html = '';
-            var giamgia = $("#discount-input").val();
-            var tienmat = $("#tienmat").val();
-            var chuyenkhoan = $("#chuyenkhoan").val();
+            var giamgia = $("#discount-input").val()||0;
+            var tienmat = $("#tienmat").val()||0;
+            var chuyenkhoan = $("#chuyenkhoan").val()||0;
             var tongtien = tongtienthanhtoan;
             tienthua = tongtien - tienmat - giamgia - chuyenkhoan;
 
             if (tienthua < 0) {
-                html = `<h6 class="fs-2">Tiền khách thừa: <span class="text-danger">${formatCurrency(tienthua)}</span></h6>`;
-                $(".Tienthoichokhach").html(html);
-            }
-            else {
-                html = `<h6 class="fs-2">Tiền khách thiếu: <span class="text-danger">${formatCurrency(tienthua)}</span></h6>`;
-                $(".Tienthoichokhach").html(html);
-            }
+        // Tiền thối khách
+        html = `<h6 class="fs-2">Tiền thối khách: <span class="text-success">${formatCurrency(Math.abs(tienthua))}</span></h6>`;
+        } else if (tienthua > 0) {
+        // Tiền khách thiếu
+        html = `<h6 class="fs-2">Tiền khách thiếu: <span class="text-danger">${formatCurrency(tienthua)}</span></h6>`;
+        } else {
+        // Đã đủ tiền, không thối hoặc thiếu
+        html = `<h6 class="fs-2">Khách đã thanh toán đủ.</h6>`;
         }
+
+        $(".Tienthoichokhach").html(html);
+        }
+       
         // function filter
         function filterTable() {
             const searchInput = document.getElementById("search");
@@ -2268,6 +2403,27 @@
                 row.style.display = match ? "table-row" : "none";
             });
         }
+
+        $(document).on('click', '#btnChondm', function () {
+         var button = $(this);
+         var row = button.closest('tr'); // Lấy hàng tương ứng với nút bấm
+         var soluongCell = row.find('td:nth-child(3)'); // Lấy ô chứa số lượng (ô thứ 3)
+         var soluong = parseInt(soluongCell.text()); // Lấy giá trị số lượng hiện tại và chuyển thành số nguyên
+
+         if (soluong > 0) {
+         soluong--; // Giảm số lượng
+         soluongCell.text(soluong); // Cập nhật lại số lượng hiển thị
+
+        // Ẩn nút "Chọn" nếu số lượng = 0
+            if (soluong === 0) {
+             button.hide();
+            }
+
+        // Gọi hàm Capnhatsoluonghh để cập nhật số lượng trong database
+         Capnhatsoluonghh(button.data('id')); // Truyền mã khu vực cầu (hoặc mã sản phẩm)
+    }
+});
+
         // hàm cập nhật số lượng hàng hóa
         function Capnhatsoluonghh(ma_khuvuccau) {
             $.ajax({
@@ -2291,6 +2447,102 @@
         }
         // Thêm sự kiện keyup cho ô tìm kiếm
         document.getElementById("search").addEventListener("keyup", filterTable);
+        function filterDichvu() {
+    var searchText = $('#Ten_dichvu').val().toLowerCase(); // Lấy giá trị tìm kiếm và chuyển đổi thành chữ thường
+
+    $.ajax({
+        type: "GET",
+        url: "/Danhmuchoadon/Danhmucdv", // URL của bạn để lấy danh sách dịch vụ
+        success: function (response) {
+            $('#tblbodyDichvu').empty(); // Xóa các mục trước đó
+
+            if (response.success) {
+                var filteredItems = response.data.filter(function (item) {
+                    return item.ten_dichvu.toLowerCase().includes(searchText); // Lọc dựa trên giá trị tìm kiếm
+                });
+
+                if (filteredItems.length > 0) {
+                    $.each(filteredItems, function (index, value) {
+                        var str = `
+                            <tr onclick="selectDichvu('${value.ma_dichvu}', '${value.ten_dichvu}', '${value.gia}', '${value.donvitinh}')">
+                                <td>${value.ma_dichvu}</td>
+                                <td>${value.ten_dichvu}</td>
+                                <td>${value.donvitinh}</td>
+                                <td>$${value.gia}</td>
+                            </tr>`;
+                        $('#tblbodyDichvu').append(str);
+                    });
+                    $('#dichvuList').show();
+                } else {
+                    $('#dichvuList').hide();
+                }
+
+            } else {
+                Swal.fire({
+                    title: "Thông báo lỗi",
+                    text: response.message,
+                    icon: "error"
+                });
+            }
+        }
+    });
+}
+
+// Hàm xử lý khi chọn một dịch vụ từ danh sách
+function selectDichvu(maDichvu, tenDichvu, gia, donvitinh) {
+    $('#Ten_dichvu').val(tenDichvu);
+    $('#dichvuList').hide();
+}
+
+// Ẩn danh sách khi nhấp ra ngoài
+$(document).click(function (event) {
+    if (!$(event.target).closest('#Ten_dichvu, #dichvuList').length) {
+        $('#dichvuList').hide();
+    }
+});
+
+
+  // Hàm lọc danh mục dựa trên ô input
+        function filterDichvuList() {
+            var searchText = $('#Ten_danhmuc').val().toLowerCase();
+
+            $.ajax({
+                type: "GET",
+                url: "/Danhmuchoadon/Danhmucdv",
+                success: function (response) {
+                    $('#tblbody').empty();
+                    if (response.success) {
+                        var filteredItems = response.data.filter(function (item) {
+                            return item.ten_danhmuc.toLowerCase().includes(searchText);
+                        });
+
+                        if (filteredItems.length > 0) {
+                            $.each(filteredItems, function (index, value) {
+                                var str = `
+                                                            <tr onclick="selectItem('${value.ma_danhmuc}', '${value.ten_danhmuc}', '${value.gia}', '${value.donvitinh}')">
+                                                                <td>${value.ma_danhmuc}</td>
+                                                                <td>${value.ten_danhmuc}</td>
+                                                               
+                                                            </tr>`;
+                                $('#tblbody').append(str);
+                            });
+                            $('#danhMucList').show();
+                        } else {
+                            $('#danhMucList').hide();
+                        }
+
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                }
+            });
+        }
+
+
     </script>
 
 }

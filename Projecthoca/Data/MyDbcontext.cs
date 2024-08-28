@@ -46,6 +46,9 @@ namespace Projecthoca.Data
         public DbSet<Danhsachhhkho> Danhsachhhkhos { get; set; }
         #endregion
 
+        
+      
+  
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -92,6 +95,8 @@ namespace Projecthoca.Data
             // Table Danhmuc
             modelBuilder.Entity<Danhmuc>().ToTable("Danhmuc").HasKey(x => x.Ma_danhmuc);
             modelBuilder.Entity<Danhmuc>().Property(e => e.Ten_danhmuc).HasMaxLength(int.MaxValue);
+                        modelBuilder.Entity<Danhmuc>().Property(e => e.Nhacungcap).HasMaxLength(int.MaxValue);
+                                    modelBuilder.Entity<Danhmuc>().Property(e => e.Gianhap).HasMaxLength(int.MaxValue);
             modelBuilder.Entity<Danhmuc>().Property(e => e.Gia).HasMaxLength(int.MaxValue);
             modelBuilder.Entity<Danhmuc>().Property(e => e.Donvitinh).HasMaxLength(int.MaxValue);
             modelBuilder.Entity<Danhmuc>().HasOne(x => x.Nguoidung).WithMany(x => x.Danhmucs).HasForeignKey(x => x.Id);
@@ -180,6 +185,9 @@ namespace Projecthoca.Data
             modelBuilder.Entity<Danhsachhhkho>().Property(e => e.Thanhtien).HasMaxLength(100);
             modelBuilder.Entity<Danhsachhhkho>().HasOne(x => x.Danhmuc).WithMany(x => x.Danhsachhhkhos).HasForeignKey(x => x.Ma_danhmuc);
             modelBuilder.Entity<Danhsachhhkho>().HasOne(x => x.Phieunhapkho).WithMany(x => x.Danhsachhhkhos).HasForeignKey(x => x.Ma_phieunhapkho);
+
+
+           
 
         }
 

@@ -7,7 +7,7 @@
         public string Nguoinhap { get; set; }
         public string Id { get; set; }
         public ApplicationUser Nguoidung { get; set; }
-
+        
         public List<Danhsachhhkho> Danhsachhhkhos { get; set; }
         public Phieunhapkho()
         {

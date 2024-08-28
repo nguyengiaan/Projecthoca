@@ -285,12 +285,21 @@ namespace Projecthoca.Migrations
                         .HasMaxLength(2147483647)
                         .HasColumnType("int");
 
+                    b.Property<int>("Gianhap")
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("int");
+
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Ma_mathang")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Nhacungcap")
+                        .IsRequired()
+                        .HasMaxLength(2147483647)
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Soluong")
                         .HasColumnType("int");
@@ -638,6 +647,10 @@ namespace Projecthoca.Migrations
                     b.Property<string>("Ma_phieuxuatkho")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("Chitiethoadon")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("Chuyenkhoan")
                         .HasMaxLength(200)
                         .HasColumnType("int");
@@ -664,6 +677,10 @@ namespace Projecthoca.Migrations
                     b.Property<int>("Tongtien")
                         .HasMaxLength(200)
                         .HasColumnType("int");
+
+                    b.Property<string>("Trangthai")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("giamgia")
                         .HasMaxLength(200)

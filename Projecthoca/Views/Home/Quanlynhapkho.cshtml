@@ -3,7 +3,7 @@
 }
 
 @model Projecthoca.Models.EnitityVM.DanhmucVM
-
+<link href="~/css/quanlynhapkho.css" rel="stylesheet" />
 <style>
     .container {
         display: flex;
@@ -132,6 +132,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Thêm phiếu nhập</h5>
+                
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -216,13 +217,29 @@
 <div class="container-fluid">
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <div class="row">
-                <div class="col-md-10 col-12">
-                    <h4 class="m-0 font-weight-bold text-primary">Danh sách phiếu nhập</h4>
+           <div class="row align-items-center">
+    <div class="col-md-8 col-12">
+        <h4 class="m-0 font-weight-bold text-primary">Danh sách phiếu nhập</h4>
+    </div>
+    <div class="col-md-2 col-8 mt-2 mt-md-0">
+        <input type="text" id="searchBox" class="form-control" placeholder="Tìm kiếm...">
+    </div>
+    <div class="col-md-2 col-4 mt-2 mt-md-0 text-md-right">
+        <button class="btn btn-primary w-100" data-toggle="modal" data-target="#Themphieunhap">Thêm phiếu nhập</button>
+    </div>
+</div>
+<div class="row mt-3">
+                <div class="col-md-4 mb-2">
+                    <input type="date" id="startDate" class="form-control" placeholder="Ngày bắt đầu"
+                        value="@DateTime.Now.ToString("yyyy-MM-dd")">
                 </div>
-                <div class="col-md-2 col-12">
-                    <button class="btn btn-primary" data-toggle="modal" data-target="#Themphieunhap">Thêm phiếu
-                        nhập</button>
+                <div class="col-md-4 mb-2">
+                    <input type="date" id="endDate" class="form-control" placeholder="Ngày kết thúc"
+                        value="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")">
+                </div>
+                <div class="col-md-4 d-flex">
+                    <button id="filterButton" class="btn btn-outline-primary mr-2 flex-fill">Lọc</button>
+                    <button id="clearFilterButton" class="btn btn-outline-secondary flex-fill">Xóa lọc</button>
                 </div>
             </div>
         </div>
@@ -283,7 +300,6 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
-
             </div>
         </div>
     </div>
@@ -302,7 +318,6 @@
             $(document).on('click', '.btnSuaPhieu', function () {
                 var maPhieu = $(this).data('phieu');
                 var phieu = phieuNhaps.find(p => p.maPhieu === maPhieu);
-
                 // Hiển thị danh sách chi tiết phiếu trong modal chỉnh sửa
                 $('#tblbodyModalEdit').empty();
                 phieu.chiTietPhieu.forEach(function (item) {
@@ -332,12 +347,15 @@
                 editingPhieuIndex = phieuNhaps.indexOf(phieu); // Lưu chỉ số phiếu đang sửa
             });
 
+<<<<<<< HEAD
+=======
             $(document).on('click', '.btnXoaModal', function () {
                 var maPhieu = $(this).data('id');
                 $(this).closest('tr').remove(); // Xóa dòng tương ứng
                 xoaPhieuNhap(maPhieu);
 
             });
+>>>>>>> 2afadeae29ae2d82824f1e9fcd33c1ee5477fd95
             // Xử lý sự kiện khi nhấn nút Xóa trong modal chỉnh sửa
             $(document).on('click', '.btnXoaModalEdit', function () {
                 $(this).closest('tr').remove(); // Xóa dòng tương ứng
@@ -409,7 +427,11 @@
                                                                                                                                                                                                                                                                                 <td>${value.ma_danhmuc}</td>
                                                                                                                                                                                                                                                                                 <td>${value.ten_danhmuc}</td>
                                                                                                                                                                                                                                                                                 <td>${value.donvitinh}</td>
+<<<<<<< HEAD
+                                                                                                                                                                                                                                                                               <td> $${value.gia}</td>
+=======
                                                                                                                                                                                                                                                                                <td> ${value.gia}</td>
+>>>>>>> 2afadeae29ae2d82824f1e9fcd33c1ee5477fd95
                                                                                                                                                                                                                                                                             </tr>`;
                                 $('#tblbody').append(str);
                             });
@@ -634,6 +656,20 @@
                         $('#dataTableBody').empty();
                         response.dsdm.forEach(function (item) {
                             var row = `
+<<<<<<< HEAD
+                                <tr>
+                                    <td>${item.ma_phieunhapkho}</td>
+                                    
+                                    <td>${item.nguoinhap}</td>
+                                    <td>${item.ngaynhap.split('T')[0]}</td>
+                                    <td>
+                                        <button class="btn btn-info btnXemPhieu" id="btnXemPhieu" data-id="${item.ma_phieunhapkho}">Xem</button>
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-danger btnXoaPhieu" id="btnXoaPhieu" data-id="${item.ma_phieunhapkho}">Xóa</button>
+                                    </td>
+                                </tr>`;
+=======
                                     <tr>
                                         <td>${item.ma_phieunhapkho}</td>
                                         <td>${item.ngaynhap.split('T')[0]}</td>
@@ -645,6 +681,7 @@
                                             <button class="btn btn-danger" id="btnXoaPhieu" data-id="${item.ma_phieunhapkho}">Xóa</button>
                                         </td>
                                     </tr>`;
+>>>>>>> 2afadeae29ae2d82824f1e9fcd33c1ee5477fd95
                             $('#dataTableBody').append(row);
                         });
                         updatePagination(response.totalPages, response.pageindex);
@@ -665,6 +702,16 @@
                 }
             });
         }
+        $(document).ready(function () {
+    // Gọi hàm lọc khi người dùng nhập vào ô tìm kiếm
+    $('#searchBox').on('keyup', function () {
+        var searchValue = $(this).val().toLowerCase(); // Lấy giá trị từ ô tìm kiếm và chuyển về chữ thường
+        $('#dataTableBody tr').filter(function () {
+            $(this).toggle($(this).find('td:first').text().toLowerCase().indexOf(searchValue) > -1);
+        });
+    });
+});
+
         function updatePagination(totalPages, currentPage) {
             if (totalPages > 0) {
                 var str = `<nav aria-label="Page navigation example">
@@ -763,5 +810,30 @@
         function formatCurrency(value) {
             return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
         }
+
+        $(document).ready(function () {
+    // Sự kiện nhấp vào nút Lọc
+    $("#filterButton").click(function () {
+        var startDate = new Date($("#startDate").val());
+        var endDate = new Date($("#endDate").val());
+
+        // So sánh các phiếu với khoảng thời gian được chọn
+        $("#dataTableBody tr").each(function () {
+            var ngayNhap = new Date($(this).find("td:nth-child(3)").text()); // Lấy ngày nhập từ cột thứ 3
+            if (ngayNhap >= startDate && ngayNhap <= endDate) {
+                $(this).show();  // Hiển thị những phiếu nằm trong khoảng
+            } else {
+                $(this).hide();  // Ẩn những phiếu không nằm trong khoảng
+            }
+        });
+    });
+
+    // Sự kiện nhấp vào nút Xóa lọc
+    $("#clearFilterButton").click(function () {
+        // Hiển thị tất cả các phiếu khi xóa lọc
+        $("#dataTableBody tr").show();
+    });
+});
+
     </script>
 }

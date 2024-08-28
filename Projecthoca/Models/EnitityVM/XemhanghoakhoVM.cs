@@ -11,6 +11,8 @@
         public int Soluong { get; set; }
 
         public int Gia { get; set; }
+         public int Gianhap { get; set; }
+        public string Nhapcungcap { get; set; }
 
         public int Thanhtien { get; set; }
 

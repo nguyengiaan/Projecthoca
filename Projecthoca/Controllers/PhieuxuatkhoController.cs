@@ -194,5 +194,52 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, ex = ex.Message });
             }
         }
+
+        [HttpPost]
+        public async Task<IActionResult> Suaphieuxuatkho(PhieuxuatkhoVM pxk)
+        {
+            try
+            {
+                var data = await _phieuxuatkho.Suaphieuxuatkho(pxk);
+                if (data)
+                {
+                    return Json(new { success = true });
+                }
+                else
+                {
+                    return Json(new { success = false });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, });
+            }
+        }
+    
+[HttpGet]
+public async Task<IActionResult> Xemphieuxuatkho(string Ma_phieuxuatkho)
+{
+    if (string.IsNullOrWhiteSpace(Ma_phieuxuatkho))
+    {
+        return Json(new { success = false, message = "Parameter Ma_phieuxuatkho is null or empty." });
+    }
+
+    try
+    {
+        var data = await _phieuxuatkho.Xemphieuxuatkho(Ma_phieuxuatkho);
+        if (data != null)
+        {
+            return Json(new { success = true, data = data });
+        }
+        else
+        {
+            return Json(new { success = false, message = "No data found." });
+        }
+    }
+    catch (Exception ex)
+    {
+        return Json(new { success = false, message = ex.Message });
+    }
+}  
     }
 }

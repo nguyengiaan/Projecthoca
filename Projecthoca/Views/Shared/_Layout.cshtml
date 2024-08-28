@@ -32,13 +32,17 @@
 
 
 </head>
+  
 
 <body id="page-top">
 
     <!-- Page Wrapper -->
     <div id="wrapper">
 
+   @if (User.IsInRole("Admin"))
+                { 
         <!-- Sidebar -->
+      
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
@@ -59,9 +63,20 @@
                 </a>
             </li>
 
+            <li class="nav-item active">
+                <a class="nav-link" href="/Home/Hoadonbanle">
+                    <i class="fa fa-book" aria-hidden="true"></i>
+                    <span>Hóa đơn bán lẻ</span>
+                </a>
+            </li>
+
             <!-- Divider -->
             <hr class="sidebar-divider">
+           @if (User.IsInRole("Admin"))
+                { 
+            <div>
 
+           
             <!-- Heading -->
             <div class="sidebar-heading">
                 Quản lý
@@ -222,7 +237,9 @@
 
 
         </ul>
+        }
         <!-- End of Sidebar -->
+
         <!-- Content Wrapper -->
         <div id="content-wrapper" class="d-flex flex-column">
 

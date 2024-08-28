@@ -23,6 +23,7 @@ namespace Projecthoca.Controllers
 
         public IActionResult Index()
         {
+            
             return View();
         }
         public IActionResult Quanlytaikhoan()
@@ -73,6 +74,10 @@ namespace Projecthoca.Controllers
 
         }
 
+        public IActionResult Hoadonbanle()
+        {
+            return View();
+        }
         public IActionResult Quanlydanhmuc()
         {
             return View();
@@ -86,6 +91,10 @@ namespace Projecthoca.Controllers
             return View();
         }
         public IActionResult Quanlyphieuxuatkho()
+        {
+            return View();
+        }
+        public IActionResult PrintBill()
         {
             return View();
         }
@@ -103,6 +112,10 @@ namespace Projecthoca.Controllers
             return View();
         }
         public IActionResult Baocaoxuathang()
+        {
+            return View();
+        }
+         public IActionResult Baocaonhapxuatton()
         {
             return View();
         }
@@ -148,5 +161,6 @@ namespace Projecthoca.Controllers
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
+        
     }
 }
