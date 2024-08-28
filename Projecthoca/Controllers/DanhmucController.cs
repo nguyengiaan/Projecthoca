@@ -189,26 +189,51 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+        // [HttpPost]
+        // public async Task<IActionResult> Capnhatsoluong(string ma_khuvuccau)
+        // {
+        //     try
+        //     {
+        //         var data = await _danhmuc.Capnhatsoluong(ma_khuvuccau);
+        //         if (data)
+        //         {
+        //             return Json(new { success = true, message = "Cập nhật số lượng thành công" });
+        //         }
+        //         else
+        //         {
+        //             return Json(new { success = false, message = "Cập nhật số lượng không thành công" });
+        //         }
+        //     }
+        //     catch (Exception ex)
+        //     {
+        //         return Json(new { success = false, message = ex.Message });
+        //     }
+        // }
+
         [HttpPost]
-        public async Task<IActionResult> Capnhatsoluong(string ma_khuvuccau)
+public async Task<IActionResult> Capnhatsoluong(string ma_khuvuccau)
+{
+    try
+    {
+        // Gọi phương thức Capnhatsoluong từ repository hoặc service
+        var isUpdated = await _danhmuc.Capnhatsoluong(ma_khuvuccau);
+
+        if (isUpdated)
         {
-            try
-            {
-                var data = await _danhmuc.Capnhatsoluong(ma_khuvuccau);
-                if (data)
-                {
-                    return Json(new { success = true, message = "Cập nhật số lượng thành công" });
-                }
-                else
-                {
-                    return Json(new { success = false, message = "Cập nhật số lượng không thành công" });
-                }
-            }
-            catch (Exception ex)
-            {
-                return Json(new { success = false, message = ex.Message });
-            }
+            return Json(new { success = true, message = "Cập nhật số lượng thành công" });
         }
+        else
+        {
+            return Json(new { success = false, message = "Cập nhật số lượng không thành công" });
+        }
+    }
+    catch (Exception ex)
+    {
+        // Xử lý lỗi và trả về thông báo lỗi
+        return Json(new { success = false, message = ex.Message });
+    }
+}
+
         // controller nhà cung cấp
 
         // controller mặt hàng

@@ -233,7 +233,8 @@ namespace Projecthoca.Service.Responser
                          Dvt = x.Danhmuc.Donvitinh,
                          Soluong = x.Soluong,
                          Gia = x.Danhmuc.Gia,
-                         Thanhtien = x.Danhmuc.Gia * x.Soluong
+                         Thanhtien = x.Danhmuc.Gia * x.Soluong,
+                         Nhapcungcap = x.Danhmuc.Nhacungcap,
                      }
                 ).ToListAsync();
 

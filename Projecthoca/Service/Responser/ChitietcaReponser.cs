@@ -29,6 +29,8 @@ namespace Projecthoca.Service.Responser
                 {
                     Ma_danhmuc = x.Ma_danhmuc,
                     Ten_danhmuc = x.Ten_danhmuc,
+                    Nhacungcap = x.Nhacungcap,
+                    
 
                 }).ToListAsync();
                 return data;
@@ -57,6 +59,7 @@ namespace Projecthoca.Service.Responser
                     sokg = x.sokg,
                     Thanhtien = x.Thanhtien,
                     Tendanhmuc = x.Danhmuc.Ten_danhmuc,
+                   
                 }).ToListAsync();
                 return data;
             }

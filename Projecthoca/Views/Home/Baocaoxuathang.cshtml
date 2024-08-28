@@ -1,4 +1,4 @@
-﻿﻿@{
+﻿@{
     Layout = "_Layout";
 }
 @model Projecthoca.Models.EnitityVM.DanhmucVM
@@ -6,7 +6,14 @@
     ViewData["Title"] = "Xem tồn kho";
 }
  <link href="~/css/baocaoxuathang.css" rel="stylesheet" />
- 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.2/html2pdf.bundle.min.js"></script>
+
+
+
+<!-- Bootstrap JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
 <style>
     /* Tùy chỉnh cho container chính */
     .container {
@@ -116,21 +123,21 @@
     </div>
 
     <div class="row mt-3">
-        <div class="col-md-3">
+        @* <div class="col-md-3">
             <label for="TuThang">Từ tháng</label>
             <input type="date" class="form-control" id="TuThang" placeholder="Chọn tháng và năm">
         </div>
         <div class="col-md-3">
             <label for="DenNgay">Đến ngày</label>
             <input type="date" class="form-control" id="DenNgay">
-        </div>
-        <div class="col-md-2">
+        </div> *@
+        @* <div class="col-md-2">
             <label for="MaSanPham">Mã sản phẩm</label>
             <input type="text" class="form-control" id="MaSanPham" placeholder="%">
-        </div>
+        </div> *@
         <div class="col-md-2">
             <label for="SearchInput">Tìm kiếm</label>
-            <input type="text" class="form-control" id="SearchInput" placeholder="Tìm theo mã hoặc tên sản phẩm">
+           <input type="text" class="form-control" id="SearchInput" placeholder="Tìm theo mã hoặc tên sản phẩm">
         </div>
         <div class="col-md-2 d-flex align-items-end">
             <button class="btn btn-primary" onclick="BaoCao()">Báo cáo</button>
@@ -141,19 +148,22 @@
     <div class="row mt-4">
         <div class="col-md-12">
             <div class="table-container">
-                <table class="table table-bordered table-hover">
+                 <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                     <thead>
                         <tr>
-                            <th>Mã sản phẩm</th>
-                            <th>Tên sản phẩm</th>
-                            <th>ĐVT</th>
+                            <th>Mã danh mục</th>
+                            <th>Tên danh mục</th>
+                            <th>Giá nhập</th>
+                            <th>Giá bán</th>
+                            <th>Miêu tả</th>
                             <th>Nhà cung cấp</th>
-                            <th>Số lượng tồn</th>
-                            <th>Giá</th>
+                            <th>Đơn vị tính</th>
+                            <th>Số lượng</th>
+                            
                         </tr>
                     </thead>
-                    <tbody id="tableBody">
-                        <!-- Dữ liệu sẽ được thêm vào bằng JavaScript -->
+                    
+                    <tbody id="tblbody">
                     </tbody>
                 </table>
             </div>
@@ -166,110 +176,539 @@
         </div>
     </div>
 </div>
-
+<!-- Modal báo cáo-->
+<div class="modal fade" id="reportModal" tabindex="-1" aria-labelledby="reportModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reportModalLabel">Báo cáo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="reportContent">
+                    <!-- Nội dung báo cáo sẽ được hiển thị ở đây -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" onclick="XuatPDF()">Xuất PDF</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 
 @section Scripts {
-    <script>
-  const products = [
-             { maSanPham: 'BUL-005931_A', tenSanPham: 'Quần nam dài jeans', donViTinh: 'Cái', nhaCungCap: 'Kaki', soLuongTon: 7, gia: 5700000 },
-    { maSanPham: 'BEG-001929_A', tenSanPham: 'Quần nam dài jeans', donViTinh: 'Cái', nhaCungCap: 'Không rõ', soLuongTon: 34, gia: 500000 },
-    { maSanPham: 'BTS-001999_A', tenSanPham: 'Quần nữ dài kaki', donViTinh: 'Cái', nhaCungCap: 'Không rõ', soLuongTon: 19, gia: 450000 },
-    { maSanPham: 'SHO-002340_B', tenSanPham: 'Giày thể thao nam', donViTinh: 'Đôi', nhaCungCap: 'Nike', soLuongTon: 15, gia: 1200000 },
-    { maSanPham: 'BAG-007856_C', tenSanPham: 'Túi xách nữ', donViTinh: 'Cái', nhaCungCap: 'Chanel', soLuongTon: 10, gia: 3500000 },
-    { maSanPham: 'JAC-003678_A', tenSanPham: 'Áo khoác mùa đông', donViTinh: 'Cái', nhaCungCap: 'Adidas', soLuongTon: 22, gia: 2000000 },
-    { maSanPham: 'SWE-005489_B', tenSanPham: 'Áo sweater nam', donViTinh: 'Cái', nhaCungCap: 'Zara', soLuongTon: 18, gia: 700000 },
-    { maSanPham: 'DRE-009021_C', tenSanPham: 'Đầm dự tiệc', donViTinh: 'Cái', nhaCungCap: 'H&M', soLuongTon: 8, gia: 1200000 },
-    { maSanPham: 'SKI-004567_A', tenSanPham: 'Váy ngắn', donViTinh: 'Cái', nhaCungCap: 'Uniqlo', soLuongTon: 25, gia: 450000 },
-    { maSanPham: 'HAT-002356_B', tenSanPham: 'Mũ lưỡi trai', donViTinh: 'Cái', nhaCungCap: 'New Era', soLuongTon: 30, gia: 250000 }
-        ];
+   
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-        // Hàm tạo bảng từ danh sách sản phẩm
-        function populateTable() {
-            let tableBody = $('#tableBody');
-            tableBody.empty(); // Xóa dữ liệu hiện có trong bảng
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/2.5.0/jspdf.plugin.autotable.min.js"></script>
 
-            products.forEach(product => {
-                let row = `<tr>
-                    <td>${product.maSanPham}</td>
-                    <td>${product.tenSanPham}</td>
-                    <td>${product.donViTinh}</td>
-                    <td>${product.nhaCungCap}</td>
-                    <td class="quantity">${product.soLuongTon}</td>
-                    <td class="price">${product.gia.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</td>
-                </tr>`;
-                tableBody.append(row);
-            });
+     <script>
+    function XuatPDF() {
+    // Lấy nội dung báo cáo từ modal
+    const element = document.getElementById('reportContent');
+    
+    // Tạo một tùy chọn cho việc xuất PDF
+    const options = {
+        margin: 1,
+        filename: 'bao_cao.pdf',
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2 },
+        jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    };
+    
+    // Sử dụng html2pdf để chuyển đổi nội dung thành PDF
+    html2pdf().from(element).set(options).save();
+}
 
-            calculateTotals(); // Tính tổng sau khi bảng được tạo
+                $(document).ready(function () {
+                    $(document).on('click', '#submitBtndm', function () {
+                        Themdanhmuc();
+                    });
+                    danhsachdanhmuc(1, 10);
+                    $('#Themdanhmuc').on('hidden.bs.modal', function () {
+                        resetForm();
+                        $('#updateBtndm').attr('id', 'submitBtndm').text('Thêm danh mục');
+
+                    });
+                    $(document).on('click', '#updateBtndm', function () {
+                        Capnhatdanhmuc();
+                    });
+                    $(document).on('click', '#btndvt', function () {
+                        event.preventDefault();
+                        $('#Themdanhmuc').modal('hide');
+                        $('#Themdonvitinh').modal('show');
+                    });
+                    $(document).on('click', '#submitBtndvt', function () {
+                        Themdonvitinh();
+                    });
+                    $(document).on('keydown', function (event) {
+    // Kiểm tra nếu phím Enter được nhấn (keyCode 13)
+                    if (event.key === "Enter") {
+                        event.preventDefault(); // Ngăn chặn hành động mặc định của phím Enter
+                        Themdonvitinh(); // Gọi hàm Themmathang()
+                    }
+                    });
+                    Laydvt();
+                    $(document).on('click', '#btnmathang', function () {
+                        event.preventDefault();
+                        $('#Themdanhmuc').modal('hide');
+                        $('#Themmathang').modal('show');
+                    });
+                    $(document).on('click', '#submitBtnmh', function () {
+                        event.preventDefault();
+                        Themmathang();
+                    });
+                    $(document).on('keydown', function (event) {
+                        // Kiểm tra nếu phím Enter được nhấn (keyCode 13)
+                        if (event.key === "Enter") {
+                            event.preventDefault(); // Ngăn chặn hành động mặc định của phím Enter
+                            Themmathang(); // Gọi hàm Themmathang()
+                        }
+                    });
+                    
+                    Laymathang();
+                });
+                function Themdanhmuc() {
+                    var form = $("#formThemdanhmuc")[0];
+                    var data = new FormData(form);
+                    $.ajax({
+                        type: "POST",
+                        url: "/Danhmuc/Themdanhmuc",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            Swal.fire({
+                                title: "Loading...",
+                                text: "Please wait",
+                                imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+                                imageWidth: 100,
+                                imageHeight: 100,
+                                imageAlt: "Loading",
+                            });
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                $("#Themdanhmuc").modal("hide");
+                                form.reset();
+                                danhsachdanhmuc(1, 10);
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+             function danhsachdanhmuc(page, pagesize) {
+    $.ajax({
+        type: "POST",
+        url: "/Danhmuc/Danhsachdanhmuc",
+        data: { page: page, pagesize: pagesize }, 
+        success: function (response) {
+            $('#tblbody').empty();
+            console.log(response.dsdm);
+            if (response.success) {
+                $.each(response.dsdm, function (index, value) {
+                    var str = `<tr>
+                                    <td>${value.ma_danhmuc}</td>
+                                    <td>${value.ten_danhmuc}</td>
+                                    <td>${formatCurrency(value.gianhap)}</td>
+                                    <td>${formatCurrency(value.gia)}</td>
+                                    <td>${value.ma_mathang}</td>
+                                    <td>${value.nhacungcap}</td>
+                                    <td>${value.donvitinh}</td>
+                                    <td>${value.soluong}</td>
+                               </tr>`;
+                    $('#tblbody').append(str);
+                });
+                 calculateTotals();
+                updatePagination(response.totalPages, response.pageindex);
+            } else {
+                Swal.fire({
+                    title: "Thông báo lỗi",
+                    text: response.message,
+                    icon: "error"
+                });
+            }
         }
+    });
+}
 
-        // Hàm báo cáo
-        function BaoCao() {
-            var tuThangDate = new Date($('#TuThang').val());
-            var tuThang = `${tuThangDate.getMonth() + 1}/${tuThangDate.getFullYear()}`;
-            var denNgay = $('#DenNgay').val();
-            var maSanPham = $('#MaSanPham').val();
-            alert("Báo cáo từ tháng: " + tuThang + ", đến ngày: " + denNgay + ", mã sản phẩm: " + maSanPham);
-            // Sau khi lấy dữ liệu từ server, gọi populateTable() để hiển thị dữ liệu
-            populateTable(); // Hiển thị dữ liệu mẫu
-        }
+function filterTable() {
+    var input = $('#SearchInput').val().toLowerCase();
+    $('#tblbody tr').each(function () {
+        var text = $(this).text().toLowerCase();
+        $(this).toggle(text.indexOf(input) > -1);
+    });
+}
 
-        // Hàm in ấn
-        function InAn() {
-            alert("In báo cáo tồn kho");
-            // Thực hiện các thao tác in ấn
-        }
+$(document).ready(function () {
+    $('#SearchInput').on('keyup', function() {
+        filterTable();
+    });
 
-        // Hàm lọc bảng
-        function filterTable() {
-            var input = $('#SearchInput').val().toLowerCase();
-            $('#tableBody tr').each(function () {
-                var text = $(this).text().toLowerCase();
-                $(this).toggle(text.indexOf(input) > -1);
-            });
-            calculateTotals(); // Tính tổng sau khi lọc
-        }
+    // Gọi hàm danhsachdanhmuc() để tải dữ liệu ban đầu khi trang tải
+    danhsachdanhmuc(1, 10); 
+});
+                function updatePagination(totalPages, currentPage) {
 
-        // Hàm tính tổng số lượng tồn và tổng tiền
-       function calculateTotals() {
+                    if (totalPages > 0) {
+                        var str = `<nav aria-label="Page navigation example">
+                                                                                            <ul class="pagination">`;
+                        if (totalPages > 1) {
+                            if (currentPage > 1) {
+                                str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachdanhmuc(${currentPage - 1}, 10)">Previous</a></li>`;
+                            }
+                            for (let i = 1; i <= totalPages; i++) {
+                                if (currentPage === i) {
+                                    str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
+                                } else {
+                                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachdanhmuc(${i}, 10)">${i}</a></li>`;
+                                }
+                            }
+                            if (currentPage < totalPages) {
+                                str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachdanhmuc(${currentPage + 1}, 10)">Next</a></li>`;
+                            }
+                        }
+                        str += `</ul></nav>`;
+                        $('#pagination').html(str);
+                    }
+                }
+                function formatCurrency(value) {
+                    return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+                }
+                function Xoadanhmuc(Ma_danhmuc) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Danhmuc/Xoadanhmuc",
+                        data: { Ma_danhmuc: Ma_danhmuc },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                danhsachdanhmuc(1, 10);
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                function LaydmID(Ma_danhmuc) {
+                    $('#Themdanhmuc').modal('show');
+                    $.ajax({
+                        type: "POST",
+                        url: "/Danhmuc/Laytheoma",
+                        data: { Ma_danhmuc: Ma_danhmuc },
+                        success: function (response) {
+                            if (response.success) {
+                                $('#Ma_danhmuc').val(response.data.ma_danhmuc);
+                                $('#Ten_danhmuc').val(response.data.ten_danhmuc);
+                                $('#Gia').val(response.data.gia);
+                                $('#Gianhap').val(response.data.gianhap);
+                                $('#Nhacungcap').val(response.data.nhacungcap);
+                                $('#Donvitinh').val(response.data.donvitinh);
+                                $('#soluong').val(response.data.soluong);
+                                $('#submitBtndm').attr('id', 'updateBtndm').text('Cập nhật');
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                function resetForm() {
+                    var form = $("#formThemdanhmuc")[0];
+                    form.reset();
+
+                }
+                function Capnhatdanhmuc() {
+                    var form = $("#formThemdanhmuc")[0];
+                    var data = new FormData(form);
+                    $.ajax({
+                        type: "POST",
+                        url: "/Danhmuc/Suadanhmuc",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            Swal.fire({
+                                title: "Loading...",
+                                text: "Please wait",
+                                imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+                                imageWidth: 100,
+                                imageHeight: 100,
+                                imageAlt: "Loading",
+                            });
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                $("#Themdanhmuc").modal("hide");
+                                form.reset();
+                                danhsachdanhmuc(1, 10);
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                //Thêm đon vị tính
+                function Themdonvitinh() {
+                    var form = $("#formdonvitinh")[0];
+                    var data = new FormData();
+                    data.append("Ten_donvitinh", $("#Ten_donvitinh").val());
+                    $.ajax({
+                        type: "POST",
+                        url: "/Danhmuc/Themdvt",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            Swal.fire({
+                                title: "Loading...",
+                                text: "Please wait",
+                                imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+                                imageWidth: 100,
+                                imageHeight: 100,
+                                imageAlt: "Loading",
+                            });
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                Laydvt();
+                                $("#Themdonvitinh").modal("hide");
+                                $('#Themdanhmuc').modal('show');
+                                form.reset();
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                //Lấy tất cả đơn vị tính
+                function Laydvt() {
+                    $.ajax({
+                        type: "GET",
+                        url: "/Danhmuc/Danhsachdvt",
+                        success: function (response) {
+                            $('#Donvitinh').empty();
+                            if (response.success) {
+                                $.each(response.data, function (index, value) {
+                                    var str = `<option value="${value.ten_donvitinh}">${value.ten_donvitinh}</option>`;
+                                    $('#Donvitinh').append(str);
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                //Thêm mặt hàng
+                function Themmathang() {
+                    var form = $("#formmathang")[0];
+                    var data = new FormData();
+                    data.append("Ten_mathang", $("#Ten_mathang").val());
+                    $.ajax({
+                        type: "POST",
+                        url: "/Danhmuc/Themmathang",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                           
+                            Swal.fire({
+                                title: "Loading...",
+                                text: "Please wait",
+                                imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+                                imageWidth: 100,
+                                imageHeight: 100,
+                                imageAlt: "Loading",
+                            });
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                Laymathang();
+                                $("#Themmathang").modal("hide");
+                                $('#Themdanhmuc').modal('show');
+                                form.reset();
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                //Lấy mặt hàng
+                function Laymathang() {
+                    $.ajax({
+                        type: "GET",
+                        url: "/Danhmuc/Danhsachmh",
+                        success: function (response) {
+                            $('#Ma_mathang').empty();
+                            if (response.success) {
+                                $.each(response.data, function (index, value) {
+                                    var str = `<option value="${value.ma_mathang}">${value.ten_mathang}</option>`;
+                                    $('#Ma_mathang').append(str);
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+function calculateTotals() {
     var totalQuantity = 0;
     var totalAmount = 0;
 
-    // Duyệt qua từng hàng trong bảng để tính tổng số lượng và tổng tiền
-    $('#tableBody tr').each(function () {
-        var quantity = parseInt($(this).find('.quantity').text().replace('.', '').trim());
-        var priceText = $(this).find('.price').text().replace('₫', '').replace('.', '').trim();
-        var price = parseFloat(priceText);
-
+    $('#tblbody tr').each(function () {
+        var quantity = parseFloat($(this).find('td:nth-child(8)').text()); // Số lượng ở cột thứ 8
+        var price = parseFloat($(this).find('td:nth-child(4)').text().replace(/[^0-9.-]+/g,"")); // Giá ở cột thứ 4, loại bỏ các ký tự không phải số
+       
         if (!isNaN(quantity)) {
             totalQuantity += quantity;
         }
-        if (!isNaN(price)) {
-            totalAmount += price;
+        
+        if (!isNaN(price) && !isNaN(quantity)) {
+            @* totalAmount += price * quantity*1000; *@
+            totalAmount += price *1000;
         }
     });
 
-    // Định dạng tổng tiền với dấu phẩy
-    totalAmount = totalAmount.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
-
+    // Cập nhật hiển thị tổng số lượng và tổng tiền
     $('#totalQuantity').text(totalQuantity);
-    $('#totalAmount').text(totalAmount);
+    $('#totalAmount').text(formatCurrency(totalAmount));
 }
 
 
-        // Hàm chọn ngày
-        $(document).ready(function () {
-            populateTable(); // Hiển thị bảng ngay khi trang tải
+function BaoCao() {
+    var reportContent = "<h3>Báo cáo chi tiết</h3>";
+    reportContent += "<p><strong>Tổng số lượng tồn:</strong> " + $('#totalQuantity').text() + "</p>";
+    reportContent += "<p><strong>Tổng tiền:</strong> " + $('#totalAmount').text() + "</p>";
+    reportContent += "<table class='table table-bordered'><thead><tr><th>Mã danh mục</th><th>Tên danh mục</th><th>Giá nhập</th><th>Giá bán</th><th>Mã mặt hàng</th><th>Nhà cung cấp</th><th>Đơn vị tính</th><th>Số lượng</th></tr></thead><tbody>";
 
-            $('#DenNgay').change(function () {
-                var selectedDate = $(this).val();
-                console.log("Ngày được chọn: " + selectedDate);
-            });
+    // Lấy dữ liệu từ bảng
+    $('#tblbody tr').each(function () {
+        var row = $(this).html();
+        reportContent += "<tr>" + row + "</tr>";
+    });
 
-            $('#SearchInput').on('keyup', filterTable);
+    reportContent += "</tbody></table>";
 
-            calculateTotals();
-        });
-    </script>
+    // Hiển thị nội dung báo cáo trong modal
+    $('#reportContent').html(reportContent);
+    $('#reportModal').modal('show');
 }
+
+
+function InAn() {
+    var printContent = "<h3>Báo cáo chi tiết</h3>";
+    printContent += "<p><strong>Tổng số lượng tồn:</strong> " + $('#totalQuantity').text() + "</p>";
+    printContent += "<p><strong>Tổng tiền:</strong> " + $('#totalAmount').text() + "</p>";
+    
+    // Bảng chi tiết
+    printContent += "<table class='table table-bordered' style='width: 100%; border-collapse: collapse;'><thead><tr><th>Mã danh mục</th><th>Tên danh mục</th><th>Giá nhập</th><th>Giá bán</th><th>Mã mặt hàng</th><th>Nhà cung cấp</th><th>Đơn vị tính</th><th>Số lượng</th></tr></thead><tbody>";
+    
+    // Lấy dữ liệu từ bảng
+    $('#tblbody tr').each(function () {
+        var row = $(this).find('td').map(function () {
+            return "<td>" + $(this).text() + "</td>";
+        }).get().join('');
+        printContent += "<tr>" + row + "</tr>";
+    });
+    
+    printContent += "</tbody></table>";
+
+    // Tạo một khung in tạm thời
+    var printFrame = document.createElement('iframe');
+    printFrame.style.position = 'absolute';
+    printFrame.style.width = '0px';
+    printFrame.style.height = '0px';
+    printFrame.style.border = 'none';
+    document.body.appendChild(printFrame);
+    
+    // Lấy nội dung và chuẩn bị in
+    var printDoc = printFrame.contentWindow || printFrame.contentDocument;
+    if (printDoc.document) printDoc = printDoc.document;
+    printDoc.open();
+    printDoc.write('<html><head><title>Báo cáo chi tiết</title>');
+    printDoc.write('<style>table { width: 100%; border-collapse: collapse; } th, td { border: 1px solid #ddd; padding: 8px; } th { background-color: #f4f4f4; }</style>');
+    printDoc.write('</head><body>');
+    printDoc.write(printContent);
+    printDoc.write('</body></html>');
+    printDoc.close();
+    
+    // Thực hiện lệnh in
+    printFrame.contentWindow.focus();
+    printFrame.contentWindow.print();
+    
+    // Xóa khung in sau khi in xong
+    setTimeout(function () {
+        document.body.removeChild(printFrame);
+    }, 1000);
+}
+
+
+
+            </script>
+        }

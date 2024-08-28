@@ -72,6 +72,10 @@ namespace Projecthoca.Controllers
         {
             return View();
         }
+        public IActionResult PrintBill()
+        {
+            return View();
+        }
 
         public IActionResult Quanlynhapkho()
         {

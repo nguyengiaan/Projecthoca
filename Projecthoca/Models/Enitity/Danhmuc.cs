@@ -6,6 +6,9 @@
         public string Ten_danhmuc { get; set; }
         public int Gia { get; set; }
         public string Donvitinh { get; set; }
+
+         public string Nhacungcap { get; set; }
+         public int Gianhap { get; set; }
         public string Id { get; set; }
         public string Ma_mathang { get; set; }
 

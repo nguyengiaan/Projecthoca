@@ -401,7 +401,8 @@ namespace Projecthoca.Service.Responser
                         Ten_danhmuc = x.Ten_danhmuc,
                         Gia = x.Gia,
                         Soluong= x.Soluong,
-                        Donvitinh = x.Donvitinh
+                        Donvitinh = x.Donvitinh,
+                        Nhacungcap = x.Nhacungcap
 
                     }).ToListAsync();
                     return data;
@@ -413,7 +414,8 @@ namespace Projecthoca.Service.Responser
                         Ma_danhmuc = x.Ma_danhmuc,
                         Ten_danhmuc = x.Ten_danhmuc,
                         Gia = x.Gia,
-                        Donvitinh = x.Donvitinh
+                        Donvitinh = x.Donvitinh,
+                        Nhacungcap = x.Nhacungcap
                     }).ToListAsync();
                     return data;
                 }

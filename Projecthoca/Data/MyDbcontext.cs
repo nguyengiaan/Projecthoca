@@ -95,6 +95,8 @@ namespace Projecthoca.Data
             // Table Danhmuc
             modelBuilder.Entity<Danhmuc>().ToTable("Danhmuc").HasKey(x => x.Ma_danhmuc);
             modelBuilder.Entity<Danhmuc>().Property(e => e.Ten_danhmuc).HasMaxLength(int.MaxValue);
+                        modelBuilder.Entity<Danhmuc>().Property(e => e.Nhacungcap).HasMaxLength(int.MaxValue);
+                                    modelBuilder.Entity<Danhmuc>().Property(e => e.Gianhap).HasMaxLength(int.MaxValue);
             modelBuilder.Entity<Danhmuc>().Property(e => e.Gia).HasMaxLength(int.MaxValue);
             modelBuilder.Entity<Danhmuc>().Property(e => e.Donvitinh).HasMaxLength(int.MaxValue);
             modelBuilder.Entity<Danhmuc>().HasOne(x => x.Nguoidung).WithMany(x => x.Danhmucs).HasForeignKey(x => x.Id);

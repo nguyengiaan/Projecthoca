@@ -37,7 +37,8 @@ namespace Projecthoca.Service.Responser
                              Id = x.Id,
                              Ma_mathang = x.Mathang.Ten_mathang,
                              Soluong = x.Soluong,
-
+                             Nhacungcap = x.Nhacungcap,
+                             Gianhap=x.Gianhap,
                          }).Where(x => x.Id == user.Id)
                          .Skip((page - 1) * pagesize)
                          .Take(pagesize)
@@ -60,6 +61,7 @@ namespace Projecthoca.Service.Responser
                     Ten_danhmuc = x.Ten_danhmuc,
                     Gia = x.Gia,
                     Donvitinh = x.Donvitinh,
+                    
 
                     Id = x.Id
                 }).FirstOrDefaultAsync();
@@ -82,6 +84,9 @@ namespace Projecthoca.Service.Responser
                     data.Gia = danhmuc.Gia;
                     data.Donvitinh = danhmuc.Donvitinh;
                     data.Ma_mathang = danhmuc.Ma_mathang;
+                    data.Nhacungcap = danhmuc.Nhacungcap;
+                    data.Gianhap = danhmuc.Gianhap;
+                    data.Soluong = danhmuc.Soluong;
                     _context.Danhmuc.Update(data);
                     await _context.SaveChangesAsync();
                     return true;
@@ -116,6 +121,8 @@ namespace Projecthoca.Service.Responser
                 _dm.Ten_danhmuc = danhmuc.Ten_danhmuc;
                 _dm.Gia = danhmuc.Gia;
                 _dm.Donvitinh = danhmuc.Donvitinh;
+                _dm.Nhacungcap = danhmuc.Nhacungcap;
+                _dm.Gianhap = danhmuc.Gianhap;
                 _dm.Soluong = danhmuc.Soluong;
                 _dm.Id = user.Id;
                 await _context.Danhmuc.AddAsync(_dm);
@@ -295,46 +302,60 @@ namespace Projecthoca.Service.Responser
             }
         }
         // cập nhật số lượng hàng hóa
-        public async Task<bool> Capnhatsoluong(string ma_khuvuc)
+      public async Task<bool> Capnhatsoluong(string ma_khuvuc)
+{
+    try
+    {
+        if (string.IsNullOrEmpty(ma_khuvuc))
         {
-            try
-            {
-                if (ma_khuvuc == null)
-                {
-                    return false;
-                }
-                var data = await (from kvc in _context.Khuvuccau
-                                  join nt in _context.Thuehoca on kvc.Ma_Khuvuccau equals nt.Khuvuccau.Ma_Khuvuccau
-                                  join dmhd in _context.danhmuchoadons on nt.Ma_thuehoca equals dmhd.Ma_thuehoca
-                                  join dm in _context.Danhmuc on dmhd.Ma_danhmuc equals dm.Ma_danhmuc
-                                  where kvc.Ma_Khuvuccau == ma_khuvuc
-                                  select new
-                                  {
-                                      dm.Ma_danhmuc,
-                                      dm.Soluong
-                                  }).ToListAsync();
-                if (data != null)
-                {
-                    foreach (var item in data)
-                    {
-                        var dm = await _context.Danhmuc.FindAsync(item.Ma_danhmuc);
-                        if (dm != null)
-                        {
-                            dm.Soluong -= item.Soluong;
-                            _context.Danhmuc.Update(dm);
-                        }
-                    }
-                    await _context.SaveChangesAsync();
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+            return false;
         }
 
+        // Truy vấn dữ liệu liên quan
+        var data = await (from kvc in _context.Khuvuccau
+                          join nt in _context.Thuehoca on kvc.Ma_Khuvuccau equals nt.Khuvuccau.Ma_Khuvuccau
+                          join dmhd in _context.danhmuchoadons on nt.Ma_thuehoca equals dmhd.Ma_thuehoca
+                          join dm in _context.Danhmuc on dmhd.Ma_danhmuc equals dm.Ma_danhmuc
+                          where kvc.Ma_Khuvuccau == ma_khuvuc
+                          select new
+                          {
+                              dm.Ma_danhmuc,
+                              SoluongGiam = dmhd.Soluong // Số lượng cần giảm, lấy từ bảng danhmuchoadons
+                          }).ToListAsync();
+
+        if (data != null && data.Count > 0)
+        {
+            // Cập nhật số lượng trong bảng `Danhmuc`
+            foreach (var item in data)
+            {
+                var dm = await _context.Danhmuc.FindAsync(item.Ma_danhmuc);
+                if (dm != null && item.SoluongGiam > 0)
+                {
+                    dm.Soluong -= item.SoluongGiam; // Giảm số lượng theo số lượng cần giảm
+
+                    // Đảm bảo số lượng không âm
+                    if (dm.Soluong < 0)
+                    {
+                        dm.Soluong = 0;
+                    }
+
+                    _context.Danhmuc.Update(dm); // Cập nhật trong context
+                }
+            }
+
+            // Lưu thay đổi vào database
+            await _context.SaveChangesAsync();
+            return true;
+        }
+
+        return false; // Trả về false nếu không có dữ liệu để cập nhật
+    }
+    catch (Exception ex)
+    {
+        // Ghi log lỗi nếu cần
+        return false; // Trả về false nếu có lỗi xảy ra
+    }
+}
         public async Task<List<DanhmucVM>> Laydanhsachdanhmuc()
         {
             try
@@ -349,6 +370,8 @@ namespace Projecthoca.Service.Responser
                     Id = x.Id,
                     Ma_mathang = x.Mathang.Ten_mathang,
                     Soluong = x.Soluong,
+                    Nhacungcap = x.Nhacungcap,
+                    Gianhap = x.Gianhap,
 
                 }).ToListAsync();
                 return data;

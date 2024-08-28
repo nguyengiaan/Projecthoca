@@ -2350,6 +2350,27 @@
                 row.style.display = match ? "table-row" : "none";
             });
         }
+
+        $(document).on('click', '#btnChondm', function () {
+    var button = $(this);
+    var row = button.closest('tr'); // Lấy hàng tương ứng với nút bấm
+    var soluongCell = row.find('td:nth-child(3)'); // Lấy ô chứa số lượng (ô thứ 3)
+    var soluong = parseInt(soluongCell.text()); // Lấy giá trị số lượng hiện tại và chuyển thành số nguyên
+
+    if (soluong > 0) {
+        soluong--; // Giảm số lượng
+        soluongCell.text(soluong); // Cập nhật lại số lượng hiển thị
+
+        // Ẩn nút "Chọn" nếu số lượng = 0
+        if (soluong === 0) {
+            button.hide();
+        }
+
+        // Gọi hàm Capnhatsoluonghh để cập nhật số lượng trong database
+        Capnhatsoluonghh(button.data('id')); // Truyền mã khu vực cầu (hoặc mã sản phẩm)
+    }
+});
+
         // hàm cập nhật số lượng hàng hóa
         function Capnhatsoluonghh(ma_khuvuccau) {
             $.ajax({

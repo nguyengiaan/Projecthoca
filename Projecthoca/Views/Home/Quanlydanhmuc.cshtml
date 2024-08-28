@@ -2,6 +2,127 @@
     Layout = "_Layout";
 }
 @model Projecthoca.Models.EnitityVM.DanhmucVM
+<style>
+  /* CSS cho bảng */
+/* Container cho các form group */
+.form-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px; /* Khoảng cách giữa các ô */
+    max-width: 100%; /* Đảm bảo container không vượt quá chiều rộng của modal */
+}
+
+/* Phần bên trái với 4 ô input */
+.form-left {
+    flex: 1;
+    max-width: 48%; /* Chiếm 48% chiều rộng của container */
+}
+
+/* Phần bên phải với 3 ô input */
+.form-right {
+    flex: 1;
+    max-width: 48%; /* Chiếm 48% chiều rộng của container */
+}
+
+/* Đảm bảo các ô input đều có chiều rộng tối đa */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.table {
+    width: 100%;
+    margin-bottom: 1rem;
+    color: #212529;
+    border-collapse: collapse;
+}
+
+.table-bordered {
+    border: 1px solid #dee2e6;
+}
+
+.table-bordered th,
+.table-bordered td {
+    border: 1px solid #dee2e6;
+    padding: 0.75rem;
+    vertical-align: top;
+    text-align: center;
+}
+
+.table thead th {
+    background-color: #f8f9fa;
+    color: #495057;
+    font-weight: bold;
+}
+
+.table tfoot {
+    background-color: #f1f3f5;
+}
+
+.table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* CSS cho nút Xóa và Sửa */
+.table .btn {
+    font-size: 0.875rem;
+    padding: 0.375rem 0.75rem;
+    color: #fff;
+    background-color: #007bff;
+    border: none;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.table .btn-danger {
+    background-color: #dc3545;
+}
+
+.table .btn-warning {
+    background-color: #ffc107;
+}
+
+.table .btn:hover {
+    opacity: 0.9;
+}
+
+/* CSS cho phân trang */
+.pagination {
+    display: inline-flex;
+    padding-left: 0;
+    list-style: none;
+    border-radius: 0.25rem;
+}
+
+.pagination li {
+    display: inline;
+    margin-right: 0.25rem;
+}
+
+.pagination a {
+    color: #007bff;
+    text-decoration: none;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    position: relative;
+    display: block;
+}
+
+.pagination a:hover {
+    color: #0056b3;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.pagination .active a {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+</style>
 <!--Modal thêm mặt hàng-->
 <div class="modal fade" id="Themmathang" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
@@ -55,8 +176,7 @@
     </div>
 </div>
 <!-- Modal Thêm danh mục-->
-<div class="modal fade" id="Themdanhmuc" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
-    aria-hidden="true">
+<div class="modal fade" id="Themdanhmuc" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -67,40 +187,47 @@
             </div>
             <div class="modal-body">
                 <form method="post" id="formThemdanhmuc" enctype="multipart/form-data">
-                    <div class="form-group">
-
-                        <input asp-for="Ma_danhmuc" type="hidden" class="form-control" id="Ma_danhmuc">
-                    </div>
-                    <div class="form-group">
-                        <label class="col-form-label">Tên danh mục</label>
-                        <input asp-for="Ten_danhmuc" type="text" class="form-control" id="Ten_danhmuc">
-                    </div>
-                    <div class="form-group">
-                        <label class="col-form-label">Giá</label>
-                        <input asp-for="Gia" type="text" class="form-control" id="Gia">
-                    </div>
-                    <div class="form-group">
-                        <label class="col-form-label">Đơn vị tính</label>
-                        <div class="d-flex">
-                            <select class="form-select pr-2" asp-for="Donvitinh" aria-label="Default select example"
-                                id="Donvitinh">
-
-                            </select>
-                            <button class="btn btn-success" id="btndvt">+</button>
+                    <div class="form-container">
+                        <div class="form-group form-left">
+                            <input asp-for="Ma_danhmuc" type="hidden" class="form-control" id="Ma_danhmuc">
+                            <div class="form-group">
+                                <label class="col-form-label">Tên danh mục</label>
+                                <input asp-for="Ten_danhmuc" type="text" class="form-control" id="Ten_danhmuc">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Nhà cung cấp</label>
+                                <input asp-for="Nhacungcap" type="text" class="form-control" id="Nhapcungcap">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Giá nhập</label>
+                                <input asp-for="Gianhap" type="text" class="form-control" id="Gianhap">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Giá bán</label>
+                                <input asp-for="Gia" type="text" class="form-control" id="Gia">
+                            </div>
+                        </div>
+                        <div class="form-group form-right">
+                            <div class="form-group">
+                                <label class="col-form-label">Số lượng</label>
+                                <input asp-for="Soluong" type="text" class="form-control" id="soluong">
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Đơn vị tính</label>
+                                <div class="d-flex">
+                                    <select class="form-select pr-2" asp-for="Donvitinh" aria-label="Default select example" id="Donvitinh"></select>
+                                    <button class="btn btn-success" id="btndvt">+</button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-form-label">Mặt hàng</label>
+                                <div class="d-flex">
+                                    <select class="form-select " asp-for="Ma_mathang" aria-label="Default select example" id="Ma_mathang"></select>
+                                    <button class="btn btn-success" id="btnmathang">+</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label class="col-form-label">Mặt hàng</label>
-                        <div class="d-flex">
-                            <select class="form-select " asp-for="Ma_mathang" aria-label="Default select example"
-                                id="Ma_mathang">
-
-                            </select>
-                            <button class="btn btn-success" id="btnmathang">+</button>
-                        </div>
-
-                    </div>
-
                 </form>
             </div>
             <div class="modal-footer">
@@ -110,6 +237,7 @@
         </div>
     </div>
 </div>
+
 <!-- Danh sách Danh mục-->
 <div class="container-fluid">
     <div class="card shadow mb-4">
@@ -131,8 +259,10 @@
                         <tr>
                             <th>Mã danh mục</th>
                             <th>Tên danh mục</th>
-                            <th>Giá</th>
+                            <th>Giá nhập</th>
+                            <th>Giá bán</th>
                             <th>Miêu tả</th>
+                            <th>Nhà cung cấp</th>
                             <th>Đơn vị tính</th>
                             <th>Số lượng</th>
                             <th>Xóa</th>
@@ -183,6 +313,13 @@
                     $(document).on('click', '#submitBtndvt', function () {
                         Themdonvitinh();
                     });
+                    $(document).on('keydown', function (event) {
+    // Kiểm tra nếu phím Enter được nhấn (keyCode 13)
+                    if (event.key === "Enter") {
+                        event.preventDefault(); // Ngăn chặn hành động mặc định của phím Enter
+                        Themdonvitinh(); // Gọi hàm Themmathang()
+                    }
+                    });
                     Laydvt();
                     $(document).on('click', '#btnmathang', function () {
                         event.preventDefault();
@@ -193,6 +330,14 @@
                         event.preventDefault();
                         Themmathang();
                     });
+                    $(document).on('keydown', function (event) {
+                        // Kiểm tra nếu phím Enter được nhấn (keyCode 13)
+                        if (event.key === "Enter") {
+                            event.preventDefault(); // Ngăn chặn hành động mặc định của phím Enter
+                            Themmathang(); // Gọi hàm Themmathang()
+                        }
+                    });
+                    
                     Laymathang();
                 });
                 function Themdanhmuc() {
@@ -248,8 +393,10 @@
                                     var str = `<tr>
                                                                                                     <td>${value.ma_danhmuc}</td>
                                                                                                             <td>${value.ten_danhmuc}</td>
+                                                                                                            <td>${formatCurrency(value.gianhap)}</td>
                                                                                                              <td>${formatCurrency(value.gia)}</td>
                                                                                                         <td>${value.ma_mathang}</td>
+                                                                                                        <td>${value.nhacungcap}</td>
                                                                                                             <td>${value.donvitinh}</td>
                                                                                                             <td>${value.soluong}</td>
                                                                                                             <td><button class="btn btn-danger" data-id='${value.ma_danhmuc}' onclick="Xoadanhmuc('${value.ma_danhmuc}')">Xóa</button></td>
@@ -330,6 +477,8 @@
                                 $('#Ma_danhmuc').val(response.data.ma_danhmuc);
                                 $('#Ten_danhmuc').val(response.data.ten_danhmuc);
                                 $('#Gia').val(response.data.gia);
+                                $('#Gianhap').val(response.data.gianhap);
+                                $('#Nhacungcap').val(response.data.nhacungcap);
                                 $('#Donvitinh').val(response.data.donvitinh);
                                 $('#soluong').val(response.data.soluong);
                                 $('#submitBtndm').attr('id', 'updateBtndm').text('Cập nhật');
@@ -368,7 +517,9 @@
                                 imageAlt: "Loading",
                             });
                         },
+                       
                         success: function (response) {
+                             console.log(response)
                             if (response.success) {
                                 Swal.fire({
                                     title: "Thành công",
@@ -467,6 +618,7 @@
                         processData: false,
                         contentType: false,
                         beforeSend: function () {
+                           
                             Swal.fire({
                                 title: "Loading...",
                                 text: "Please wait",
