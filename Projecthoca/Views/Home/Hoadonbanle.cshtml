@@ -91,6 +91,7 @@
                             </tbody>
                         </table>
                     </div>
+
                     <div class="col-md-6" id="in">
                         <div class="bill-container p-3">
                             <div class="customer-info mb-4">
@@ -100,7 +101,7 @@
                                 </div>
                             </div>
                             <div class="bill-details">
-                                <table class="table table-striped">
+                                <table>
                                     <thead>
                                         <tr>
                                             <th>Tên hàng</th>
@@ -114,38 +115,32 @@
                                     <tbody id="dsdv">
                                         <!-- Thông tin dịch vụ được thêm vào đây -->
                                     </tbody>
-                                    <tbody>
-                                        <tr>
-                                            <td colspan="6" style="text-align:right;">
-                                                <div class="d-flex align-items-center justify-content-end mb-2">
-                                                    <span class="fw-bold me-2">Giảm giá:</span>
-                                                    <input type="number"
-                                                        class="form-control hide-when-print border-secondary"
-                                                        style="max-width: 200px;" id="discount-input">
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="6" style="text-align:right;">
-                                                <div class="d-flex align-items-center justify-content-end mb-2">
-                                                    <span class="fw-bold me-2">Tiền mặt:</span>
-                                                    <input type="number"
-                                                        class="form-control hide-when-print border-secondary"
-                                                        style="max-width: 200px;" id="tienmat">
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td colspan="6" style="text-align:right;">
-                                                <div class="d-flex align-items-center justify-content-end mb-2">
-                                                    <span class="fw-bold me-2">Chuyển khoản:</span>
-                                                    <input type="number"
-                                                        class="form-control hide-when-print border-secondary"
-                                                        style="max-width: 200px;" id="chuyenkhoan">
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </tbody>
+                                  <tbody>
+                                              <tr >
+            <td colspan="6" style="text-align:right;">
+                <div class="d-flex align-items-center justify-content-end mb-2">
+                    <span class="fw-bold me-2">Giảm giá:</span>
+                    <input type="number" class="form-control hide-when-print border-secondary" style="max-width: 200px;" id="discount-input">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" style="text-align:right;">
+                <div class="d-flex align-items-center justify-content-end mb-2">
+                    <span class="fw-bold me-2">Tiền mặt:</span>
+                    <input type="number" class="form-control hide-when-print border-secondary" style="max-width: 200px;" id="tienmat">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6" style="text-align:right;">
+                <div class="d-flex align-items-center justify-content-end mb-2">
+                    <span class="fw-bold me-2">Chuyển khoản:</span>
+                    <input type="number" class="form-control hide-when-print border-secondary" style="max-width: 200px;" id="chuyenkhoan">
+                </div>
+            </td>
+        </tr>
+                                  </tbody>
                                 </table>
                             </div>
                             <div class="bill-summary mt-4">
@@ -160,12 +155,74 @@
                             </div>
                         </div>
                     </div>
+
                 </div>
             </div>
             <div class="modal-footer"></div>
         </div>
     </div>
 </div>
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/hoca.css">
+    <link rel="stylesheet" href="~/css/Formchitietcau.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/timepicker/1.3.5/jquery.timepicker.min.css">
+    <link href="~/Content/css/select2.css" rel="stylesheet" />
+    <link href="~/Content/css/select2.min.css" rel="stylesheet" />
+    <script src="~/Scripts/select2.js"></script>
+    <script src="~/Scripts/select2.min.js"></script>
+    <style>
+        /* Kích thước mặc định cho màn hình lớn */
+        .select2-container--default .select2-selection--single {
+            height: 38px;
+            width: 446px;
+        }
+
+        /* Điều chỉnh chiều cao của phần tử input trong Select2 */
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 50px;
+
+
+        }
+
+        /* Điều chỉnh chiều cao của phần tử dropdown */
+        .select2-container--default .select2-results>.select2-results__options {
+            max-height: 200px;
+            max-width: 440px;
+        }
+
+        .bill-total {}
+
+        /* Tùy chỉnh chiều rộng của thành phần chosen */
+        .chosen-container {
+            width: 100% !important;
+            /* Điều chỉnh kích thước theo ý muốn */
+        }
+
+        .chosen-container .chosen-single {
+            height: 40px;
+            /* Tăng chiều cao của dropdown */
+            font-size: 18px;
+            /* Tăng kích thước font */
+            line-height: 40px;
+            /* Điều chỉnh để văn bản nằm giữa */
+        }
+
+
+        /* Tùy chỉnh chiều cao của các mục trong danh sách */
+        .chosen-container .chosen-results li {
+            height: 70px;
+            /* Điều chỉnh chiều cao theo ý muốn */
+        }
+
+        /* Tùy chỉnh font-size của các mục trong danh sách */
+        .chosen-container .chosen-results li {
+            font-size: 16px;
+            /* Điều chỉnh font-size theo ý muốn */
+        }
+    </style>
+
+}
 
 
 
@@ -435,7 +492,7 @@
                         $("#Themkhachthuetill").modal("hide");
                         $("#makhuvuc").val(response.maKhuvuc);
                         $("#mathuehoca").val(response.mathuehoca);
-                        var html = `<div class="customer-info">
+                        var html = `
                                     <div class="info-item">
                                         <span class="label">Tên khách hàng:</span>
                                         <span class="value">${response.tenkhachhang}</span>
@@ -443,7 +500,7 @@
                                     <div class="info-item">
                                         <span class="value">${response.ngaymua}</span>
                                     </div>       
-                                </div>       
+                                   
                                 `
                         console.log(response);
                         $('#rename').html(html);
@@ -1593,9 +1650,17 @@
 
                     } else {
                         Swal.fire({
-                            title: "Thất bại",
+                            @* title: "Thất bại",
                             text: response.message,
-                            icon: "error"
+                            icon: "error" *@
+                            title: 'Thông báo nè',
+                            text: "Ui bạn ơi, bạn chưa chọn khách hàng nè",
+                            icon: 'warning',
+                           
+                            confirmButtonColor: '#3085d6',
+                        
+                            confirmButtonText: 'Um, tui sẽ thêm khách hàng trước',
+                            
                         });
                     }
                 },
@@ -1635,25 +1700,31 @@
                 }
             });
         }
-        // hàm tính tiền cho khách 
+      // hàm tính tiền cho khách 
         function Tinhtienthua() {
 
             var html = '';
-            var giamgia = $("#discount-input").val() || 0;
-            var tienmat = $("#tienmat").val() || 0;
-            var chuyenkhoan = $("#chuyenkhoan").val() || 0;
+            var giamgia = $("#discount-input").val()||0;
+            var tienmat = $("#tienmat").val()||0;
+            var chuyenkhoan = $("#chuyenkhoan").val()||0;
             var tongtien = tongtienthanhtoan;
             tienthua = tongtien - tienmat - giamgia - chuyenkhoan;
 
             if (tienthua < 0) {
-                html = `<h6 class="fs-2">Tiền khách thừa: <span class="text-danger">${formatCurrency(tienthua)}</span></h6>`;
-                $(".Tienthoichokhach").html(html);
-            }
-            else {
-                html = `<h6 class="fs-2">Tiền khách thiếu: <span class="text-danger">${formatCurrency(tienthua)}</span></h6>`;
-                $(".Tienthoichokhach").html(html);
-            }
+        // Tiền thối khách
+        html = `<h6 class="fs-2">Tiền thối khách: <span class="text-success">${formatCurrency(Math.abs(tienthua))}</span></h6>`;
+    } else if (tienthua > 0) {
+        // Tiền khách thiếu
+        html = `<h6 class="fs-2">Tiền khách thiếu: <span class="text-danger">${formatCurrency(tienthua)}</span></h6>`;
+    } else {
+        // Đã đủ tiền, không thối hoặc thiếu
+        html = `<h6 class="fs-2">Khách đã thanh toán đủ.</h6>`;
+    }
+
+    $(".Tienthoichokhach").html(html);
         }
+       
+       
         // function filter
         function filterTable() {
             const searchInput = document.getElementById("search");

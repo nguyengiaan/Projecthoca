@@ -126,7 +126,6 @@
         /* Phóng to nhẹ khi di chuột qua */
     }
 </style>
-
 <div class="modal fade" id="Themphieunhap" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
     <div class="modal-dialog modal-lg modal-dialog-centered" role="document" id="formtong" style="max-width: 90%;">
@@ -238,13 +237,14 @@
                             <th>Ngày nhập phiếu</th>
                             <th>Xem phiếu</th>
                             <th>Xóa phiếu</th>
-                            <th>Sửa phiếu</th>
-
                         </tr>
                     </thead>
                     <tbody id="dataTableBody">
                         <!-- Dữ liệu sẽ được thêm vào bảng tại đây -->
                     </tbody>
+                    <tfoot id="pagination">
+                    </tfoot>
+
                 </table>
             </div>
         </div>
@@ -297,7 +297,7 @@
         $(document).ready(function () {
             var phieuNhaps = []; // Mảng lưu trữ các phiếu nhập
             var editingPhieuIndex = -1; // Biến để lưu vị trí phiếu đang sửa
-
+            Dsphieunhap(1, 10);
             // Hiển thị modal chỉnh sửa khi nhấn nút "Sửa"
             $(document).on('click', '.btnSuaPhieu', function () {
                 var maPhieu = $(this).data('phieu');
@@ -307,16 +307,16 @@
                 $('#tblbodyModalEdit').empty();
                 phieu.chiTietPhieu.forEach(function (item) {
                     var chiTietRow = `
-                                                                                                                                                                                                                                                                    <tr>
+                                                                                                                                                                                                                                                                        <tr>
         @* <td>${item.maHang}</td> *@
-                                                                                                                                                                                                                                                                        <td>${item.tenHang}</td>
-                                                                                                                                                                                                                                                                        <td>${item.donViTinh}</td>
-                                                                                                                                                                                                                                                                        <td>${item.soLuong}</td>
-                                                                                                                                                                                                                                                                        <td>${item.donGia}</td>
+                                                                                                                                                                                                                                                                            <td>${item.tenHang}</td>
+                                                                                                                                                                                                                                                                            <td>${item.donViTinh}</td>
+                                                                                                                                                                                                                                                                            <td>${item.soLuong}</td>
+                                                                                                                                                                                                                                                                            <td>${item.donGia}</td>
 
-                                                                                                                                                                                                                                                                        <td><button class="btn btn-danger btnXoaModalEdit">Xóa</button></td>
-                                                                                                                                                                                                                                                                        <td><button class="btn btn-warning btnSuaModalEdit">Sửa</button></td>
-                                                                                                                                                                                                                                                                    </tr>`;
+                                                                                                                                                                                                                                                                            <td><button class="btn btn-danger btnXoaModalEdit">Xóa</button></td>
+                                                                                                                                                                                                                                                                            <td><button class="btn btn-warning btnSuaModalEdit">Sửa</button></td>
+                                                                                                                                                                                                                                                                        </tr>`;
                     $('#tblbodyModalEdit').append(chiTietRow);
                 });
 
@@ -332,7 +332,12 @@
                 editingPhieuIndex = phieuNhaps.indexOf(phieu); // Lưu chỉ số phiếu đang sửa
             });
 
+            $(document).on('click', '.btnXoaModal', function () {
+                var maPhieu = $(this).data('id');
+                $(this).closest('tr').remove(); // Xóa dòng tương ứng
+                xoaPhieuNhap(maPhieu);
 
+            });
             // Xử lý sự kiện khi nhấn nút Xóa trong modal chỉnh sửa
             $(document).on('click', '.btnXoaModalEdit', function () {
                 $(this).closest('tr').remove(); // Xóa dòng tương ứng
@@ -400,12 +405,12 @@
                         if (filteredItems.length > 0) {
                             $.each(filteredItems, function (index, value) {
                                 var str = `
-                                                                                                                                                                                                                                                                        <tr onclick="selectItem('${value.ma_danhmuc}', '${value.ten_danhmuc}', '${value.gia}', '${value.donvitinh}')">
-                                                                                                                                                                                                                                                                            <td>${value.ma_danhmuc}</td>
-                                                                                                                                                                                                                                                                            <td>${value.ten_danhmuc}</td>
-                                                                                                                                                                                                                                                                            <td>${value.donvitinh}</td>
-                                                                                                                                                                                                                                                                           <td> $${value.gia}</td>
-                                                                                                                                                                                                                                                                        </tr>`;
+                                                                                                                                                                                                                                                                            <tr onclick="selectItem('${value.ma_danhmuc}', '${value.ten_danhmuc}', '${value.gia}', '${value.donvitinh}')">
+                                                                                                                                                                                                                                                                                <td>${value.ma_danhmuc}</td>
+                                                                                                                                                                                                                                                                                <td>${value.ten_danhmuc}</td>
+                                                                                                                                                                                                                                                                                <td>${value.donvitinh}</td>
+                                                                                                                                                                                                                                                                               <td> ${value.gia}</td>
+                                                                                                                                                                                                                                                                            </tr>`;
                                 $('#tblbody').append(str);
                             });
                             $('#danhMucList').show();
@@ -474,20 +479,38 @@
                 var gia = $('#Gia').val();
                 var soLuong = $('#Soluong').val();
                 var donViTinh = $('#Donvitinh').val();
+                if (!maDanhMuc || maDanhMuc.trim() === "") {
+                    Swal.fire({
+                        title: "Thông báo lỗi",
+                        text: "Vui lòng chọn ít nhất một mặt hàng để thêm vào phiếu nhập.",
+                        icon: "error"
+                    });
+                    return;
+                }
+                if (!soLuong || soLuong.trim() === "") {
+                    Swal.fire({
+                        title: "Thông báo lỗi",
+                        text: "Vui lòng nhập số lượng.",
+                        icon: "error"
+                    });
+                    return;
+                }
+
+                
 
                 if (editingModalRowIndex === -1) {
                     // Thêm mới vào bảng nếu không có dòng nào đang sửa
                     var newRow = `
-                                                                                                                                                                                                                                                                    <tr>
-                                                                                                                                                                                                                                                                        <td>${maDanhMuc}</td>
-                                                                                                                                                                                                                                                                        <td>${tenDanhMuc}</td>
-                                                                                                                                                                                                                                                                        <td>${donViTinh}</td>
-                                                                                                                                                                                                                                                                        <td>${soLuong}</td>
-                                                                                                                                                                                                                                                                        <td>${gia}</td>
-                                                                                                                                                                                                                                                                         <td>${(soLuong * gia).toFixed(2)}</td>
-                                                                                                                                                                                                                                                                        <td><button class="btn btn-danger btnXoaModal" data-id="${maDanhMuc}">Xóa</button></td>
-                                                                                                                                                                                                                                                                        <td><button class="btn btn-warning btnSuaModal" data-id="${maDanhMuc}">Sửa</button></td>
-                                                                                                                                                                                                                                                                    </tr>`;
+                                                                                                                                                                                                                                                                        <tr>
+                                                                                                                                                                                                                                                                            <td>${maDanhMuc}</td>
+                                                                                                                                                                                                                                                                            <td>${tenDanhMuc}</td>
+                                                                                                                                                                                                                                                                            <td>${donViTinh}</td>
+                                                                                                                                                                                                                                                                            <td>${soLuong}</td>
+                                                                                                                                                                                                                                                                            <td>${formatCurrency(gia)}</td>
+                                                                                                                                                                                                                                                                             <td>${formatCurrency(soLuong * gia)}</td>
+                                                                                                                                                                                                                                                                            <td><button class="btn btn-danger btnXoaModal" data-id="${maDanhMuc}">Xóa</button></td>
+                                                                                                                                                                                                                                                                            <td><button class="btn btn-warning btnSuaModal" data-id="${maDanhMuc}">Sửa</button></td>
+                                                                                                                                                                                                                                                                        </tr>`;
                     var danhMuc = {
                         Ma_danhmuc: maDanhMuc,
                         soLuong: soLuong,
@@ -512,13 +535,6 @@
             });
 
             // Hàm xử lý khi nhấn nút Xóa trong modal
-            $(document).on('click', '.btnXoaModal', function () {
-                var maPhieu = $(this).data('id');
-                $(this).closest('tr').remove(); // Xóa dòng tương ứng
-                xoaPhieuNhap(maPhieu);
-
-            });
-
             // Hàm xử lý khi nhấn nút Sửa trong modal
             $(document).on('click', '.btnSuaModal', function () {
                 var data = $(this).data('id');
@@ -531,51 +547,43 @@
                 $('#Gia').val(editingRow.find('td:nth-child(5)').text());
                 editingModalRowIndex = $(this).closest('tr').index();
             });
-            $(document).ready(function () {
-                // Mảng lưu trữ các phiếu nhập
-                var phieuNhaps = [];
-
-                // Hàm xử lý khi nhấn nút Thêm phiếu nhập
-                $(document).on('click', '#submitBtnpn', function () {
-                    Themphieunhap();
-                });                // Xử lý sự kiện khi nhấn nút Xóa phiếu
-                $(document).on('click', '.btnXoaPhieu', function () {
-                    var maPhieu = $(this).data('phieu');
-                    // Xóa phiếu khỏi mảng
-                    phieuNhaps = phieuNhaps.filter(p => p.maPhieu !== maPhieu);
-                    // Xóa phiếu khỏi bảng
-                    $(this).closest('tr').remove();
-                });
-                // Xử lý sự kiện khi nhấn nút Xem phiếu
-                $(document).on('click', '.btnXemPhieu', function () {
-                    var maPhieu = $(this).data('phieu');
-                    var phieu = phieuNhaps.find(p => p.maPhieu === maPhieu);
-
-
-                    // Hiển thị danh sách chi tiết phiếu trong modal
-                    $('#chiTietTableBody').empty(); // Xóa dữ liệu cũ
-                    phieu.chiTietPhieu.forEach(function (item) {
-                        var chiTietRow = `
-                                                                                                                                                                                                                                                                    <tr>
-                                                                                                                                                                                                                                                                        <td>${item.maHang}</td>
-                                                                                                                                                                                                                                                                        <td>${item.tenHang}</td>
-                                                                                                                                                                                                                                                                        <td>${item.donViTinh}</td>
-                                                                                                                                                                                                                                                                        <td>${item.soLuong}</td>
-                                                                                                                                                                                                                                                                        <td>${item.donGia}</td>
-                                                                                                                                                                                                                                                   <td>${(item.soLuong * item.donGia).toFixed(2)}</td>
-                                                                                                                                                                                                                                                                    </tr>`;
-                        $('#chiTietTableBody').append(chiTietRow);
-                    });
-
-                    // Hiển thị modal chi tiết phiếu nhập
-                    $('#ChiTietPhieuModal').modal('show');
-                });
+            $(document).on('click', '#btnXemPhieu', function () {
+                var maphieunhap = $(this).data('id');
+                Xemphieunhap(maphieunhap);
             });
+            // Mảng lưu trữ các phiếu nhập
+            var phieuNhaps = [];
+
+            // Hàm xử lý khi nhấn nút Thêm phiếu nhập
+            $(document).on('click', '#submitBtnpn', function () {
+                Themphieunhap();
+            });
+
+            // Xử lý sự kiện khi nhấn nút Xem phiếu
             function generateMaPhieu() {
                 return 'PN' + Math.floor(Math.random() * 10000); // Tạo mã phiếu ngẫu nhiên
             }
+            $(document).on('click', '#btnXoaPhieu', function () {
+                var data = $(this).data('id');
+                xoaphieunhap(data);
+            });
+            $(document).on('click', '.btnXoaPhieu', function () {
+                var maPhieu = $(this).data('phieu');
+                // Xóa phiếu khỏi mảng
+                phieuNhaps = phieuNhaps.filter(p => p.maPhieu !== maPhieu);
+                // Xóa phiếu khỏi bảng
+                $(this).closest('tr').remove();
+            });
         });
         function Themphieunhap() {
+            if (danhMucList.length === 0) {
+                Swal.fire({
+                    title: "Thông báo lỗi",
+                    text: "Vui lòng chọn ít nhất một mặt hàng để thêm vào phiếu nhập.",
+                    icon: "error"
+                });
+                return;
+            }
             $.ajax({
                 type: "POST",
                 url: "/Phieuxuatkho/Themphieunhapkho",
@@ -615,6 +623,145 @@
 
             }
             console.log(danhMucList);
+        }
+        function Dsphieunhap(page, pagesize) {
+            $.ajax({
+                type: "POST",
+                url: "/Phieuxuatkho/Danhsachphieunhapkho",
+                data: { page: page, pagesize: pagesize },
+                success: function (response) {
+                    if (response.success) {
+                        $('#dataTableBody').empty();
+                        response.dsdm.forEach(function (item) {
+                            var row = `
+                                    <tr>
+                                        <td>${item.ma_phieunhapkho}</td>
+                                        <td>${item.ngaynhap.split('T')[0]}</td>
+                                        <td>${item.nguoinhap}</td>
+                                        <td>
+                                            <button class="btn btn-info" id="btnXemPhieu" data-id="${item.ma_phieunhapkho}">Xem</button>
+                                        </td>
+                                        <td>
+                                            <button class="btn btn-danger" id="btnXoaPhieu" data-id="${item.ma_phieunhapkho}">Xóa</button>
+                                        </td>
+                                    </tr>`;
+                            $('#dataTableBody').append(row);
+                        });
+                        updatePagination(response.totalPages, response.pageindex);
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Lỗi",
+                        text: "Đã xảy ra lỗi trong quá trình lấy dữ liệu. Vui lòng thử lại.",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+        function updatePagination(totalPages, currentPage) {
+            if (totalPages > 0) {
+                var str = `<nav aria-label="Page navigation example">
+                                    <ul class="pagination">`;
+                if (totalPages > 1) {
+                    if (currentPage > 1) {
+                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="Dsphieunhap(${currentPage - 1}, 10)">Previous</a></li>`;
+                    }
+                    for (let i = 1; i <= totalPages; i++) {
+                        if (currentPage === i) {
+                            str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
+                        } else {
+                            str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="Dsphieunhap(${i}, 10)">${i}</a></li>`;
+                        }
+                    }
+                    if (currentPage < totalPages) {
+                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="Dsphieunhap(${currentPage + 1}, 10)">Next</a></li>`;
+                    }
+                }
+                str += `</ul></nav>`;
+                $('#pagination').html(str);
+            }
+        }
+        function xoaphieunhap(maphieunhap) {
+            Swal.fire({
+                title: 'Bạn có chắc chắn muốn xóa?',
+                text: "Hành động này không thể hoàn tác!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Xóa nó đi cưng!',
+                cancelButtonText: 'Mị không muốn xóa'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: "/Phieuxuatkho/Xoaphieunhap",
+                        data: { Ma_phieunhapkho: maphieunhap },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire('Đã xóa!', response.message, 'success').then(() => {
+                                    // Reload danh sách sau khi xóa thành công
+                                });
+                                Dsphieunhap(1, 10);
+                            } else {
+                                Swal.fire('Lỗi!', response.message, 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Lỗi!', 'Đã xảy ra lỗi. Vui lòng thử lại.', 'error');
+                        }
+                    });
+                }
+            });
+        }
+        function Xemphieunhap(maphieunhap) {
+            $.ajax({
+                type: "POST",
+                url: "/Phieuxuatkho/Xemphieukho",
+                data: { Ma_phieukho: maphieunhap },
+                success: function (response) {
+                    if (response.success) {
+                        $('#chiTietTableBody').empty();
+                        response.data.forEach(function (item) {
+                            var row = `
+                                    <tr>
+                                                <td>${item.ma_hanghoa}</td>
+                                                <td>${item.ten_hanghoa}</td>
+                                                <td>${item.dvt}</td>
+                                                <td>${item.soluong}</td>
+                                                 <td>${formatCurrency(item.gia)}</td>
+                                                <td>${formatCurrency(item.soluong * item.gia)}</td>
+                                    </tr>`;
+                            $('#chiTietTableBody').append(row);
+                        });
+                        console.log(response)
+                        $('#ChiTietPhieuModal').modal('show');
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Lỗi",
+                        text: "Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại.",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
         }
     </script>
 }

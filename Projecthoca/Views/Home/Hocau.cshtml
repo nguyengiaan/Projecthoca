@@ -2289,14 +2289,19 @@
             tienthua = tongtien - tienmat - giamgia - chuyenkhoan;
 
             if (tienthua < 0) {
-                html = `<h6 class="fs-2">Tiền khách thừa: <span class="text-danger">${formatCurrency(tienthua)}</span></h6>`;
-                $(".Tienthoichokhach").html(html);
-            }
-            else {
-                html = `<h6 class="fs-2">Tiền khách thiếu: <span class="text-danger">${formatCurrency(tienthua)}</span></h6>`;
-                $(".Tienthoichokhach").html(html);
-            }
+        // Tiền thối khách
+        html = `<h6 class="fs-2">Tiền thối khách: <span class="text-success">${formatCurrency(Math.abs(tienthua))}</span></h6>`;
+    } else if (tienthua > 0) {
+        // Tiền khách thiếu
+        html = `<h6 class="fs-2">Tiền khách thiếu: <span class="text-danger">${formatCurrency(tienthua)}</span></h6>`;
+    } else {
+        // Đã đủ tiền, không thối hoặc thiếu
+        html = `<h6 class="fs-2">Khách đã thanh toán đủ.</h6>`;
+    }
+
+    $(".Tienthoichokhach").html(html);
         }
+       
         // function filter
         function filterTable() {
             const searchInput = document.getElementById("search");

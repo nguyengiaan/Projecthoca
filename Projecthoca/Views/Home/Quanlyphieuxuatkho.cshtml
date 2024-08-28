@@ -23,6 +23,67 @@
         </div>
     </div>
 </div>
+
+<!-- Modal sửa phiếu xuất kho -->
+<div class="modal fade" id="SuaPhieuXuat" tabindex="-1" role="dialog" aria-labelledby="suaPhieuXuatLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="suaPhieuXuatLabel">Sửa Phiếu Xuất Kho</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formSuaPhieuXuat">
+                    <div class="form-group">
+                        <label for="maPhieuXuat">Mã Phiếu Xuất</label>
+                        <input type="text" class="form-control" id="maPhieuXuat" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="loaiHoaDon">Loại Hóa Đơn</label>
+                        <input type="text" class="form-control" id="loaiHoaDon">
+                    </div>
+                    <div class="form-group">
+                        <label for="banCau">Bàn Câu</label>
+                        <input type="text" class="form-control" id="banCau">
+                    </div>
+                    <div class="form-group">
+                        <label for="ngayXuat">Ngày Xuất</label>
+                        <input type="date" class="form-control" id="ngayXuat">
+                    </div>
+                    <div class="form-group">
+                        <label for="giamGia">Giảm Giá</label>
+                        <input type="number" class="form-control" id="giamGia">
+                    </div>
+                    <div class="form-group">
+                        <label for="tienMat">Tiền Mặt</label>
+                        <input type="number" class="form-control" id="tienMat">
+                    </div>
+                    <div class="form-group">
+                        <label for="chuyenKhoan">Chuyển Khoản</label>
+                        <input type="number" class="form-control" id="chuyenKhoan">
+                    </div>
+                    <div class="form-group">
+                        <label for="thanhTien">Thành Tiền</label>
+                        <input type="number" class="form-control" id="thanhTien">
+                    </div>
+                    <div class="form-group">
+                        <label for="tongTien">Tổng Tiền</label>
+                        <input type="number" class="form-control" id="tongTien">
+                    </div>
+                    <div class="form-group text-center">
+                        <button type="button" class="btn btn-primary" id="btnLuuSuaPhieuXuat">Lưu</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
 <!-- Modal chi tiết hóa đơn -->
 <div class="modal fade" id="ChiTietHoaDon" tabindex="-1" role="dialog" aria-labelledby="chiTietModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable" role="document">
@@ -131,7 +192,7 @@
 .add{
     display:none;
 }
-.btn-info,.btn-danger{
+.btn-info,.btn-danger,.btn-warning{
     background-color: white;
     color: black;
 }
@@ -203,8 +264,98 @@
         });
     });
 
+
+    // Xử lý sự kiện nhấn nút "Lưu" trong modal sửa phiếu xuất kho
+$('#btnLuuSuaPhieuXuat').on('click', function () {
+    capNhatPhieuXuat();
+});
+
+// Xử lý sự kiện nhấn nút sửa phiếu xuất kho trong bảng
+$('#dataTable').on('click', '#btnSua', function () {
+    var Ma_phieuxuatkho = $(this).data('id');
+    $.ajax({
+        type: "GET",
+        url: "/Phieuxuatkho/Xemphieuxuatkho",
+        data: { Ma_phieuxuatkho: Ma_phieuxuatkho },
+        success: function (response) {
+            
+            if (response.success) {
+                console.log(response);
+                hienThiModalSuaPhieuXuat(response.data);
+            } else {
+                Swal.fire({
+                    title: "Thông báo lỗi",
+                    text: response.message,
+                    icon: "error"
+                });
+            }
+        }
+    });
+});
     Tongtientatca();
 });
+
+// Hiển thị modal sửa phiếu xuất kho với dữ liệu hiện tại
+function hienThiModalSuaPhieuXuat(phieuXuat) {
+    $('#maPhieuXuat').val(phieuXuat.ma_phieuxuatkho);
+    $('#loaiHoaDon').val(phieuXuat.trangthai);
+    $('#banCau').val(phieuXuat.ma_khuvuc);
+    $('#ngayXuat').val(new Date(phieuXuat.ngayxuat).toISOString().split('T')[0]);
+    $('#giamGia').val(phieuXuat.giamgia);
+    $('#tienMat').val(phieuXuat.tienmat);
+    $('#chuyenKhoan').val(phieuXuat.chuyenkhoan);
+    $('#thanhTien').val(phieuXuat.thanhtien);
+    $('#tongTien').val(phieuXuat.tongtien);
+    $('#SuaPhieuXuat').modal('show');
+}
+
+// Cập nhật thông tin phiếu xuất kho
+function capNhatPhieuXuat() {
+    var maPhieuXuat = $('#maPhieuXuat').val();
+    var loaiHoaDon = $('#loaiHoaDon').val();
+    var banCau = $('#banCau').val();
+    var ngayXuat = $('#ngayXuat').val();
+    var giamGia = $('#giamGia').val();
+    var tienMat = $('#tienMat').val();
+    var chuyenKhoan = $('#chuyenKhoan').val();
+    var thanhTien = $('#thanhTien').val();
+    var tongTien = $('#tongTien').val();
+    
+
+    $.ajax({
+        type: "POST",
+        url: "/Phieuxuatkho/Capnhatphieuxuat",
+        data: {
+            maPhieuXuat: maPhieuXuat,
+            loaiHoaDon: loaiHoaDon,
+            banCau: banCau,
+            ngayXuat: ngayXuat,
+            giamGia: giamGia,
+            tienMat: tienMat,
+            chuyenKhoan: chuyenKhoan,
+            thanhTien: thanhTien,
+            tongTien: tongTien
+        },
+        success: function (response) {
+            if (response.success) {
+                Swal.fire({
+                    title: "Thành công",
+                    text: response.message,
+                    icon: "success"
+                });
+                $('#SuaPhieuXuat').modal('hide');
+                danhsachphieuxuat(1, 10); // Tải lại danh sách sau khi cập nhật
+            } else {
+                Swal.fire({
+                    title: "Thông báo lỗi",
+                    text: response.message,
+                    icon: "error"
+                });
+            }
+        }
+    });
+}
+
 
 
  // in hóa đơn
@@ -267,9 +418,12 @@ function hienThiDanhSachPhieuXuat(danhSachPhieuXuat) {
                         <td>${formatCurrency(value.chuyenkhoan)}</td>
                         <td>${formatCurrency(value.thanhtien)}</td>
                         <td>${formatCurrency(value.tongtien)}</td>
-                        <td><button class="btn btn-info" data-id='${value.ma_phieuxuatkho}' data-chitiethoadon='${encodeURIComponent(value.chitiethoadon)}' id="btnXemChiTiet">Xem Chi Tiết</button></td>
-
-                        <td><button class="btn btn-danger" data-id='${value.ma_phieuxuatkho}' id="btnhttb">Xóa</button></td>
+                        <td><button class="btn btn-info" data-id='${value.ma_phieuxuatkho}' data-chitiethoadon='${encodeURIComponent(value.chitiethoadon)}' id="btnXemChiTiet">In lại hóa đơn</button></td>
+                        <td>
+                        <button class="btn btn-danger" data-id='${value.ma_phieuxuatkho}' id="btnhttb">Xóa</button>
+                        @* <button class="btn btn-warning" data-id='${value.ma_phieuxuatkho}' id="btnSua">Sửa</button> *@
+                        </td>
+                       
                     </tr>`;
         $('#tblbody').append(str);
     });
@@ -306,7 +460,8 @@ function filterData(searchTerm, startDate, endDate) {
 
     // Cập nhật hiển thị tổng tiền
     var html = `<tr>
-                    <th colspan="4">THÀNH TIỀN </th>
+                    <th colspan="5">THÀNH TIỀN </th>
+                    <th>${formatCurrency(tongTienMat)}</th>
                     <th>${formatCurrency(tongTienMat)}</th>
                     <th>${formatCurrency(tongTienCK)}</th>
                     <th>${formatCurrency(tongThanhTien)}</th>
@@ -381,7 +536,7 @@ function Tongtientatca() {
             if (response.success) {
                 $('#tblfoot').empty();
                 var html = `<tr>
-                                <th colspan="4">THÀNH TIỀN </th>
+                                <th colspan="5">TỔNG TIỀN</th>
                                 <th>${formatCurrency(response.tongtienmat)}</th>
                                 <th>${formatCurrency(response.tongtienck)}</th>
                                 <th>${formatCurrency(response.tongthanhtien)}</th>
