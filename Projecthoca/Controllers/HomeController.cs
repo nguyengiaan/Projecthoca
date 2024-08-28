@@ -56,6 +56,10 @@ namespace Projecthoca.Controllers
             return View(data);
         }
 
+        public IActionResult Hoadonbanle()
+        {
+            return View();
+        }
         public IActionResult Quanlydanhmuc()
         {
             return View();
@@ -99,34 +103,34 @@ namespace Projecthoca.Controllers
         }
         // GET: Quanlyhanghoa
         public async Task<IActionResult> Quanlyhanghoa()
-{
-    try
-    {
-        // Lấy danh sách sản phẩm từ cơ sở dữ liệu
-        var products = await _context.Quanlyhanghoa.ToListAsync();
-        
-        // Chuyển đổi danh sách sản phẩm thành danh sách QuanlyhanghoaVM
-        var productVMs = products.Select(p => new QuanlyhanghoaVM
         {
-            Ma_sanpham = p.Ma_sanpham,
-            Ten_sanpham = p.Ten_sanpham,
-            Ten_donvitinh = p.Ten_donvitinh,
-            Giaban = p.Giaban
-        }).ToList();
-        
-        if (productVMs == null)
-        {
-            return View();
+            try
+            {
+                // Lấy danh sách sản phẩm từ cơ sở dữ liệu
+                var products = await _context.Quanlyhanghoa.ToListAsync();
+
+                // Chuyển đổi danh sách sản phẩm thành danh sách QuanlyhanghoaVM
+                var productVMs = products.Select(p => new QuanlyhanghoaVM
+                {
+                    Ma_sanpham = p.Ma_sanpham,
+                    Ten_sanpham = p.Ten_sanpham,
+                    Ten_donvitinh = p.Ten_donvitinh,
+                    Giaban = p.Giaban
+                }).ToList();
+
+                if (productVMs == null)
+                {
+                    return View();
+                }
+                return View(productVMs);
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (ex)
+                // Example: _logger.LogError(ex, "An error occurred while retrieving products.");
+                return StatusCode(500, "Internal server error. Please try again later.");
+            }
         }
-        return View(productVMs);
-    }
-    catch (Exception ex)
-    {
-        // Log the exception (ex)
-        // Example: _logger.LogError(ex, "An error occurred while retrieving products.");
-        return StatusCode(500, "Internal server error. Please try again later.");
-    }
-}
 
 
 
