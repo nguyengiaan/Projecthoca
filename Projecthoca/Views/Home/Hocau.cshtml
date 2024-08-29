@@ -956,7 +956,6 @@
             $(document).on("click", "#btnChondm", function () {
                 var data = $(this).data("id");
                 Themdichvuhd(data);
-
             })
             hienthihanghoa()
             $(document).on('change', '#Soluong', function () {
@@ -1976,7 +1975,7 @@
         function selectbancau() {
             var Ma_hoca = $("#Ma_hoca").val();
             $.ajax({
-                url: "/Khuvuchoca/Danhsachkhuvuc",
+                url: "/Khuvuchoca/Danhsachkhuvucvang",
                 type: "POST",
                 data: { Ma_hocau: Ma_hoca },
                 success: function (response) {
