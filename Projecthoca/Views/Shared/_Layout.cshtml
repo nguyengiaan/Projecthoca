@@ -35,11 +35,12 @@
   
 
 <body id="page-top">
-
+                
     <!-- Page Wrapper -->
     <div id="wrapper">              
         <!-- Sidebar -->
-      
+        @if (User.IsInRole("Admin")|| User.IsInRole("Customer") )
+                {
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
@@ -229,7 +230,7 @@
 
 
         </ul>
-        
+        }
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
@@ -263,6 +264,7 @@
         <!-- End of Content Wrapper -->
 
     </div>
+
     <!-- End of Page Wrapper -->
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">
