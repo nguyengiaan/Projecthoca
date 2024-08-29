@@ -17,6 +17,7 @@ namespace Projecthoca.Service.Interface
         public Task<bool> Themdonvitinh(DonvitinhVM donvitinh);
 
         public Task<List<DonvitinhVM>> Laydanhsachdvt();
+       
 
         public Task<bool> Xoadonvitinh(string madonvitinh);
 
@@ -32,5 +33,8 @@ namespace Projecthoca.Service.Interface
 
         // hàm dùng để lấy tất cả danh mục trong phiếu nhập
         public Task<List<DanhmucVM>> Laydanhsachdanhmuc();
+        public Task<List<NhacungcapVM>> Danhsachnhacungcap();
+        public Task<bool> Themnhacungcap(NhacungcapVM nhacungcap);
+        public Task<bool> Xoanhacungcap(string ma_nhacungcap);
     }
 }

@@ -61,7 +61,8 @@ namespace Projecthoca.Service.Responser
                     Ten_danhmuc = x.Ten_danhmuc,
                     Gia = x.Gia,
                     Donvitinh = x.Donvitinh,
-                    
+                  
+                  
 
                     Id = x.Id
                 }).FirstOrDefaultAsync();
@@ -116,8 +117,8 @@ namespace Projecthoca.Service.Responser
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
                 var madm = "DM" + nextNumber.ToString("D4");
                 var _dm = new Danhmuc();
-                _dm.Ma_mathang = danhmuc.Ma_mathang;
                 _dm.Ma_danhmuc = madm;
+                _dm.Ma_mathang = danhmuc.Ma_mathang;
                 _dm.Ten_danhmuc = danhmuc.Ten_danhmuc;
                 _dm.Gia = danhmuc.Gia;
                 _dm.Donvitinh = danhmuc.Donvitinh;
@@ -188,6 +189,7 @@ namespace Projecthoca.Service.Responser
             }
         }
 
+
         public async Task<List<DonvitinhVM>> Laydanhsachdvt()
         {
             try
@@ -208,7 +210,77 @@ namespace Projecthoca.Service.Responser
                 return null;
             }
         }
+           public async Task<bool> Themnhacungcap(NhacungcapVM nhacungcap)
+        {
+            try
+            {
+                int nextNumber = 1;
+                var lastMaNCC = await _context.Nhacungcap
+                              .OrderByDescending(x => x.Ma_nhacungcap)
+                              .Select(x => x.Ma_nhacungcap)
+                              .FirstOrDefaultAsync();
 
+                if (lastMaNCC != null)
+                {
+                    nextNumber = int.Parse(lastMaNCC.Substring(2)) + 1;
+                }
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var mancc = "CC" + nextNumber.ToString("D4");
+                var _ncc = new Nhacungcaps();
+                _ncc.Ma_nhacungcap = mancc;
+                _ncc.Nhacungcap = nhacungcap.Nhacungcap;
+                _ncc.Id = user.Id;
+                await _context.Nhacungcap.AddAsync(_ncc);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+        public async Task<List<NhacungcapVM>>Danhsachnhacungcap()
+                {
+                    try
+            {
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var data = await _context.Nhacungcap
+                           .Where(x => x.Id == user.Id)
+                           .Select(x => new NhacungcapVM
+                           {
+                               Ma_nhacungcap = x.Ma_nhacungcap,
+                               Nhacungcap = x.Nhacungcap,
+                               Id = x.Id
+                           }).ToListAsync();
+                return data;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+                }
+  public async Task<bool> Xoanhacungcap(string ma_nhacungcap)
+        {
+            try
+            {
+                var data = await _context.Nhacungcap.FindAsync(ma_nhacungcap);
+                if (data != null)
+                {
+                    _context.Nhacungcap.Remove(data);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
         public async Task<bool> Xoadonvitinh(string madonvitinh)
         {
             try

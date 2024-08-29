@@ -347,15 +347,6 @@
                 editingPhieuIndex = phieuNhaps.indexOf(phieu); // Lưu chỉ số phiếu đang sửa
             });
 
-<<<<<<< HEAD
-=======
-            $(document).on('click', '.btnXoaModal', function () {
-                var maPhieu = $(this).data('id');
-                $(this).closest('tr').remove(); // Xóa dòng tương ứng
-                xoaPhieuNhap(maPhieu);
-
-            });
->>>>>>> 2afadeae29ae2d82824f1e9fcd33c1ee5477fd95
             // Xử lý sự kiện khi nhấn nút Xóa trong modal chỉnh sửa
             $(document).on('click', '.btnXoaModalEdit', function () {
                 $(this).closest('tr').remove(); // Xóa dòng tương ứng
@@ -427,11 +418,7 @@
                                                                                                                                                                                                                                                                                 <td>${value.ma_danhmuc}</td>
                                                                                                                                                                                                                                                                                 <td>${value.ten_danhmuc}</td>
                                                                                                                                                                                                                                                                                 <td>${value.donvitinh}</td>
-<<<<<<< HEAD
                                                                                                                                                                                                                                                                                <td> $${value.gia}</td>
-=======
-                                                                                                                                                                                                                                                                               <td> ${value.gia}</td>
->>>>>>> 2afadeae29ae2d82824f1e9fcd33c1ee5477fd95
                                                                                                                                                                                                                                                                             </tr>`;
                                 $('#tblbody').append(str);
                             });
@@ -656,7 +643,6 @@
                         $('#dataTableBody').empty();
                         response.dsdm.forEach(function (item) {
                             var row = `
-<<<<<<< HEAD
                                 <tr>
                                     <td>${item.ma_phieunhapkho}</td>
                                     
@@ -669,19 +655,6 @@
                                         <button class="btn btn-danger btnXoaPhieu" id="btnXoaPhieu" data-id="${item.ma_phieunhapkho}">Xóa</button>
                                     </td>
                                 </tr>`;
-=======
-                                    <tr>
-                                        <td>${item.ma_phieunhapkho}</td>
-                                        <td>${item.ngaynhap.split('T')[0]}</td>
-                                        <td>${item.nguoinhap}</td>
-                                        <td>
-                                            <button class="btn btn-info" id="btnXemPhieu" data-id="${item.ma_phieunhapkho}">Xem</button>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-danger" id="btnXoaPhieu" data-id="${item.ma_phieunhapkho}">Xóa</button>
-                                        </td>
-                                    </tr>`;
->>>>>>> 2afadeae29ae2d82824f1e9fcd33c1ee5477fd95
                             $('#dataTableBody').append(row);
                         });
                         updatePagination(response.totalPages, response.pageindex);

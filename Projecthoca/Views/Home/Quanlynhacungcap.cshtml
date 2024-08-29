@@ -1,0 +1,193 @@
+@{
+    Layout = "_Layout";
+}
+@model Projecthoca.Models.EnitityVM.DanhmucVM
+<!--Modal thêm đơn vị tính-->
+<div class="modal fade" id="Themnhacungcap" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm nhà cung cấp</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formnhacungcap" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="col-form-label">Tên nhà cung cấp</label>
+                        <input  type="text" class="form-control" id="Ten_nhacungcap">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="submitBtndvt">Thêm nhà cung cấp</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeBtn">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Danh sách đơn vị tính-->
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3  ">
+            <div class="row">
+                <div class="col-md-10 col-12">
+                    <h4 class="m-0 font-weight-bold text-primary">Danh sách nhà cung cấp</h4>
+                </div>
+                <div class="col-md-2 col-12">
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#Themnhacungcap"> <span class="fs-20">Thêm nhà cung cấp</span> </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã nhà cung cấp</th>
+                            <th>Tên nhà cung cấp</th>
+                            <th>Xóa</th>
+                        </tr>
+                    </thead>
+                   
+                    <tbody id="tblbody">
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-sm-12 col-md-5">
+                        <div class="col-sm-12 col-md-7">
+                            <div class="dataTables_paginate paging_simple_numbers" id="dataTable_paginate">
+                                <nav aria-label="Page navigation example" id="pagination">
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        @section Scripts {
+            <script>
+                $(document).ready(function () {
+                    $(document).on('click', '#submitBtndvt', function () {
+                        Themnhacungcap();
+                    });
+                    Laydanhsachnhacungcap();
+                    $(document).on('click', '#btndvt', function () {
+                        event.preventDefault();
+                        $('#Themdanhmuc').modal('hide');
+                        $('#Themnhacungcap').modal('show');
+                    });
+                });
+                function resetForm() {
+                    var form = $("#formnhacungcap")[0];
+                    form.reset();
+
+                }
+                //Thêm nhà cung cấp
+                function Themnhacungcap() {
+                    var form = $("#formnhacungcap")[0];
+                    var data = new FormData();
+                    data.append("Nhacungcap", $("#Ten_nhacungcap").val());
+                    $.ajax({
+                        type: "POST",
+                        url: "/Danhmuc/Themnhacungcap",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            Swal.fire({
+                                title: "Loading...",
+                                text: "Please wait",
+                                imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+                                imageWidth: 100,
+                                imageHeight: 100,
+                                imageAlt: "Loading",
+                            });
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                Laydanhsachnhacungcap();
+                                $("#Themnhacungcap").modal("hide");
+                                 $('#Themdanhmuc').modal('show');
+                                form.reset();
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                //Lấy tất cả nhà cung cấp
+                function Laydanhsachnhacungcap() {
+                    $.ajax({
+                        type: "GET",
+                        url: "/Danhmuc/Danhsachnhacungcap",
+                        success: function (response) {
+                            $('#Nhacungcap').empty();
+
+                            if (response.success) {
+                                  console.log(response);
+                                var html = ''
+                                $.each(response.data, function (index, item) {
+                                    html += '<tr>';
+                                    html += '<td>' + item.ma_nhacungcap + '</td>';
+                                    html += '<td>' + item.nhacungcap + '</td>';
+                                    html += `<td><button class="btn btn-danger" onclick="Xoanhacungcap('${ item.ma_nhacungcap }')">Xóa</button></td>`;
+                                    html += '</tr>';
+                                });
+                                $('#tblbody').html(html);
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                // xóa đơn vị tính
+                function Xoanhacungcap(ma_nhacungcap) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/Danhmuc/Xoanhacungcap",
+                        data: {ma_nhacungcap: ma_nhacungcap },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                Laydanhsachnhacungcap(); // Hàm này có thể cần được kiểm tra để đảm bảo nó hoạt động đúng.
+                            } else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        },
+                        error: function () {
+                            Swal.fire({
+                                title: "Lỗi hệ thống",
+                                text: "Có lỗi xảy ra khi xóa đơn vị tính.",
+                                icon: "error"
+                            });
+                        }
+                    });
+                }
+
+            </script>
+        }
