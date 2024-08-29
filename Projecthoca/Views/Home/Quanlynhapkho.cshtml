@@ -309,54 +309,50 @@
 
 @section Scripts {
     <script>
-        var danhMucList = []; // Array to store category list
+        var danhMucList = []; // Mảng lưu trữ danh sách danh mục
         $(document).ready(function () {
-            var phieuNhaps = []; // Array to store receipts
-            var editingPhieuIndex = -1; // Index for the receipt being edited
+            var phieuNhaps = []; // Mảng lưu trữ các phiếu nhập
+            var editingPhieuIndex = -1; // Biến để lưu vị trí phiếu đang sửa
             Dsphieunhap(1, 10);
-
-            // Edit button in the receipt modal
+            // Hiển thị modal chỉnh sửa khi nhấn nút "Sửa"
             $(document).on('click', '.btnSuaPhieu', function () {
                 var maPhieu = $(this).data('phieu');
                 var phieu = phieuNhaps.find(p => p.maPhieu === maPhieu);
+                // Hiển thị danh sách chi tiết phiếu trong modal chỉnh sửa
                 $('#tblbodyModalEdit').empty();
                 phieu.chiTietPhieu.forEach(function (item) {
                     var chiTietRow = `
-                                <tr>
-                                    <td>${item.tenHang}</td>
-                                    <td>${item.donViTinh}</td>
-                                    <td>${item.soLuong}</td>
-                                    <td>${item.donGia}</td>
-                                    <td><button class="btn btn-danger btnXoaModalEdit">Xóa</button></td>
-                                    <td><button class="btn btn-warning btnSuaModalEdit">Sửa</button></td>
-                                </tr>`;
+                                                                                                                                                                                                                                                                        <tr>
+        @* <td>${item.maHang}</td> *@
+                                                                                                                                                                                                                                                                            <td>${item.tenHang}</td>
+                                                                                                                                                                                                                                                                            <td>${item.donViTinh}</td>
+                                                                                                                                                                                                                                                                            <td>${item.soLuong}</td>
+                                                                                                                                                                                                                                                                            <td>${item.donGia}</td>
+
+                                                                                                                                                                                                                                                                            <td><button class="btn btn-danger btnXoaModalEdit">Xóa</button></td>
+                                                                                                                                                                                                                                                                            <td><button class="btn btn-warning btnSuaModalEdit">Sửa</button></td>
+                                                                                                                                                                                                                                                                        </tr>`;
                     $('#tblbodyModalEdit').append(chiTietRow);
                 });
 
-                // Populate edit form with receipt data
+                // Hiển thị dữ liệu phiếu trong form chỉnh sửa
                 $('#EditMaDanhmuc').val(phieu.maDanhMuc);
                 $('#EditTenDanhmuc').val(phieu.tenDanhMuc);
                 $('#EditGia').val(phieu.gia);
                 $('#EditSoluong').val(phieu.soLuong);
                 $('#EditDonvitinh').val(phieu.donViTinh);
+
+                // Hiển thị modal chỉnh sửa phiếu nhập
                 $('#ChinhSuaPhieuModal').modal('show');
-                editingPhieuIndex = phieuNhaps.indexOf(phieu);
+                editingPhieuIndex = phieuNhaps.indexOf(phieu); // Lưu chỉ số phiếu đang sửa
             });
 
-<<<<<<< HEAD
-=======
-            $(document).on('click', '.btnXoaModal', function () {
-                var maPhieu = $(this).data('id');
-                $(this).closest('tr').remove(); // Xóa dòng tương ứng
-                xoaPhieuNhap(maPhieu);
-
-            });
->>>>>>> 2afadeae29ae2d82824f1e9fcd33c1ee5477fd95
             // Xử lý sự kiện khi nhấn nút Xóa trong modal chỉnh sửa
             $(document).on('click', '.btnXoaModalEdit', function () {
-                $(this).closest('tr').remove();
+                $(this).closest('tr').remove(); // Xóa dòng tương ứng
             });
 
+            // Xử lý sự kiện khi nhấn nút Sửa trong modal chỉnh sửa
             $(document).on('click', '.btnSuaModalEdit', function () {
                 var row = $(this).closest('tr');
                 $('#EditMaDanhmuc').val(row.find('td:nth-child(1)').text());
@@ -366,23 +362,26 @@
                 $('#EditGia').val(row.find('td:nth-child(5)').text());
             });
 
-            // Filter categories for editing
+            // Hàm lọc danh mục trong modal chỉnh sửa
             function filterDanhMucListEdit() {
                 var searchText = $('#EditTenDanhmuc').val().toLowerCase();
                 $('#danhMucListEdit').empty();
+
                 danhMucList.forEach(function (danhMuc) {
                     if (danhMuc.tenDanhMuc.toLowerCase().includes(searchText)) {
-                        var item = `<a class="dropdown-item" href="#" data-ten="${danhMuc.tenDanhMuc}">${danhMuc.tenDanhMuc}</a>`;
+                        var item = `<a class="dropdown-item" href="#"  data-ten="${danhMuc.tenDanhMuc}">${danhMuc.tenDanhMuc}</a>`;
                         $('#danhMucListEdit').append(item);
                     }
                 });
+
                 $('#danhMucListEdit').show();
             }
 
-            // Select category from dropdown
+            // Xử lý sự kiện khi nhấn vào danh mục trong danh sách danh mục
             $(document).on('click', '#danhMucListEdit .dropdown-item', function () {
                 var maDanhMuc = $(this).data('ma');
                 var tenDanhMuc = $(this).data('ten');
+
                 $('#EditMaDanhmuc').val(maDanhMuc);
                 $('#EditTenDanhmuc').val(tenDanhMuc);
                 $('#danhMucListEdit').hide();
@@ -419,11 +418,7 @@
                                                                                                                                                                                                                                                                                 <td>${value.ma_danhmuc}</td>
                                                                                                                                                                                                                                                                                 <td>${value.ten_danhmuc}</td>
                                                                                                                                                                                                                                                                                 <td>${value.donvitinh}</td>
-<<<<<<< HEAD
                                                                                                                                                                                                                                                                                <td> $${value.gia}</td>
-=======
-                                                                                                                                                                                                                                                                               <td> ${value.gia}</td>
->>>>>>> 2afadeae29ae2d82824f1e9fcd33c1ee5477fd95
                                                                                                                                                                                                                                                                             </tr>`;
                                 $('#tblbody').append(str);
                             });
@@ -486,7 +481,7 @@
         $(document).ready(function () {
             var editingModalRowIndex = -1; // Biến để lưu vị trí dòng đang sửa trong modal
 
-            // Handle add to table button in modal
+            // Hàm thêm dữ liệu vào bảng trong modal
             $('#btnThemVaoBangModal').click(function () {
                 var maDanhMuc = $('#Ma_danhmuc').val();
                 var tenDanhMuc = $('#Ten_danhmuc').val();
@@ -509,81 +504,131 @@
                     });
                     return;
                 }
+
+                
+
                 if (editingModalRowIndex === -1) {
+                    // Thêm mới vào bảng nếu không có dòng nào đang sửa
                     var newRow = `
-                                <tr>
-                                    <td>${maDanhMuc}</td>
-                                    <td>${tenDanhMuc}</td>
-                                    <td>${donViTinh}</td>
-                                    <td>${soLuong}</td>
-                                    <td>${formatCurrency(gia)}</td>
-                                    <td>${formatCurrency(soLuong * gia)}</td>
-                                    <td><button class="btn btn-danger btnXoaModal">Xóa</button></td>
-                                    <td><button class="btn btn-warning btnSuaModal">Sửa</button></td>
-                                </tr>`;
+                                                                                                                                                                                                                                                                        <tr>
+                                                                                                                                                                                                                                                                            <td>${maDanhMuc}</td>
+                                                                                                                                                                                                                                                                            <td>${tenDanhMuc}</td>
+                                                                                                                                                                                                                                                                            <td>${donViTinh}</td>
+                                                                                                                                                                                                                                                                            <td>${soLuong}</td>
+                                                                                                                                                                                                                                                                            <td>${formatCurrency(gia)}</td>
+                                                                                                                                                                                                                                                                             <td>${formatCurrency(soLuong * gia)}</td>
+                                                                                                                                                                                                                                                                            <td><button class="btn btn-danger btnXoaModal" data-id="${maDanhMuc}">Xóa</button></td>
+                                                                                                                                                                                                                                                                            <td><button class="btn btn-warning btnSuaModal" data-id="${maDanhMuc}">Sửa</button></td>
+                                                                                                                                                                                                                                                                        </tr>`;
+                    var danhMuc = {
+                        Ma_danhmuc: maDanhMuc,
+                        soLuong: soLuong,
+                    };
+                    danhMucList.push(danhMuc);
+                    console.log(danhMucList);
                     $('#tblbodyModal').append(newRow);
                 } else {
-                    var row = $('#tblbodyModal tr').eq(editingModalRowIndex);
-                    row.find('td:nth-child(1)').text(maDanhMuc);
-                    row.find('td:nth-child(2)').text(tenDanhMuc);
-                    row.find('td:nth-child(3)').text(donViTinh);
-                    row.find('td:nth-child(4)').text(soLuong);
-                    row.find('td:nth-child(5)').text(formatCurrency(gia));
-                    row.find('td:nth-child(6)').text(formatCurrency(soLuong * gia));
+                    // Cập nhật dữ liệu dòng đang sửa trong modal
+                    var editingRow = $('#tblbodyModal tr').eq(editingModalRowIndex);
+        @* editingRow.find('td:nth-child(1)').text(maDanhMuc); *@
+                        editingRow.find('td:nth-child(2)').text(tenDanhMuc);
+                    editingRow.find('td:nth-child(3)').text(donViTinh);
+                    editingRow.find('td:nth-child(4)').text(soLuong);
+                    editingRow.find('td:nth-child(5)').text(gia);
                     editingModalRowIndex = -1;
+                    capNhatPhieunhap(maDanhMuc, soLuong);
                 }
-                $('#NhapHangModal').modal('hide');
+
+                // Reset form sau khi thêm hoặc sửa
+                $('#formnhapkho')[0].reset();
             });
 
-            // Format currency
-            function formatCurrency(value) {
-                return parseFloat(value).toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+            // Hàm xử lý khi nhấn nút Xóa trong modal
+            // Hàm xử lý khi nhấn nút Sửa trong modal
+            $(document).on('click', '.btnSuaModal', function () {
+                var data = $(this).data('id');
+                danhMucList.findIndex(p => p.Ma_danhmuc === data);
+                var editingRow = $('#tblbodyModal tr').eq(editingModalRowIndex);
+                $('#Ma_danhmuc').val(editingRow.find('td:nth-child(1)').text());
+                $('#Ten_danhmuc').val(editingRow.find('td:nth-child(2)').text());
+                $('#Donvitinh').val(editingRow.find('td:nth-child(3)').text());
+                $('#Soluong').val(editingRow.find('td:nth-child(4)').text());
+                $('#Gia').val(editingRow.find('td:nth-child(5)').text());
+                editingModalRowIndex = $(this).closest('tr').index();
+            });
+            $(document).on('click', '#btnXemPhieu', function () {
+                var maphieunhap = $(this).data('id');
+                Xemphieunhap(maphieunhap);
+            });
+            // Mảng lưu trữ các phiếu nhập
+            var phieuNhaps = [];
+
+            // Hàm xử lý khi nhấn nút Thêm phiếu nhập
+            $(document).on('click', '#submitBtnpn', function () {
+                Themphieunhap();
+            });
+
+            // Xử lý sự kiện khi nhấn nút Xem phiếu
+            function generateMaPhieu() {
+                return 'PN' + Math.floor(Math.random() * 10000); // Tạo mã phiếu ngẫu nhiên
             }
-
-            // Handle add new receipt
-            $('#btnThemPhieuNhap').click(function () {
-                var data = {
-                    maDanhMuc: $('#Ma_danhmuc').val(),
-                    tenDanhMuc: $('#Ten_danhmuc').val(),
-                    gia: $('#Gia').val(),
-                    soLuong: $('#Soluong').val(),
-                    donViTinh: $('#Donvitinh').val(),
-                    chiTietPhieu: []
-                };
-                $('#tblbodyModal tr').each(function () {
-                    var row = $(this);
-                    data.chiTietPhieu.push({
-                        maDanhMuc: row.find('td:nth-child(1)').text(),
-                        tenDanhMuc: row.find('td:nth-child(2)').text(),
-                        donViTinh: row.find('td:nth-child(3)').text(),
-                        soLuong: row.find('td:nth-child(4)').text(),
-                        gia: row.find('td:nth-child(5)').text()
-                    });
-                });
-                $.ajax({
-                    type: "POST",
-                    url: "/PhieuNhap/ThemPhieuNhap",
-                    data: JSON.stringify(data),
-                    contentType: "application/json",
-                    success: function (response) {
-                        if (response.success) {
-                            Swal.fire({
-                                title: "Thông báo",
-                                text: response.message,
-                                icon: "success"
-                            }).then(() => {
-                                Dsphieunhap(1, 10);
-                            });
-                        } else {
-                            Swal.fire({
-                                title: "Thông báo lỗi",
-                                text: response.message,
-                                icon: "error"
-                            });
-                        }
-                    }
-                });
+            $(document).on('click', '#btnXoaPhieu', function () {
+                var data = $(this).data('id');
+                xoaphieunhap(data);
             });
+            $(document).on('click', '.btnXoaPhieu', function () {
+                var maPhieu = $(this).data('phieu');
+                // Xóa phiếu khỏi mảng
+                phieuNhaps = phieuNhaps.filter(p => p.maPhieu !== maPhieu);
+                // Xóa phiếu khỏi bảng
+                $(this).closest('tr').remove();
+            });
+        });
+        function Themphieunhap() {
+            if (danhMucList.length === 0) {
+                Swal.fire({
+                    title: "Thông báo lỗi",
+                    text: "Vui lòng chọn ít nhất một mặt hàng để thêm vào phiếu nhập.",
+                    icon: "error"
+                });
+                return;
+            }
+            $.ajax({
+                type: "POST",
+                url: "/Phieuxuatkho/Themphieunhapkho",
+                data: { pnk: danhMucList },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Thành công",
+                            text: response.message,
+                            icon: "success"
+                        });
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 1000);
+                    }
+                    else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                }
+            });
+        }
+        function xoaPhieuNhap(Ma_danhmuc) {
+            var index = danhMucList.findIndex(p => p.Ma_danhmuc === Ma_danhmuc);
+            if (index !== -1) {
+                danhMucList.splice(index, 1);
+            }
+        }
+        function capNhatPhieunhap(ma_danhmuc, Soluong) {
+            var index = danhMucList.findIndex(p => p.Ma_danhmuc === ma_danhmuc);
+            if (index !== -1) {
+                danhMucList[index].Ma_danhmuc = ma_danhmuc;
+                danhMucList[index].soLuong = Soluong;
 
             }
             console.log(danhMucList);
@@ -598,7 +643,6 @@
                         $('#dataTableBody').empty();
                         response.dsdm.forEach(function (item) {
                             var row = `
-<<<<<<< HEAD
                                 <tr>
                                     <td>${item.ma_phieunhapkho}</td>
                                     
@@ -611,19 +655,6 @@
                                         <button class="btn btn-danger btnXoaPhieu" id="btnXoaPhieu" data-id="${item.ma_phieunhapkho}">Xóa</button>
                                     </td>
                                 </tr>`;
-=======
-                                    <tr>
-                                        <td>${item.ma_phieunhapkho}</td>
-                                        <td>${item.ngaynhap.split('T')[0]}</td>
-                                        <td>${item.nguoinhap}</td>
-                                        <td>
-                                            <button class="btn btn-info" id="btnXemPhieu" data-id="${item.ma_phieunhapkho}">Xem</button>
-                                        </td>
-                                        <td>
-                                            <button class="btn btn-danger" id="btnXoaPhieu" data-id="${item.ma_phieunhapkho}">Xóa</button>
-                                        </td>
-                                    </tr>`;
->>>>>>> 2afadeae29ae2d82824f1e9fcd33c1ee5477fd95
                             $('#dataTableBody').append(row);
                         });
                         updatePagination(response.totalPages, response.pageindex);
@@ -654,57 +685,128 @@
     });
 });
 
-            // Load receipts
-            function Dsphieunhap(pageNumber, pageSize) {
-                $.ajax({
-                    type: "GET",
-                    url: `/PhieuNhap/GetDanhSach?pageNumber=${pageNumber}&pageSize=${pageSize}`,
-                    success: function (response) {
-                        $('#tblbodyPhieuNhap').empty();
-                        if (response.success) {
-                            phieuNhaps = response.data;
-                            phieuNhaps.forEach(function (item) {
-                                var str = `
-                                            <tr>
-                                                <td>${item.maPhieu}</td>
-                                                <td>${item.tenPhieu}</td>
-                                                <td>${item.ngayNhap}</td>
-                                                <td><button class="btn btn-warning btnSuaPhieu" data-phieu="${item.maPhieu}">Sửa</button></td>
-                                                <td><button class="btn btn-danger btnXoaPhieu" data-id="${item.maPhieu}">Xóa</button></td>
-                                            </tr>`;
-                                $('#tblbodyPhieuNhap').append(str);
-                            });
-                            // Update pagination
-                            updatePagination(response.pageNumber, response.pageCount);
+        function updatePagination(totalPages, currentPage) {
+            if (totalPages > 0) {
+                var str = `<nav aria-label="Page navigation example">
+                                    <ul class="pagination">`;
+                if (totalPages > 1) {
+                    if (currentPage > 1) {
+                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="Dsphieunhap(${currentPage - 1}, 10)">Previous</a></li>`;
+                    }
+                    for (let i = 1; i <= totalPages; i++) {
+                        if (currentPage === i) {
+                            str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
                         } else {
-                            Swal.fire({
-                                title: "Thông báo lỗi",
-                                text: response.message,
-                                icon: "error"
-                            });
+                            str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="Dsphieunhap(${i}, 10)">${i}</a></li>`;
                         }
                     }
-                });
-            }
-
-            // Update pagination
-            function updatePagination(currentPage, totalPages) {
-                $('#pagination').empty();
-                for (var i = 1; i <= totalPages; i++) {
-                    var pageItem = `<li class="page-item ${i === currentPage ? 'active' : ''}">
-                                <a class="page-link" href="#" data-page="${i}">${i}</a>
-                            </li>`;
-                    $('#pagination').append(pageItem);
+                    if (currentPage < totalPages) {
+                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="Dsphieunhap(${currentPage + 1}, 10)">Next</a></li>`;
+                    }
                 }
+                str += `</ul></nav>`;
+                $('#pagination').html(str);
             }
-
-            // Handle pagination click
-            $(document).on('click', '#pagination .page-link', function (e) {
-                e.preventDefault();
-                var pageNumber = $(this).data('page');
-                Dsphieunhap(pageNumber, 10);
+        }
+        function xoaphieunhap(maphieunhap) {
+            Swal.fire({
+                title: 'Bạn có chắc chắn muốn xóa?',
+                text: "Hành động này không thể hoàn tác!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Xóa nó đi cưng!',
+                cancelButtonText: 'Mị không muốn xóa'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        type: 'POST',
+                        url: "/Phieuxuatkho/Xoaphieunhap",
+                        data: { Ma_phieunhapkho: maphieunhap },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire('Đã xóa!', response.message, 'success').then(() => {
+                                    // Reload danh sách sau khi xóa thành công
+                                });
+                                Dsphieunhap(1, 10);
+                            } else {
+                                Swal.fire('Lỗi!', response.message, 'error');
+                            }
+                        },
+                        error: function () {
+                            Swal.fire('Lỗi!', 'Đã xảy ra lỗi. Vui lòng thử lại.', 'error');
+                        }
+                    });
+                }
             });
+        }
+        function Xemphieunhap(maphieunhap) {
+            $.ajax({
+                type: "POST",
+                url: "/Phieuxuatkho/Xemphieukho",
+                data: { Ma_phieukho: maphieunhap },
+                success: function (response) {
+                    if (response.success) {
+                        $('#chiTietTableBody').empty();
+                        response.data.forEach(function (item) {
+                            var row = `
+                                    <tr>
+                                                <td>${item.ma_hanghoa}</td>
+                                                <td>${item.ten_hanghoa}</td>
+                                                <td>${item.dvt}</td>
+                                                <td>${item.soluong}</td>
+                                                 <td>${formatCurrency(item.gia)}</td>
+                                                <td>${formatCurrency(item.soluong * item.gia)}</td>
+                                    </tr>`;
+                            $('#chiTietTableBody').append(row);
+                        });
+                        console.log(response)
+                        $('#ChiTietPhieuModal').modal('show');
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Lỗi",
+                        text: "Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại.",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
+        }
+
+        $(document).ready(function () {
+    // Sự kiện nhấp vào nút Lọc
+    $("#filterButton").click(function () {
+        var startDate = new Date($("#startDate").val());
+        var endDate = new Date($("#endDate").val());
+
+        // So sánh các phiếu với khoảng thời gian được chọn
+        $("#dataTableBody tr").each(function () {
+            var ngayNhap = new Date($(this).find("td:nth-child(3)").text()); // Lấy ngày nhập từ cột thứ 3
+            if (ngayNhap >= startDate && ngayNhap <= endDate) {
+                $(this).show();  // Hiển thị những phiếu nằm trong khoảng
+            } else {
+                $(this).hide();  // Ẩn những phiếu không nằm trong khoảng
+            }
         });
+    });
+
+    // Sự kiện nhấp vào nút Xóa lọc
+    $("#clearFilterButton").click(function () {
+        // Hiển thị tất cả các phiếu khi xóa lọc
+        $("#dataTableBody tr").show();
+    });
+});
+
     </script>
 }
-

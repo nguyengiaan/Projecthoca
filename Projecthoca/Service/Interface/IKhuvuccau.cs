@@ -24,7 +24,6 @@ namespace Projecthoca.Service.Interface
 
         // mặt hàng hiển thị trong hóa đơn thẻ select
         public Task<List<MathangVM>> Mathanghthd();
-
         public Task<List<KhuvuccauVM>> Danhsachkhuvucvang(string Ma_hocau);
     }
 

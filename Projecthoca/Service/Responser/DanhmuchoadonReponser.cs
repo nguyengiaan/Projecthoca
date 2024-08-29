@@ -25,8 +25,10 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var roles = await _userManager.GetRolesAsync(user);
                 var danhmuc = await _context.Danhmuc.Where(x => x.Ma_danhmuc == danhmuchoadon.Ma_danhmuc).FirstOrDefaultAsync();
                 var kvc = await _context.Khuvuccau.Where(x => x.Ma_Khuvuccau == danhmuchoadon.Ma_khuvuc).FirstOrDefaultAsync();
+                
                 if (danhmuc == null)
                 {
                     return false;
@@ -39,8 +41,16 @@ namespace Projecthoca.Service.Responser
                 await _context.danhmuchoadons.AddAsync(_dmhd);
                 var _thongbao = new Thongbao();
                 _thongbao.NgayDang = DateTime.Now.ToString();
-                _thongbao.NoiDung = "Bạn đã thêm dịch vụ " + danhmuc.Ten_danhmuc + " vào hóa đơn" + " tại khu vực " + kvc.Ten_Khuvuccau;
-                _thongbao.Id = user.Id;
+                _thongbao.NoiDung = user.Hovaten+ " đã thêm dịch vụ " + danhmuc.Ten_danhmuc + " vào hóa đơn" + " tại khu vực " + kvc.Ten_Khuvuccau;
+                if(roles.Contains("Staff"))
+                {
+                    _thongbao.Id = user.IdCustomer;
+                }
+                else
+                {
+                    _thongbao.Id = user.Id;
+                }
+             
                 _thongbao.Trangthai = false;
                 await _context.Thongbaos.AddAsync(_thongbao);
                 await _context.SaveChangesAsync();
@@ -57,14 +67,30 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var data = await _context.Danhmuc.Where(x => x.Id == user.Id).Select(x => new DanhmucVM
+                var roles = await _userManager.GetRolesAsync(user);
+                if (roles.Contains("Staff"))
                 {
-                    Ma_danhmuc = x.Ma_danhmuc,
-                    Ten_danhmuc = x.Ten_danhmuc,
-                    Nhacungcap = x.Nhacungcap,
-                   
-                }).ToListAsync();
-                return data;
+                    var data = await _context.Danhmuc.Where(x => x.Id == user.IdCustomer).Select(x => new DanhmucVM
+                    {
+                        Ma_danhmuc = x.Ma_danhmuc,
+                        Ten_danhmuc = x.Ten_danhmuc,
+                        Nhacungcap = x.Nhacungcap,
+
+                    }).ToListAsync();
+                    return data;
+                }
+                else
+                {
+                    var data = await _context.Danhmuc.Where(x => x.Id == user.Id).Select(x => new DanhmucVM
+                    {
+                        Ma_danhmuc = x.Ma_danhmuc,
+                        Ten_danhmuc = x.Ten_danhmuc,
+                        Nhacungcap = x.Nhacungcap,
+
+                    }).ToListAsync();
+                    return data;
+                }
+         
             }
             catch (Exception ex)
             {
@@ -154,12 +180,25 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var data = await _context.Giahocas.Where(x => x.Id == user.Id).Select(x => new GiahocaVM
+                var roles = await _userManager.GetRolesAsync(user);
+                if(roles.Contains("Staff"))
                 {
-                    Ma_giahoca = x.Ma_giahoca,
-                    Ca = x.Ca,
-                }).ToListAsync();
-                return data;
+                    var data = await _context.Giahocas.Where(x => x.Id == user.IdCustomer).Select(x => new GiahocaVM
+                    {
+                        Ma_giahoca = x.Ma_giahoca,
+                        Ca = x.Ca,
+                    }).ToListAsync();
+                    return data;
+                }
+                else
+                {
+                    var data = await _context.Giahocas.Where(x => x.Id == user.Id).Select(x => new GiahocaVM
+                    {
+                        Ma_giahoca = x.Ma_giahoca,
+                        Ca = x.Ca,
+                    }).ToListAsync();
+                    return data;
+                }
             }
             catch (Exception ex)
             {
@@ -263,7 +302,6 @@ namespace Projecthoca.Service.Responser
             }
         }
 
-
         public async Task<HoadondanhmucVM> Laytongthangtoan(string KhuvucId)
         {
             try
@@ -324,6 +362,7 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var roles = await _userManager.GetRolesAsync(user);
                 var danhmuc = await _context.Danhmuc.Where(x => x.Ma_danhmuc == danhmuchoadon.Ma_danhmuc).FirstOrDefaultAsync();
                 var kvc = await _context.Khuvuccau.Where(x => x.Ma_Khuvuccau == danhmuchoadon.Ma_khuvuccau).FirstOrDefaultAsync();
                 if (danhmuc == null)
@@ -338,8 +377,16 @@ namespace Projecthoca.Service.Responser
                 await _context.danhmuchoadons.AddAsync(_dmhd);
                 var _thongbao = new Thongbao();
                 _thongbao.NgayDang = DateTime.Now.ToString();
-                _thongbao.NoiDung = "Bạn đã thêm dịch vụ " + danhmuc.Ten_danhmuc + " vào hóa đơn" + " tại khu vực " + kvc.Ten_Khuvuccau;
-                _thongbao.Id = user.Id;
+                _thongbao.NoiDung = user.Hovaten+ " thêm dịch vụ " + danhmuc.Ten_danhmuc + " vào hóa đơn" + " tại khu vực " + kvc.Ten_Khuvuccau;
+                if(roles.Contains("Staff"))
+                {
+                    _thongbao.Id = user.IdCustomer;
+                }
+                else
+                {
+                    _thongbao.Id = user.Id;
+                }
+              
                 _thongbao.Trangthai = false;
                 await _context.Thongbaos.AddAsync(_thongbao);
                 await _context.SaveChangesAsync();
