@@ -297,6 +297,8 @@
                         Themdanhmuc();
                     });
                     danhsachdanhmuc(1, 10);
+                    
+                    
                     $('#Themdanhmuc').on('hidden.bs.modal', function () {
                         resetForm();
                         $('#updateBtndm').attr('id', 'submitBtndm').text('Thêm danh mục');
@@ -321,6 +323,8 @@
                     }
                     });
                     Laydvt();
+                   
+        
                     $(document).on('click', '#btnmathang', function () {
                         event.preventDefault();
                         $('#Themdanhmuc').modal('hide');
@@ -339,7 +343,18 @@
                     });
                     
                     Laymathang();
+                     $(document).on('keydown', function (event) {
+                        // Kiểm tra nếu phím Enter được nhấn (keyCode 13)
+                        if (event.key === "Enter") {
+                            event.preventDefault(); // Ngăn chặn hành động mặc định của phím Enter
+                            Themdanhmuc(); // Gọi hàm Themmathang()
+                        }
+                    });
+                    
+                   danhsachdanhmuc() ;
                 });
+                
+                
                 function Themdanhmuc() {
                     var form = $("#formThemdanhmuc")[0];
                     var data = new FormData(form);
