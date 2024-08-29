@@ -456,12 +456,13 @@ function filterData(searchTerm, startDate, endDate) {
         tongTienCK += item.chuyenkhoan;
         tongThanhTien += item.thanhtien;
         tongTien += item.tongtien;
+
     });
 
     // Cập nhật hiển thị tổng tiền
     var html = `<tr>
-                    <th colspan="5">THÀNH TIỀN </th>
-                    <th>${formatCurrency(tongTienMat)}</th>
+                    <th colspan="5">TỔNG TIỀN </th>
+                    <th>${formatCurrency(tonggiamgia)}</th>
                     <th>${formatCurrency(tongTienMat)}</th>
                     <th>${formatCurrency(tongTienCK)}</th>
                     <th>${formatCurrency(tongThanhTien)}</th>
@@ -534,6 +535,7 @@ function Tongtientatca() {
         url: "/Phieuxuatkho/Tongtientatcapx",
         success: function (response) {
             if (response.success) {
+                console.log(response);
                 $('#tblfoot').empty();
                 var html = `<tr>
                                 <th colspan="5">TỔNG TIỀN</th>
