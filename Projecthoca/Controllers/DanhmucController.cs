@@ -103,6 +103,8 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+       
+
 
         [HttpPost]
         public async Task<IActionResult> Laytheoma(string Ma_danhmuc)
@@ -168,7 +170,66 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
-
+ [HttpGet]
+        public async Task<IActionResult> Danhsachnhacungcap()
+        {
+            try
+            {
+                var data = await _danhmuc.Danhsachnhacungcap();
+                if (data != null)
+                {
+                    return Json(new { success = true, data = data });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Không có dữ liệu" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+         [HttpPost]
+        public async Task<IActionResult> Themnhacungcap(NhacungcapVM ncc)
+        {
+            try
+            {
+                var data = await _danhmuc.Themnhacungcap(ncc);
+                if (data)
+                {
+                    return Json(new { success = true, message = "Thêm nhà cung cấp thành công" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Thêm nhà cung cấp không thành công" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
+         [HttpPost]
+        public async Task<IActionResult> Xoanhacungcap(string ma_nhacungcap)
+        {
+            try
+            {
+                var data = await _danhmuc.Xoanhacungcap(ma_nhacungcap);
+                if (data)
+                {
+                    return Json(new { success = true, message = "Xóa nhà cung cấp thành công" });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Xóa nhà cung cấp không thành công" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
         [HttpPost]
         public async Task<IActionResult> Xoadonvitinh(string ma_donvitinh)
         {

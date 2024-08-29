@@ -149,6 +149,32 @@
         </div>
     </div>
 </div>
+<!--Modal thêm nhà cung cấp-->
+<div class="modal fade" id="Themnhacungcap" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Thêm nhà cung cấp</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formnhacungcap" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="col-form-label">Tên nhà cung cấp</label>
+                        <input type="text" class="form-control" id="Ten_nhacungcap">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="submitBtncc">Thêm nhà cung cấp</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeBtn">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!--Modal thêm đơn vị tính-->
 <div class="modal fade" id="Themdonvitinh" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
@@ -194,9 +220,12 @@
                                 <label class="col-form-label">Tên danh mục</label>
                                 <input asp-for="Ten_danhmuc" type="text" class="form-control" id="Ten_danhmuc">
                             </div>
-                            <div class="form-group">
+                           <div class="form-group">
                                 <label class="col-form-label">Nhà cung cấp</label>
-                                <input asp-for="Nhacungcap" type="text" class="form-control" id="Nhapcungcap">
+                                <div class="d-flex">
+                                    <select class="form-select pr-2" asp-for="Nhacungcap" aria-label="Default select example" id="Nhacungcap"></select>
+                                    <button class="btn btn-success" id="btncc">+</button>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label class="col-form-label">Giá nhập</label>
@@ -208,10 +237,10 @@
                             </div>
                         </div>
                         <div class="form-group form-right">
-                            <div class="form-group">
+                            @* <div class="form-group">
                                 <label class="col-form-label">Số lượng</label>
                                 <input asp-for="Soluong" type="text" class="form-control" id="soluong">
-                            </div>
+                            </div> *@
                             <div class="form-group">
                                 <label class="col-form-label">Đơn vị tính</label>
                                 <div class="d-flex">
@@ -343,18 +372,87 @@
                     });
                     
                     Laymathang();
-                     $(document).on('keydown', function (event) {
+                     $(document).on('click', '#btncc', function () {
+                        event.preventDefault();
+                        $('#Themdanhmuc').modal('hide');
+                        $('#Themnhacungcap').modal('show');
+                    });
+                    $(document).on('click', '#submitBtncc', function () {
+                        event.preventDefault();
+                        Themnhacungcap();
+                    });
+                    $(document).on('keydown', function (event) {
                         // Kiểm tra nếu phím Enter được nhấn (keyCode 13)
                         if (event.key === "Enter") {
                             event.preventDefault(); // Ngăn chặn hành động mặc định của phím Enter
-                            Themdanhmuc(); // Gọi hàm Themmathang()
+                            Themnhacungcap(); // Gọi hàm Themmathang()
                         }
                     });
-                    
-                   danhsachdanhmuc() ;
+                    Laynhacungcap();
                 });
-                
-                
+                function Themnhacungcap(){
+                    var form = $("#formnhacungcap")[0];
+                    var data = new FormData(form);
+                     data.append("Nhacungcap", $("#Ten_nhacungcap").val());
+                    $.ajax({
+                        type: "POST",
+                        url: "/Danhmuc/Themnhacungcap",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                        beforeSend: function () {
+                            Swal.fire({
+                                title: "Loading...",
+                                text: "Please wait",
+                                imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+                                imageWidth: 100,
+                                imageHeight: 100,
+                                imageAlt: "Loading",
+                            });
+                        },
+                        success: function (response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: response.message,
+                                    icon: "success"
+                                });
+                                $("#Themnhacungcap").modal("hide");
+                                form.reset();
+                               Laynhacungcap();
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
+                function Laynhacungcap() {
+                    $.ajax({
+                        type: "GET",
+                        url: "/Danhmuc/Danhsachnhacungcap",
+                        success: function (response) {
+                            $('#Nhacungcap').empty();
+                            if (response.success) {
+                                $.each(response.data, function (index, value) {
+                                    var str = `<option value="${value.nhacungcap}">${value.nhacungcap}</option>`;
+                                    $('#Nhacungcap').append(str);
+                                });
+                            }
+                            else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        }
+                    });
+                }
                 function Themdanhmuc() {
                     var form = $("#formThemdanhmuc")[0];
                     var data = new FormData(form);

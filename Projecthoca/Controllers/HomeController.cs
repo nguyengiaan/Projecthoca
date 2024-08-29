@@ -135,6 +135,12 @@ namespace Projecthoca.Controllers
         {
             return View();
         }
+        [Authorize(Roles = "Admin,Customer")]
+        public IActionResult Quanlynhacungcap()
+        {
+            return View();
+        }
+
         // GET: Quanlyhanghoa
         [Authorize(Roles = "Admin,Customer")]
         public async Task<IActionResult> Quanlyhanghoa()
