@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Projecthoca.Data;
@@ -21,15 +22,18 @@ namespace Projecthoca.Controllers
             _userManager = userManager;
         }
 
+        [Authorize(Roles = "Admin,Staff,Customer")]
         public IActionResult Index()
         {
             
             return View();
         }
+        [Authorize(Roles = "Admin,Customer")]
         public IActionResult Quanlytaikhoan()
         {
             return View();
         }
+
         public IActionResult Privacy()
         {
             return View();
@@ -38,32 +42,56 @@ namespace Projecthoca.Controllers
         {
             return View();
         }
+
+        [Authorize(Roles = "Admin,Staff,Customer")]
         public async Task<IActionResult> Hocau()
         {
             var userId = _userManager.GetUserId(User);
-            var data = await _context.Hoca
-                          .Where(h => h.Id == userId)
-                          .Select(h => new HocaVM
-                          {
-                              Ten_hoca = h.Ten_hoca,
-                              Id = h.Id,
-                              Kieuhoca = h.Kieuhoca,
-                              Ma_hoca = h.Ma_hoca
-                          })
-                          .FirstOrDefaultAsync();
+            var user = await _userManager.FindByIdAsync(userId);
+            if (User.IsInRole("Staff"))
+            {
+                var data1 = await _context.Hoca
+                        .Where(h => h.Id == user.IdCustomer)
+                        .Select(h => new HocaVM
+                        {
+                            Ten_hoca = h.Ten_hoca,
+                            Id = h.Id,
+                            Kieuhoca = h.Kieuhoca,
+                            Ma_hoca = h.Ma_hoca
+                        })
+                        .FirstOrDefaultAsync();
+                return View(data1);
+            }
+            else
+            {
+                var data = await _context.Hoca
+                      .Where(h => h.Id == userId)
+                      .Select(h => new HocaVM
+                      {
+                          Ten_hoca = h.Ten_hoca,
+                          Id = h.Id,
+                          Kieuhoca = h.Kieuhoca,
+                          Ma_hoca = h.Ma_hoca
+                      })
+                      .FirstOrDefaultAsync();
+                return View(data);
 
+            }
 
-            return View(data);
         }
 
+        [Authorize(Roles = "Admin,Staff,Customer")]
         public IActionResult Hoadonbanle()
         {
             return View();
         }
+
+        [Authorize(Roles = "Admin,Customer")]
         public IActionResult Quanlydanhmuc()
         {
             return View();
         }
+        [Authorize(Roles = "Admin,Customer")]
         public IActionResult Quanlygia()
         {
             return View();
@@ -72,40 +100,43 @@ namespace Projecthoca.Controllers
         {
             return View();
         }
+        [Authorize(Roles = "Admin,Customer")]
         public IActionResult Quanlyphieuxuatkho()
         {
             return View();
         }
-         public IActionResult Quanlynhacungcap()
-        {
-            return View();
-        }
+        [Authorize(Roles = "Admin,Staff,Customer")]
         public IActionResult PrintBill()
         {
             return View();
         }
-
+        [Authorize(Roles = "Admin,Customer")]
         public IActionResult Quanlynhapkho()
         {
             return View();
         }
+        [Authorize(Roles = "Admin,Customer")]
         public IActionResult Quanlydonvitinh()
         {
             return View();
         }
+        [Authorize(Roles = "Admin,Customer")]
         public IActionResult Quanlymathang()
         {
             return View();
         }
+        [Authorize(Roles = "Admin,Customer")]
         public IActionResult Baocaoxuathang()
         {
             return View();
         }
-         public IActionResult Baocaonhapxuatton()
+        [Authorize(Roles = "Admin,Customer")]
+        public IActionResult Baocaonhapxuatton()
         {
             return View();
         }
         // GET: Quanlyhanghoa
+        [Authorize(Roles = "Admin,Customer")]
         public async Task<IActionResult> Quanlyhanghoa()
         {
             try
@@ -135,9 +166,16 @@ namespace Projecthoca.Controllers
                 return StatusCode(500, "Internal server error. Please try again later.");
             }
         }
-
-
-
+        [Authorize(Roles = "Admin,Customer")]
+        public IActionResult Quanlynhanvien()
+        {
+            return View();
+        }
+        [Authorize(Roles = "Admin,Customer,Staff")]
+        public IActionResult Loi404()
+        {
+            return View();
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

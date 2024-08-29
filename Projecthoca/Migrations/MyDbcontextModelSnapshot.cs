@@ -182,6 +182,9 @@ namespace Projecthoca.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("IdCustomer")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
@@ -292,9 +295,6 @@ namespace Projecthoca.Migrations
                     b.Property<string>("Ma_mathang")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("Ma_nhacungcap")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Nhacungcap")
                         .IsRequired()

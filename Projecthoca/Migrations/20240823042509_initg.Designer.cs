@@ -12,8 +12,8 @@ using Projecthoca.Data;
 namespace Projecthoca.Migrations
 {
     [DbContext(typeof(MyDbcontext))]
-    [Migration("20240823042509_initg")]
-    partial class initg
+    [Migration("20240821092729_up_46")]
+    partial class up_46
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -663,10 +663,6 @@ namespace Projecthoca.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("int");
 
-                    b.Property<string>("Trangthai")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<int>("giamgia")
                         .HasMaxLength(200)
                         .HasColumnType("int");
@@ -1035,8 +1031,7 @@ namespace Projecthoca.Migrations
                 {
                     b.HasOne("Projecthoca.Models.Enitity.ApplicationUser", "Nguoidung")
                         .WithMany("Quanlyhanghoas")
-                        .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .HasForeignKey("Id");
 
                     b.Navigation("Nguoidung");
                 });

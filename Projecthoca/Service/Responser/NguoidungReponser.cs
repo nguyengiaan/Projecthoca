@@ -14,12 +14,14 @@ namespace Projecthoca.Service.Responser
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
-        public NguoidungReponser(MyDbcontext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<ApplicationUser> signInManager)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public NguoidungReponser(MyDbcontext context, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, SignInManager<ApplicationUser> signInManager, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
+            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<Status> Dangkynguoidung(NguoidungVM Nguoidung)
         {
@@ -114,7 +116,6 @@ namespace Projecthoca.Service.Responser
                     var authClaims = new List<Claim>
                    {
                        new Claim(ClaimTypes.Name, username.Hovaten),
-                       new Claim(ClaimTypes.Email, username.Email),
                        new Claim(ClaimTypes.NameIdentifier, username.Id),
 
                    };
@@ -152,25 +153,31 @@ namespace Projecthoca.Service.Responser
                       Password = user.PasswordHash,
                       diachi = user.Diachi,
                       Ngaysinh = user.Ngaysinh,
+                      
                   }).Skip((page - 1) * pagesize).Take(pagesize).OrderByDescending(x => x.Ma_user).ToListAsync();
                 var userWithRoles = new List<NguoidungVM>();
                 foreach (var user in data)
                 {
-                    var id = await _userManager.FindByIdAsync(user.Id);
-                    var roles = await _userManager.GetRolesAsync(id);
-                    userWithRoles.Add(new NguoidungVM
+                    var userEntity = await _userManager.FindByIdAsync(user.Id);
+                    var roles = await _userManager.GetRolesAsync(userEntity);
+
+                    // Filter to only include users with "Admin" or "Customer" roles
+                    if (roles.Contains("Admin") || roles.Contains("Customer"))
                     {
-                        Id = user.Id,
-                        Ma_user = user.Ma_user,
-                        hovaten = user.hovaten,
-                        UserName = user.UserName,
-                        Email = user.Email,
-                        Telephone = user.Telephone,
-                        diachi = user.diachi,
-                        Password = user.Password,
-                        Ngaysinh = user.Ngaysinh,
-                        Role = roles.FirstOrDefault(),
-                    });
+                        userWithRoles.Add(new NguoidungVM
+                        {
+                            Id = user.Id,
+                            Ma_user = user.Ma_user,
+                            hovaten = user.hovaten,
+                            UserName = user.UserName,
+                            Email = user.Email,
+                            Telephone = user.Telephone,
+                            diachi = user.diachi,
+                            Password = user.Password,
+                            Ngaysinh = user.Ngaysinh,
+                            Role = roles.FirstOrDefault(role => role == "Admin" || role == "Customer"), // Get the first matching role
+                        });
+                    }
                 }
                 return (userWithRoles, totalPages);
             }
@@ -184,8 +191,136 @@ namespace Projecthoca.Service.Responser
         {
             await _signInManager.SignOutAsync();
         }
+        // Nhân viên
+        public async Task<Status> Dangkynhanvien(NhanvienVM nv)
+        {
+            try
+            {
+                var userid = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var Status = new Status();
+                int nextNumber1 = 1;
+                var lastMaDV = await _context.Nguoidung
+                              .OrderByDescending(x => x.Ma_user)
+                              .Select(x => x.Ma_user)
+                              .FirstOrDefaultAsync();
+                int nextNumber = 1;
+                if (lastMaDV != null)
+                {
+                    nextNumber = int.Parse(lastMaDV.Substring(2)) + 1;
+                }
+                var makh = "NV" + nextNumber.ToString("D4");
+                var userExist = await _userManager.FindByNameAsync(nv.UserName);
+                if (userExist != null)
+                {
+                    Status.StatusCode = 0;
+                    Status.Message = "Tên đăng nhập đã tồn tại";
+                    return Status;
+                }
+                var user = new ApplicationUser
+                {
+                    Ma_user = makh,
+                    Hovaten = nv.hovaten,
+                    UserName = nv.UserName,
+                    Diachi = nv.diachi,
+                    Ngaysinh = nv.Ngaysinh,
+                    IdCustomer= userid.Id,
+                };
+                var result = await _userManager.CreateAsync(user, nv.Password);
+                if (!result.Succeeded)
+                {
+                    Status.StatusCode = 0;
+                    Status.Message = "Đăng ký thất bại";
+                    return Status;
+                }
+                if (!await _roleManager.RoleExistsAsync(nv.Role))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(nv.Role));
+                }
+                if (await _roleManager.RoleExistsAsync(nv.Role))
+                {
+                    await _userManager.AddToRoleAsync(user, nv.Role);
+                }
+                Status.StatusCode = 1;
+                Status.Message = "Đăng ký thành công";
+                return Status;
+            }
+            catch (Exception ex)
+            {
 
+                Console.WriteLine(ex.Message);
+                return new Status { StatusCode = 0, Message = ex.Message };
+            }
+            return new Status { StatusCode = 0, Message = "Đăng ký thất bại" };
+        }
 
+        public async Task<(List<NguoidungVM> ds, int totalpages)> Laydanhsachnv(int page, int pagesize)
+        {
+            try
+            {
+                var userid = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                int totalUser = await _context.Nguoidung.CountAsync();
+                int totalPages = (int)Math.Ceiling(totalUser / (double)pagesize);
+                var data = await _context.Nguoidung.Where(x=>x.IdCustomer==userid.Id)
+                  .Select(user => new NguoidungVM
+                  {
+                      Id = user.Id,
+                      Ma_user = user.Ma_user,
+                      hovaten = user.Hovaten,
+                      UserName = user.UserName,
+                      Password = user.PasswordHash,
+                      diachi = user.Diachi,
+                      Ngaysinh = user.Ngaysinh,
+
+                  }).Skip((page - 1) * pagesize).Take(pagesize).OrderByDescending(x => x.Ma_user).ToListAsync();
+                var userWithRoles = new List<NguoidungVM>();
+                foreach (var user in data)
+                {
+                    var userEntity = await _userManager.FindByIdAsync(user.Id);
+                    var roles = await _userManager.GetRolesAsync(userEntity);
+
+                    // Filter to only include users with "Admin" or "Customer" roles
+                    if (roles.Contains("Staff"))
+                    {
+                        userWithRoles.Add(new NguoidungVM
+                        {
+                            Id = user.Id,
+                            Ma_user = user.Ma_user,
+                            hovaten = user.hovaten,
+                            UserName = user.UserName,
+                            Password = user.Password,
+                            Ngaysinh = user.Ngaysinh,
+                            diachi=user.diachi,
+                            Role = roles.FirstOrDefault(role => role == "Staff"), 
+                        });
+                    }
+                }
+                return (userWithRoles, totalPages);
+            }
+            catch (Exception ex)
+            {
+                return (null, 0);
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public async Task<bool> Xoanhanvien(string id)
+        {
+            try
+            {
+                var data= await _userManager.FindByIdAsync(id);
+                if (data != null)
+                {
+                    await _userManager.DeleteAsync(data);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                return false;
+            }
+            catch(Exception ex)
+            {
+                return true;
+            }
+        }
 
     }
     

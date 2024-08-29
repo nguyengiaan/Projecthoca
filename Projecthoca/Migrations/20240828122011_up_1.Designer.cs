@@ -12,8 +12,8 @@ using Projecthoca.Data;
 namespace Projecthoca.Migrations
 {
     [DbContext(typeof(MyDbcontext))]
-    [Migration("20240821091643_inits")]
-    partial class inits
+    [Migration("20240828122011_up_1")]
+    partial class up_1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -182,6 +182,9 @@ namespace Projecthoca.Migrations
 
                     b.Property<string>("Hovaten")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("IdCustomer")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("LockoutEnabled")
@@ -365,6 +368,41 @@ namespace Projecthoca.Migrations
                     b.HasIndex("Ma_thuehoca");
 
                     b.ToTable("Danhmuchoadon", (string)null);
+                });
+
+            modelBuilder.Entity("Projecthoca.Models.Enitity.Danhsachhhkho", b =>
+                {
+                    b.Property<int>("Ma_hanghoa")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Ma_hanghoa"), 1L, 1);
+
+                    b.Property<string>("Ma_danhmuc")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Ma_phieunhapkho")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Soluong")
+                        .HasMaxLength(100)
+                        .HasColumnType("int");
+
+                    b.Property<int>("Thanhtien")
+                        .HasMaxLength(100)
+                        .HasColumnType("int");
+
+                    b.HasKey("Ma_hanghoa");
+
+                    b.HasIndex("Ma_danhmuc");
+
+                    b.HasIndex("Ma_phieunhapkho");
+
+                    b.ToTable("Danhsachhhkho", (string)null);
                 });
 
             modelBuilder.Entity("Projecthoca.Models.Enitity.Donvitinh", b =>
@@ -575,25 +613,8 @@ namespace Projecthoca.Migrations
 
             modelBuilder.Entity("Projecthoca.Models.Enitity.Phieunhapkho", b =>
                 {
-                    b.Property<int>("Ma_phieunhapkho")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Ma_phieunhapkho"), 1L, 1);
-
-                    b.Property<string>("Diadiem")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("Dongia")
-                        .HasMaxLength(100)
-                        .HasColumnType("int");
-
-                    b.Property<string>("Donvitinh")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                    b.Property<string>("Ma_phieunhapkho")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -606,23 +627,6 @@ namespace Projecthoca.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("Soluong")
-                        .HasMaxLength(100)
-                        .HasColumnType("int");
-
-                    b.Property<string>("Ten_danhmuc")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Tenkho")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("Thanhtien")
-                        .HasMaxLength(100)
-                        .HasColumnType("int");
 
                     b.HasKey("Ma_phieunhapkho");
 
@@ -683,16 +687,18 @@ namespace Projecthoca.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("Id")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Ten_donvitinh")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<string>("Ten_sanpham")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Ma_sanpham");
 
@@ -919,6 +925,25 @@ namespace Projecthoca.Migrations
                     b.Navigation("Thuehoca");
                 });
 
+            modelBuilder.Entity("Projecthoca.Models.Enitity.Danhsachhhkho", b =>
+                {
+                    b.HasOne("Projecthoca.Models.Enitity.Danhmuc", "Danhmuc")
+                        .WithMany("Danhsachhhkhos")
+                        .HasForeignKey("Ma_danhmuc")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Projecthoca.Models.Enitity.Phieunhapkho", "Phieunhapkho")
+                        .WithMany("Danhsachhhkhos")
+                        .HasForeignKey("Ma_phieunhapkho")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Danhmuc");
+
+                    b.Navigation("Phieunhapkho");
+                });
+
             modelBuilder.Entity("Projecthoca.Models.Enitity.Donvitinh", b =>
                 {
                     b.HasOne("Projecthoca.Models.Enitity.ApplicationUser", "Nguoidung")
@@ -1030,8 +1055,7 @@ namespace Projecthoca.Migrations
                     b.HasOne("Projecthoca.Models.Enitity.ApplicationUser", "Nguoidung")
                         .WithMany("Quanlyhanghoas")
                         .HasForeignKey("Id")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Nguoidung");
                 });
@@ -1095,6 +1119,8 @@ namespace Projecthoca.Migrations
                     b.Navigation("Chitietlancaus");
 
                     b.Navigation("Danhmuchoadons");
+
+                    b.Navigation("Danhsachhhkhos");
                 });
 
             modelBuilder.Entity("Projecthoca.Models.Enitity.Danhmucgia", b =>
@@ -1120,6 +1146,11 @@ namespace Projecthoca.Migrations
             modelBuilder.Entity("Projecthoca.Models.Enitity.Mathang", b =>
                 {
                     b.Navigation("Danhmucs");
+                });
+
+            modelBuilder.Entity("Projecthoca.Models.Enitity.Phieunhapkho", b =>
+                {
+                    b.Navigation("Danhsachhhkhos");
                 });
 
             modelBuilder.Entity("Projecthoca.Models.Enitity.Thuehoca", b =>

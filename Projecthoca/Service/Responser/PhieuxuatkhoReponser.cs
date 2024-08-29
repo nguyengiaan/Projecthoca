@@ -114,6 +114,7 @@ namespace Projecthoca.Service.Responser
             {
                 var kvc = await _context.Khuvuccau.FindAsync(phieuxuatkho.Ma_khuvuc);
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var roles = await _userManager.GetRolesAsync(user);
                 int nextNumber1 = 1;
                 var lastMaDV = await _context.Phieuxuatkhos
                               .OrderByDescending(x => x.Ma_phieuxuatkho)
@@ -128,7 +129,14 @@ namespace Projecthoca.Service.Responser
                 var data = new Phieuxuatkho();
                 data.Ma_phieuxuatkho = madm;
                 data.Ngayxuat = DateTime.Now;
-                data.Id = user.Id;
+                if(roles.Contains("Staff"))
+                {
+                    data.Id = user.IdCustomer;
+                }else
+                {
+                    data.Id = user.Id;
+                }
+           
                 data.Thanhtien = phieuxuatkho.Thanhtien;
                 data.giamgia = phieuxuatkho.giamgia;
                 data.Tienmat = phieuxuatkho.Tienmat;

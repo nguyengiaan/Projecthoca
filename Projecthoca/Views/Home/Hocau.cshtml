@@ -849,9 +849,23 @@
                 setCurrentTime('#giocau');
                 Tinhtienthua();
             }, 1000);
+            
             $("#submitkv").click(function () {
                 Themkhuvuc();
+                
+            
             });
+            @* $(document).on('keydown', function (event) {
+                        // Kiểm tra nếu phím Enter được nhấn (keyCode 13)
+                        if (event.key === "Enter") {
+                            event.preventDefault(); // Ngăn chặn hành động mặc định của phím Enter
+                            Themkhuvuc(); // Gọi hàm Themmathang()
+                        }
+                    });
+                    
+                   Danhsachkhuvuc() ;
+                }); *@
+            
             $("#Themchitietcabtn").click(function () {
                 $('#Xemca').modal('hide');
             });
@@ -956,7 +970,6 @@
             $(document).on("click", "#btnChondm", function () {
                 var data = $(this).data("id");
                 Themdichvuhd(data);
-
             })
             hienthihanghoa()
             $(document).on('change', '#Soluong', function () {
@@ -974,7 +987,7 @@
             $(document).on('change', '#chuyenkhoan', function () {
                 Tinhtienthua();
             });
-        });
+            
         function formatCurrency1(value) {
             return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
         }
@@ -1976,7 +1989,7 @@
         function selectbancau() {
             var Ma_hoca = $("#Ma_hoca").val();
             $.ajax({
-                url: "/Khuvuchoca/Danhsachkhuvuc",
+                url: "/Khuvuchoca/Danhsachkhuvucvang",
                 type: "POST",
                 data: { Ma_hocau: Ma_hoca },
                 success: function (response) {
@@ -2543,6 +2556,6 @@ $(document).click(function (event) {
         }
 
 
-    </script>
+</script>
 
 }

@@ -22,6 +22,7 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
+              
                 int nextNumber1 = 1;
                 var lastMaDV = await _context.Thuehoca
                               .OrderByDescending(x => x.Ma_thuehoca)
@@ -34,8 +35,32 @@ namespace Projecthoca.Service.Responser
                 }
                 var mact = "CT" + nextNumber.ToString("D4");
                 
-
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var roles = await _userManager.GetRolesAsync(user);
+                if(roles.Contains("Staff"))
+                {
+                    var hc1 = await _context.Hoca.FirstOrDefaultAsync(x => x.Id == user.IdCustomer);
+                    Khuvuccau kv1 = new Khuvuccau();
+                    kv1.Ma_Khuvuccau = Guid.NewGuid().ToString();
+                    kv1.Ten_Khuvuccau = "Không";
+                    kv1.Idkhuvuccau = "9999";
+                    kv1.Ma_hoca = hc1.Ma_hoca;
+                    kv1.Trangthai = "Hdl";
+                    await _context.Khuvuccau.AddAsync(kv1);
+                    await _context.SaveChangesAsync();
+                    Thuehoca ct1 = new Thuehoca();
+                    //ct.Ma_thuehoca = Guid.NewGuid().ToString();
+                    ct1.Ma_thuehoca = mact;
+                    ct1.Ma_khuvuccau = kv1.Ma_Khuvuccau;
+                    ct1.Ten_khachhang = thc.Ten_khachhang;
+                    ct1.Ngaycau = DateTime.Now.ToString();
+                    ct1.Thoigianbatdau = new TimeSpan(0, 0, 0);
+                    ct1.Timeout = new TimeSpan(0, 0, 0);
+                    ct1.trangthai = "Khong";
+                    await _context.Thuehoca.AddAsync(ct1);
+                    await _context.SaveChangesAsync();
+                    return (true, kv1.Ma_Khuvuccau, ct1.Ma_thuehoca, ct1.Ten_khachhang, ct1.Ngaycau);
+                }
                 var hc=await _context.Hoca.FirstOrDefaultAsync(x=>x.Id==user.Id);
                 Khuvuccau kv = new Khuvuccau();
                 kv.Ma_Khuvuccau = Guid.NewGuid().ToString();

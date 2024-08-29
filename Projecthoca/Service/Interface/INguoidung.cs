@@ -10,6 +10,11 @@ namespace Projecthoca.Service.Interface
         public Task<Status> Dangnhap(DangnhapVM user);
 
         public Task LogoutAsync();
-        
+        // Quản lý người dùng 
+        public Task<Status> Dangkynhanvien(NhanvienVM nv);
+        public Task<(List<NguoidungVM> ds, int totalpages)> Laydanhsachnv(int page, int pagesize);
+
+        public Task<bool> Xoanhanvien(string id);
+
     }
 }

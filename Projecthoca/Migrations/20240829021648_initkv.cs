@@ -4,7 +4,7 @@
 
 namespace Projecthoca.Migrations
 {
-    public partial class inits : Migration
+    public partial class initkv : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

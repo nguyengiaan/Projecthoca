@@ -180,7 +180,15 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
+                var time = new TimeSpan(23, 59, 50);
+
                 var data = await _context.Thuehoca.FirstOrDefaultAsync(x => x.Ma_khuvuccau == maKhuvuc);
+                if (data.Timeout  == time)
+                {
+                    data.Timeout = new TimeSpan(0, 0, 0);
+                    await _context.SaveChangesAsync();
+                    return false;
+                }
                 data.Timeout = data.Timeout.Add(TimeSpan.FromSeconds(1));
 
                 await _context.SaveChangesAsync();
@@ -393,19 +401,38 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var Roles =await _userManager.GetRolesAsync(user);
                 if (Timkiem == null)
                 {
-                    var data = await _context.Danhmuc.Where(x => x.Id == user.Id).Select(x => new DanhmucVM
+                    if(Roles.Contains("Staff"))
                     {
-                        Ma_danhmuc = x.Ma_danhmuc,
-                        Ten_danhmuc = x.Ten_danhmuc,
-                        Gia = x.Gia,
-                        Soluong= x.Soluong,
-                        Donvitinh = x.Donvitinh,
-                        Nhacungcap = x.Nhacungcap
+                        var data = await _context.Danhmuc.Where(x => x.Id == user.IdCustomer).Select(x => new DanhmucVM
+                        {
+                            Ma_danhmuc = x.Ma_danhmuc,
+                            Ten_danhmuc = x.Ten_danhmuc,
+                            Gia = x.Gia,
+                            Soluong = x.Soluong,
+                            Donvitinh = x.Donvitinh,
+                            Nhacungcap = x.Nhacungcap
 
-                    }).ToListAsync();
-                    return data;
+                        }).ToListAsync();
+                        return data;
+                    }
+                    else
+                    {
+                        var data = await _context.Danhmuc.Where(x => x.Id == user.Id).Select(x => new DanhmucVM
+                        {
+                            Ma_danhmuc = x.Ma_danhmuc,
+                            Ten_danhmuc = x.Ten_danhmuc,
+                            Gia = x.Gia,
+                            Soluong = x.Soluong,
+                            Donvitinh = x.Donvitinh,
+                            Nhacungcap = x.Nhacungcap
+
+                        }).ToListAsync();
+                        return data;
+                    }
+                   
                 }
                 else
                 {
@@ -431,13 +458,28 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
+                
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var data = await _context.Mathangs.Where(x => x.Id == user.Id).Select(x => new MathangVM
+                var Roles = await _userManager.GetRolesAsync(user);
+                if(Roles.Contains("Staff"))
                 {
-                    Ma_mathang = x.Ma_mathang,
-                    Ten_mathang = x.Ten_mathang
-                }).ToListAsync();
-                return data;
+                    var data = await _context.Mathangs.Where(x => x.Id == user.IdCustomer).Select(x => new MathangVM
+                    {
+                        Ma_mathang = x.Ma_mathang,
+                        Ten_mathang = x.Ten_mathang
+                    }).ToListAsync();
+                    return data;
+                }
+                else
+                {
+                    var data = await _context.Mathangs.Where(x => x.Id == user.Id).Select(x => new MathangVM
+                    {
+                        Ma_mathang = x.Ma_mathang,
+                        Ten_mathang = x.Ten_mathang
+                    }).ToListAsync();
+                    return data;
+                }
+          
             }
             catch (Exception)
             {
