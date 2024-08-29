@@ -40,6 +40,7 @@ namespace Projecthoca.Data
         public DbSet<Mathang> Mathangs { get; set; }
 
         public DbSet<Donvitinh> Donvitinhs { get; set; }
+        public DbSet<Nhacungcaps> Nhacungcap { get; set; }
 
         public DbSet<Quanlyhanghoa> Quanlyhanghoas { get; set; }
 
@@ -95,8 +96,8 @@ namespace Projecthoca.Data
             // Table Danhmuc
             modelBuilder.Entity<Danhmuc>().ToTable("Danhmuc").HasKey(x => x.Ma_danhmuc);
             modelBuilder.Entity<Danhmuc>().Property(e => e.Ten_danhmuc).HasMaxLength(int.MaxValue);
-                        modelBuilder.Entity<Danhmuc>().Property(e => e.Nhacungcap).HasMaxLength(int.MaxValue);
-                                    modelBuilder.Entity<Danhmuc>().Property(e => e.Gianhap).HasMaxLength(int.MaxValue);
+            modelBuilder.Entity<Danhmuc>().Property(e => e.Nhacungcap).HasMaxLength(int.MaxValue);
+            modelBuilder.Entity<Danhmuc>().Property(e => e.Gianhap).HasMaxLength(int.MaxValue);
             modelBuilder.Entity<Danhmuc>().Property(e => e.Gia).HasMaxLength(int.MaxValue);
             modelBuilder.Entity<Danhmuc>().Property(e => e.Donvitinh).HasMaxLength(int.MaxValue);
             modelBuilder.Entity<Danhmuc>().HasOne(x => x.Nguoidung).WithMany(x => x.Danhmucs).HasForeignKey(x => x.Id);
@@ -171,6 +172,10 @@ namespace Projecthoca.Data
             modelBuilder.Entity<Donvitinh>().ToTable("Donvitinh").HasKey(x => x.Ma_donvitinh);
             modelBuilder.Entity<Donvitinh>().Property(e => e.Ten_donvitinh).HasMaxLength(100);
             modelBuilder.Entity<Donvitinh>().HasOne(x => x.Nguoidung).WithMany(x => x.Donvitinhs).HasForeignKey(x => x.Id);
+             //table Nhacungcap
+            modelBuilder.Entity<Nhacungcaps>().ToTable("Nhacungcap").HasKey(x => x.Ma_nhacungcap);
+            modelBuilder.Entity<Nhacungcaps>().Property(e => e.Nhacungcap).HasMaxLength(100);
+            modelBuilder.Entity<Nhacungcaps>().HasOne(x => x.Nguoidung).WithMany(x => x.Nhacungcaps).HasForeignKey(x => x.Id);
             //table Quanlyhanghoa
             modelBuilder.Entity<Quanlyhanghoa>().ToTable("Quanlyhanghoa").HasKey(x => x.Ma_sanpham);
             modelBuilder.Entity<Quanlyhanghoa>().Property(e => e.Ten_sanpham).HasMaxLength(100);

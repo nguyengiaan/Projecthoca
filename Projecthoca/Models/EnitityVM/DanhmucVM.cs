@@ -19,6 +19,7 @@ namespace Projecthoca.Models.EnitityVM
 
         public int Soluong { get; set; }
        
+    
         public string Nhacungcap { get; set; }
         public int Gianhap { get; set; }
       
