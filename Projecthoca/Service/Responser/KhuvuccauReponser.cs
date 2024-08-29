@@ -180,7 +180,15 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
+                var time = new TimeSpan(23, 59, 50);
+
                 var data = await _context.Thuehoca.FirstOrDefaultAsync(x => x.Ma_khuvuccau == maKhuvuc);
+                if (data.Timeout  == time)
+                {
+                    data.Timeout = new TimeSpan(0, 0, 0);
+                    await _context.SaveChangesAsync();
+                    return false;
+                }
                 data.Timeout = data.Timeout.Add(TimeSpan.FromSeconds(1));
 
                 await _context.SaveChangesAsync();
