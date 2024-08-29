@@ -855,7 +855,7 @@
                 
             
             });
-            @* $(document).on('keydown', function (event) {
+            $(document).on('keydown', function (event) {
                         // Kiểm tra nếu phím Enter được nhấn (keyCode 13)
                         if (event.key === "Enter") {
                             event.preventDefault(); // Ngăn chặn hành động mặc định của phím Enter
@@ -864,7 +864,7 @@
                     });
                     
                    Danhsachkhuvuc() ;
-                }); *@
+                });
             
             $("#Themchitietcabtn").click(function () {
                 $('#Xemca').modal('hide');
