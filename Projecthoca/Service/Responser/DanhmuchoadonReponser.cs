@@ -369,6 +369,10 @@ namespace Projecthoca.Service.Responser
                 {
                     return false;
                 }
+                if (kvc == null)
+                    {
+                    return false;
+                }
                 var _dmhd = new Danhmuchoadon();
                 _dmhd.Ma_thuehoca = danhmuchoadon.Ma_nguoithue;
                 _dmhd.Ma_danhmuc = danhmuchoadon.Ma_danhmuc;
