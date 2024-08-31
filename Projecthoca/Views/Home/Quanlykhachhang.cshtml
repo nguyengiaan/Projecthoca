@@ -1,0 +1,141 @@
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Quản lý khách hàng</h6>
+            <div class="btn-group" role="group">
+                <button class="btn btn-primary" data-toggle="modal" data-target="#customerModal" title="Thêm"><i class="fas fa-plus"></i> Thêm</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="customerTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã khách hàng</th>
+                            <th>Tên khách hàng</th>
+                            <th>Địa chỉ</th>
+                            <th>Điện thoại</th>
+                            <th>Ngày sinh</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Dữ liệu khách hàng sẽ được thêm vào đây bằng JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm/Sửa Khách Hàng -->
+<div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="customerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-center" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerModalLabel">Thêm Khách Hàng Mới</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="customerForm">
+       
+                    <div class="form-group">
+                        <label for="customerName">Tên khách hàng</label>
+                        <input type="text" class="form-control" id="customerName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerAddress">Địa chỉ</label>
+                        <input type="text" class="form-control" id="customerAddress" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">Điện thoại</label>
+                        <input type="tel" class="form-control" id="customerPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="customerBirthday">Ngày sinh</label>
+                        <input type="date" class="form-control flatpickr" id="customerBirthday" placeholder="Chọn ngày sinh">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="saveCustomer">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/vn.js"></script>
+    <script>
+        $(document).ready(function() {
+            var table = $('#customerTable').DataTable({
+                "columns": [
+                    { "data": "code" },
+                    { "data": "name" },
+                    { "data": "address" },
+                    { "data": "phone" },
+                    { "data": "birthday" },
+                    {
+                        "data": null,
+                        "render": function(data, type, row) {
+                            return '<button class="btn btn-sm btn-primary edit-btn" data-id="' + row.code + '"><i class="fas fa-edit"></i></button> ' +
+                                   '<button class="btn btn-sm btn-danger delete-btn" data-id="' + row.code + '"><i class="fas fa-trash"></i></button>';
+                        }
+                    }
+                ]
+            });
+
+            // Xử lý thêm khách hàng mới
+            $('#addCustomerModal').on('click', function() {
+                $('#customerModalLabel').text('Thêm Khách Hàng Mới');
+                $('#customerForm')[0].reset();
+                $('#customerModal').modal('show');
+            });
+
+            // Xử lý sửa khách hàng
+            $('#customerTable').on('click', '.edit-btn', function() {
+                var code = $(this).data('id');
+                // Lấy thông tin khách hàng và điền vào form
+                $('#customerModalLabel').text('Sửa Thông Tin Khách Hàng');
+                $('#customerModal').modal('show');
+            });
+
+            // Xử lý xóa khách hàng
+            $('#customerTable').on('click', '.delete-btn', function() {
+                var code = $(this).data('id');
+                if (confirm('Bạn có chắc chắn muốn xóa khách hàng này?')) {
+                    // Gọi API xóa khách hàng
+                }
+            });
+
+            // Xử lý lưu thông tin khách hàng
+            $('#saveCustomer').on('click', function() {
+                // Validate và gửi thông tin form đi
+                if ($('#customerForm')[0].checkValidity()) {
+                    // Gọi API lưu thông tin khách hàng
+                    $('#customerModal').modal('hide');
+                } else {
+                    $('#customerForm')[0].reportValidity();
+                }
+            });
+
+            // Xử lý làm mới dữ liệu
+            $('#refreshBtn').on('click', function() {
+                table.ajax.reload();
+            });
+
+            // Khởi tạo Flatpickr cho trường ngày sinh
+            flatpickr("#customerBirthday", {
+                dateFormat: "d/m/Y",
+                locale: "vn",
+                maxDate: "today",
+                disableMobile: "true"
+            });
+        });
+    </script>
+}

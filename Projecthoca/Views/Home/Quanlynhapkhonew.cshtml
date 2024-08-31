@@ -1,0 +1,280 @@
+<div class="container-fluid">
+    
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Thông tin phiếu nhập</h6>
+            <div class="btn-group" role="group">
+                <button class="btn btn-primary" data-toggle="tooltip" title="Thêm"><i class="fas fa-plus"></i></button>
+                <button class="btn btn-secondary" data-toggle="tooltip" title="Sửa"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger" data-toggle="tooltip" title="Xóa"><i class="fas fa-trash"></i></button>
+                <button class="btn btn-info" data-toggle="tooltip" title="Làm mới"><i class="fas fa-sync-alt"></i></button>
+                <button class="btn btn-warning" data-toggle="tooltip" title="Mở rộng"><i class="fas fa-expand"></i></button>
+                <button class="btn btn-success" data-toggle="tooltip" title="Xác nhận"><i class="fas fa-check"></i></button>
+                <button class="btn btn-light" data-toggle="tooltip" title="In phiếu"><i class="fas fa-print"></i></button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label for="ngay" class="font-weight-bold">Ngày</label>
+                        <select id="ngay" class="form-control selectpicker" data-live-search="true">
+                            <option>Chọn ngày</option>
+                        </select>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover" id="dataTable" width="100%" cellspacing="0">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th>Số phiếu</th>
+                                    <th>Mã khách</th>
+                                    <th>Tên khách</th>
+                                    <th>Số tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>NMA2024080001</td>
+                                    <td>04499</td>
+                                    <td>Anh Tuấn</td>
+                                    <td>400.000</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-body p-2">
+                            <!-- Tabs navigation -->
+                         
+                            <!-- Tab content -->
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="thongtin-phieu" role="tabpanel">
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-4 col-form-label col-form-label-sm">Số phiếu</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control form-control-sm" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-4 col-form-label col-form-label-sm">Ngày phiếu</label>
+                                        <div class="col-sm-8">
+                                            <input type="date" class="form-control form-control-sm" value="2024-08-20">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-4 col-form-label col-form-label-sm">Khách hàng</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" class="form-control">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary btn-sm" type="button">
+                                                        <i class="fas fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-4 col-form-label col-form-label-sm">Ghi chú</label>
+                                        <div class="col-sm-8">
+                                            <textarea class="form-control form-control-sm" rows="1"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-4 col-form-label col-form-label-sm">Hạn T.toán</label>
+                                        <div class="col-sm-8">
+                                            <input type="date" class="form-control form-control-sm" value="2024-08-20">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-4 col-form-label col-form-label-sm">NVKD</label>
+                                        <div class="col-sm-8">
+                                            <select class="form-control form-control-sm">
+                                                <option>Chọn NVKD</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-4 col-form-label col-form-label-sm">Đ.Đ hàng</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" class="form-control">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary btn-sm" type="button">
+                                                        <i class="fas fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-4 col-form-label col-form-label-sm">Phiếu T. toán</label>
+                                        <div class="col-sm-8">
+                                            <input type="text" class="form-control form-control-sm">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row mb-1">
+                                        <label class="col-sm-4 col-form-label col-form-label-sm">Phiếu trả</label>
+                                        <div class="col-sm-8">
+                                            <div class="input-group input-group-sm">
+                                                <input type="text" class="form-control">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary btn-sm" type="button">
+                                                        <i class="fas fa-search"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Các tab khác -->
+                            </div>
+
+                            <!-- Thông tin thanh toán -->
+                            <div class="mt-2">
+                                <div class="form-group row mb-1">
+                                    <label class="col-sm-4 col-form-label col-form-label-sm">Tiền hàng</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" class="form-control form-control-sm text-right" readonly value="0">
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-1">
+                                    <label class="col-sm-4 col-form-label col-form-label-sm">Chiết khấu</label>
+                                    <div class="col-sm-4">
+                                        <input type="number" class="form-control form-control-sm text-right" value="0.00">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input type="number" class="form-control form-control-sm text-right" value="0">
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-1">
+                                    <label class="col-sm-4 col-form-label col-form-label-sm">Thuế</label>
+                                    <div class="col-sm-4">
+                                        <input type="number" class="form-control form-control-sm text-right" value="0.00">
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <input type="number" class="form-control form-control-sm text-right" value="0">
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-1">
+                                    <label class="col-sm-4 col-form-label col-form-label-sm">Tổng phiếu</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" class="form-control form-control-sm text-right font-weight-bold" readonly value="0">
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-1">
+                                    <label class="col-sm-4 col-form-label col-form-label-sm">Nợ cũ</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" class="form-control form-control-sm text-right" readonly value="0">
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-1">
+                                    <label class="col-sm-4 col-form-label col-form-label-sm">Thanh toán</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" class="form-control form-control-sm text-right" value="0">
+                                    </div>
+                                </div>
+                                <div class="form-group row mb-1">
+                                    <label class="col-sm-4 col-form-label col-form-label-sm">Còn lại</label>
+                                    <div class="col-sm-8">
+                                        <input type="number" class="form-control form-control-sm text-right font-weight-bold text-danger" readonly value="0">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Chi tiết sản phẩm</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover" id="productTable" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Mã sản phẩm</th>
+                            <th>Tên sản phẩm</th>
+                            <th>ĐVT</th>
+                            <th>SL</th>
+                            <th>Đơn giá</th>
+                            <th>Thành tiền</th>
+                            <th>% CK</th>
+                            <th>Chiết khấu</th>
+                            <th>% Thuế</th>
+                            <th>Thuế</th>
+                            <th>Tổng cộng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Các dòng sản phẩm sẽ được thêm vào đây -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#dataTable').DataTable();
+            $('#productTable').DataTable();
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
+}
+
+@section Styles {
+    <style>
+        .card {
+            border: none;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .info-section {
+            padding: 15px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .info-section:last-child {
+            border-bottom: none;
+        }
+        .section-title {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #4e73df;
+            margin-bottom: 15px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        .info-item label {
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+        .info-item input,
+        .info-item textarea {
+            font-size: 0.9rem;
+            padding: 5px;
+        }
+        .form-control {
+            border: 1px solid #d1d3e2;
+        }
+        .form-control:focus {
+            border-color: #bac8f3;
+            box-shadow: 0 0 0 0.2rem rgba(78,115,223,0.25);
+        }
+    </style>
+}
