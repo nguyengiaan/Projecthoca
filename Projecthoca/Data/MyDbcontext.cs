@@ -45,6 +45,8 @@ namespace Projecthoca.Data
         public DbSet<Quanlyhanghoa> Quanlyhanghoas { get; set; }
 
         public DbSet<Danhsachhhkho> Danhsachhhkhos { get; set; }
+
+        public DbSet <Khachhang> Khachhangs {get;set;}
         #endregion
 
         
@@ -190,10 +192,13 @@ namespace Projecthoca.Data
             modelBuilder.Entity<Danhsachhhkho>().Property(e => e.Thanhtien).HasMaxLength(100);
             modelBuilder.Entity<Danhsachhhkho>().HasOne(x => x.Danhmuc).WithMany(x => x.Danhsachhhkhos).HasForeignKey(x => x.Ma_danhmuc);
             modelBuilder.Entity<Danhsachhhkho>().HasOne(x => x.Phieunhapkho).WithMany(x => x.Danhsachhhkhos).HasForeignKey(x => x.Ma_phieunhapkho);
-
-
-           
-
+            // table khachhang
+            modelBuilder.Entity<Khachhang>().ToTable("Khachhang").HasKey(x => x.Ma_khachhang);
+            modelBuilder.Entity<Khachhang>().Property(e => e.Ten_khachhang).HasMaxLength(100);
+            modelBuilder.Entity<Khachhang>().Property(e => e.Sodienthoai).HasMaxLength(100);
+            modelBuilder.Entity<Khachhang>().Property(e => e.Diachi).HasMaxLength(100);
+            modelBuilder.Entity<Khachhang>().Property(e => e.Ngaysinh).HasMaxLength(100);
+            modelBuilder.Entity<Khachhang>().HasOne(x => x.Nguoidung).WithMany(x => x.Khachhangs).HasForeignKey(x => x.Id);
         }
 
     }

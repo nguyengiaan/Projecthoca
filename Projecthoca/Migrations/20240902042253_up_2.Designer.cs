@@ -12,8 +12,8 @@ using Projecthoca.Data;
 namespace Projecthoca.Migrations
 {
     [DbContext(typeof(MyDbcontext))]
-    [Migration("20240829074131_ittt")]
-    partial class ittt
+    [Migration("20240902042253_up_2")]
+    partial class up_2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -567,6 +567,35 @@ namespace Projecthoca.Migrations
                     b.HasIndex("Id");
 
                     b.ToTable("Hoca", (string)null);
+                });
+
+            modelBuilder.Entity("Projecthoca.Models.Enitity.Khachhang", b =>
+                {
+                    b.Property<string>("Ma_khachhang")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Diachi")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("Ngaysinh")
+                        .HasMaxLength(100)
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Sodienthoai")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Ten_khachhang")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Ma_khachhang");
+
+                    b.ToTable("Khachhang", (string)null);
                 });
 
             modelBuilder.Entity("Projecthoca.Models.Enitity.Khuvuccau", b =>

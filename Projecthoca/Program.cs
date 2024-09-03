@@ -54,15 +54,13 @@ builder.Services.AddScoped<IDanhmuchoadon, DanhmuchoadonReponser>();
 builder.Services.AddScoped<IThongbao, ThongbaoReponser>();
 builder.Services.AddScoped<IPhieuxuatkho, PhieuxuatkhoReponser>();
 builder.Services.AddScoped<IBanle, BanleReponser>();
+builder.Services.AddScoped<IKhachhang, KhachhangReponser>();
 builder.Services.AddSingleton<TimerBackgroundService>();
 builder.Services.AddHostedService<TimerBackgroundService>();
-
-
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddLogging();
 var app = builder.Build();
-
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {

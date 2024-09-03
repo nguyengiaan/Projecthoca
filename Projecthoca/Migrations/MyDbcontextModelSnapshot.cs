@@ -567,6 +567,40 @@ namespace Projecthoca.Migrations
                     b.ToTable("Hoca", (string)null);
                 });
 
+            modelBuilder.Entity("Projecthoca.Models.Enitity.Khachhang", b =>
+                {
+                    b.Property<string>("Ma_khachhang")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Diachi")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Ngaysinh")
+                        .HasMaxLength(100)
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Sodienthoai")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Ten_khachhang")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Ma_khachhang");
+
+                    b.HasIndex("Id");
+
+                    b.ToTable("Khachhang", (string)null);
+                });
+
             modelBuilder.Entity("Projecthoca.Models.Enitity.Khuvuccau", b =>
                 {
                     b.Property<string>("Ma_Khuvuccau")
@@ -1047,6 +1081,15 @@ namespace Projecthoca.Migrations
                     b.Navigation("Nguoidung");
                 });
 
+            modelBuilder.Entity("Projecthoca.Models.Enitity.Khachhang", b =>
+                {
+                    b.HasOne("Projecthoca.Models.Enitity.ApplicationUser", "Nguoidung")
+                        .WithMany("Khachhangs")
+                        .HasForeignKey("Id");
+
+                    b.Navigation("Nguoidung");
+                });
+
             modelBuilder.Entity("Projecthoca.Models.Enitity.Khuvuccau", b =>
                 {
                     b.HasOne("Projecthoca.Models.Enitity.Hoca", "Hoca")
@@ -1146,6 +1189,8 @@ namespace Projecthoca.Migrations
                     b.Navigation("Giahocas");
 
                     b.Navigation("Hoccas");
+
+                    b.Navigation("Khachhangs");
 
                     b.Navigation("Mathangs");
 
