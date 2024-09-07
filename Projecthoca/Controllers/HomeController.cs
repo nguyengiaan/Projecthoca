@@ -192,6 +192,12 @@ namespace Projecthoca.Controllers
         {
             return View();
         }
+
+        [Authorize(Roles = "Admin,Customer,Staff")]
+        public IActionResult Quanlyxuatkhonew()
+        {
+            return View();
+        }
         [Authorize(Roles = "Admin,Customer")]
         public IActionResult Quanlykhachhang()
         {

@@ -19,6 +19,9 @@
         public List<Chitietlancau> Chitietlancaus { get; set; }
 
         public List<Danhsachhhkho> Danhsachhhkhos { get; set; }
+
+         public ICollection<ChiTietPhieuNhap> ChiTietPhieuNhaps { get; set; }
+         public ICollection<ChiTietPhieuXuat> ChiTietPhieuXuats { get; set; }
         public Danhmuc()
         {
             Danhmuchoadons = new List<Danhmuchoadon>();

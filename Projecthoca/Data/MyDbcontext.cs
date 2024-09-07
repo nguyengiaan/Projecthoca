@@ -47,6 +47,12 @@ namespace Projecthoca.Data
         public DbSet<Danhsachhhkho> Danhsachhhkhos { get; set; }
 
         public DbSet <Khachhang> Khachhangs {get;set;}
+        public DbSet<PhieuNhap> PhieuNhaps { get; set; }
+        public DbSet<ChiTietPhieuNhap> ChiTietPhieuNhaps { get; set; }
+        // public DbSet<NhanVien> NhanViens { get; set; }
+        public DbSet<PhieuXuat> PhieuXuats { get; set; }
+        public DbSet<ChiTietPhieuXuat> ChiTietPhieuXuats { get; set; }
+    
         #endregion
 
         
@@ -55,6 +61,46 @@ namespace Projecthoca.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<PhieuXuat>()
+            .HasKey(p => p.SoPhieu);
+
+        modelBuilder.Entity<ChiTietPhieuXuat>()
+            .HasKey(ct => ct.Id);
+
+        modelBuilder.Entity<ChiTietPhieuXuat>()
+            .HasOne(ct => ct.PhieuXuat)
+            .WithMany(p => p.ChiTietPhieuXuats)
+            .HasForeignKey(ct => ct.SoPhieu);
+
+        modelBuilder.Entity<ChiTietPhieuXuat>()
+            .HasOne(ct => ct.Danhmuc) // Sửa thành Danhmuc
+            .WithMany(qh => qh.ChiTietPhieuXuats)
+            .HasForeignKey(ct => ct.Ma_sanpham);
+            
+
+             modelBuilder.Entity<PhieuNhap>()
+            .HasKey(p => p.SoPhieu);
+
+        modelBuilder.Entity<ChiTietPhieuNhap>()
+            .HasKey(ct => ct.Id);
+
+        modelBuilder.Entity<ChiTietPhieuNhap>()
+            .HasOne(ct => ct.PhieuNhap)
+            .WithMany(p => p.ChiTietPhieuNhaps)
+            .HasForeignKey(ct => ct.SoPhieu);
+
+        modelBuilder.Entity<ChiTietPhieuNhap>()
+            .HasOne(ct => ct.Danhmuc) // Sửa thành Danhmuc
+            .WithMany(qh => qh.ChiTietPhieuNhaps)
+            .HasForeignKey(ct => ct.Ma_sanpham);
+
+      
+        // modelBuilder.Entity<NhanVien>()
+        //     .HasKey(nv => nv.MaNVKD);
+
+
+
             // Table Qunanlyhanghoa
             modelBuilder.Entity<Quanlyhanghoa>()
                .ToTable("Quanlyhanghoa")
