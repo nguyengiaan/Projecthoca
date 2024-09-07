@@ -1,4 +1,6 @@
-﻿namespace Projecthoca.Models.Enitity
+﻿using Projecthoca.Models.EnitityVM;
+
+namespace Projecthoca.Models.Enitity
 {
     public class Danhmuc
     {
@@ -19,10 +21,13 @@
         public List<Chitietlancau> Chitietlancaus { get; set; }
 
         public List<Danhsachhhkho> Danhsachhhkhos { get; set; }
+
+        public List<Hoadonxuatban>Hoadonxuatbans { get; set; }
         public Danhmuc()
         {
             Danhmuchoadons = new List<Danhmuchoadon>();
             Danhsachhhkhos = new List<Danhsachhhkho>();
+            Hoadonxuatbans = new List<Hoadonxuatban>();
         }
     }
 }

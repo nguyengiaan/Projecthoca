@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using Projecthoca.Models.Enitity;
+using Projecthoca.Models.EnitityVM;
 
 namespace Projecthoca.Data
 {
@@ -47,6 +48,8 @@ namespace Projecthoca.Data
         public DbSet<Danhsachhhkho> Danhsachhhkhos { get; set; }
 
         public DbSet <Khachhang> Khachhangs {get;set;}
+
+        public DbSet<Hoadonxuatban> Hoadonxuatbans { get; set; }
         #endregion
 
         
@@ -199,6 +202,14 @@ namespace Projecthoca.Data
             modelBuilder.Entity<Khachhang>().Property(e => e.Diachi).HasMaxLength(100);
             modelBuilder.Entity<Khachhang>().Property(e => e.Ngaysinh).HasMaxLength(100);
             modelBuilder.Entity<Khachhang>().HasOne(x => x.Nguoidung).WithMany(x => x.Khachhangs).HasForeignKey(x => x.Id);
+            // table Hoadonxuatban  
+            modelBuilder.Entity<Hoadonxuatban>().ToTable("Hoadonxuatban").HasKey(x => x.Ma_hoadonxuatban);
+            modelBuilder.Entity<Hoadonxuatban>().Property(e => e.Soluong).HasMaxLength(100);
+            modelBuilder.Entity<Hoadonxuatban>().Property(e => e.Ma_danhmuc).HasMaxLength(100);
+            modelBuilder.Entity<Hoadonxuatban>().Property(e => e.Ma_phieuxuatkho).HasMaxLength(100);
+            modelBuilder.Entity<Hoadonxuatban>().HasOne(x => x.Danhmuc).WithMany(x => x.Hoadonxuatbans).HasForeignKey(x => x.Ma_danhmuc);
+            modelBuilder.Entity<Hoadonxuatban>().HasOne(x => x.Phieuxuatkho).WithMany(x => x.Hoadonxuatbans).HasForeignKey(x => x.Ma_phieuxuatkho);
+
         }
 
     }

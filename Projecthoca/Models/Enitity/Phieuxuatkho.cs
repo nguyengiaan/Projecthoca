@@ -1,4 +1,6 @@
-﻿namespace Projecthoca.Models.Enitity
+﻿using Projecthoca.Models.EnitityVM;
+
+namespace Projecthoca.Models.Enitity
 {
     public class Phieuxuatkho
     {
@@ -22,6 +24,13 @@
 
         public string Trangthai { get; set; }
         public ApplicationUser Nguoidung { get; set; }
+
+        public List<Hoadonxuatban> Hoadonxuatbans { get; set; }
+
+        public Phieuxuatkho()
+        {
+            Hoadonxuatbans = new List<Hoadonxuatban>();
+        }
 
     }
 }
