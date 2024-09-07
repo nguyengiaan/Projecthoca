@@ -321,17 +321,8 @@
                 // Hiển thị danh sách chi tiết phiếu trong modal chỉnh sửa
                 $('#tblbodyModalEdit').empty();
                 phieu.chiTietPhieu.forEach(function (item) {
-                    var chiTietRow = `
-                                                                                                                                                                                                                                                                        <tr>
-        @* <td>${item.maHang}</td> *@
-                                                                                                                                                                                                                                                                            <td>${item.tenHang}</td>
-                                                                                                                                                                                                                                                                            <td>${item.donViTinh}</td>
-                                                                                                                                                                                                                                                                            <td>${item.soLuong}</td>
-                                                                                                                                                                                                                                                                            <td>${item.donGia}</td>
-
-                                                                                                                                                                                                                                                                            <td><button class="btn btn-danger btnXoaModalEdit">Xóa</button></td>
-                                                                                                                                                                                                                                                                            <td><button class="btn btn-warning btnSuaModalEdit">Sửa</button></td>
-                                                                                                                                                                                                                                                                        </tr>`;
+                    var chiTietRow = `                                                                                                                                                                                                                                                         <tr>
+        @* <td>${item.maHang}</td> *@                                                                                                                                                                                                                                                  </tr>`;
                     $('#tblbodyModalEdit').append(chiTietRow);
                 });
 
@@ -618,6 +609,8 @@
                 }
             });
         }
+        
+        
         function xoaPhieuNhap(Ma_danhmuc) {
             var index = danhMucList.findIndex(p => p.Ma_danhmuc === Ma_danhmuc);
             if (index !== -1) {

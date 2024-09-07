@@ -9,7 +9,12 @@ namespace Projecthoca.Models.Enitity
         public string Ten_donvitinh { get; set; }
         public string Id { get; set; }
         public int Giaban { get; set; }
+        public int GiaNhap { get; set; }
+        public int Soluong { get; set; }
+
+
         public ApplicationUser Nguoidung { get; set; }
+
 
     }
 }

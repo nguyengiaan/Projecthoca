@@ -1,0 +1,242 @@
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Projecthoca.Data;
+using Projecthoca.Models.Enitity;
+using Projecthoca.Models.EnitityVM;
+
+namespace Projecthoca.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    public class PhieuXuatController : ControllerBase
+    {
+        private readonly MyDbcontext _context;
+
+        public PhieuXuatController(MyDbcontext context)
+        {
+            _context = context;
+        }
+
+
+
+        
+        // GET: /api/PhieuNhap/LayTatCaPhieuNhap
+[HttpGet("LayTatCaPhieuXuat")]
+public async Task<IActionResult> LayTatCaPhieuXuat()
+{
+    var phieuXuats = await _context.PhieuXuats
+        .Include(p => p.ChiTietPhieuXuats) // Bao gồm chi tiết phiếu nhập
+            .ThenInclude(c => c.Danhmuc) // Bao gồm Danhmuc trong chi tiết phiếu nhập
+        .ToListAsync();
+
+    // Sắp xếp theo số phiếu giảm dần
+    var sortedPhieuXuats = phieuXuats
+        .OrderByDescending(p => 
+        {
+            // Tách phần số từ soPhieu, ví dụ: "PH-0001" -> 1
+            var parts = p.SoPhieu.Split('-');
+            return int.TryParse(parts.Last(), out int number) ? number : 0;
+        })
+        .ToList();
+
+    var result = sortedPhieuXuats.Select(phieuXuat => new
+    {
+        soPhieu = phieuXuat.SoPhieu,
+        ngayPhieu = phieuXuat.NgayPhieu.ToString("dd/MM/yyyy"),
+        tenKhachHang = phieuXuat.Khachhang,
+        tenNVKD = phieuXuat.NhanVien,
+        tongTien = phieuXuat.TongTien,
+        noCu = phieuXuat.NoCu,
+        thanhToan = phieuXuat.ThanhToan,
+        conLai = phieuXuat.ConLai,
+        hanThanhToan = phieuXuat.HanThanhToan?.ToString("dd/MM/yyyy"),
+        ghiChu = phieuXuat.GhiChu,
+        chiTietPhieuXuats = phieuXuat.ChiTietPhieuXuats.Select(c => new
+        {
+            id = c.Id,
+            soPhieu = c.SoPhieu,
+            maSanPham = c.Ma_sanpham,
+            tenSanPham = c.Danhmuc?.Ten_danhmuc,
+            soLuong = c.SoLuong,
+            donGia = c.DonGia,
+            thanhTien = c.ThanhTien
+        })
+    });
+
+    return Ok(new
+    {
+        success = true,
+        data = result
+    });
+}
+
+
+
+
+
+        // POST: /api/PhieuNhap/ThemPhieuNhap
+    [HttpPost("ThemPhieuXuat")]
+public async Task<IActionResult> ThemPhieuXuat([FromBody] PhieuXuatVM model)
+{
+    if (ModelState.IsValid)
+    {
+        // Sinh số phiếu tự động
+        model.SoPhieu = GenerateSoPhieu();
+
+        // Gán giá trị mặc định nếu các thuộc tính null
+        model.TenNVKD = model.TenNVKD ?? "Chưa có NVKD";
+        model.ChiTietPhieuXuats = model.ChiTietPhieuXuats ?? new List<ChiTietPhieuXuatVM>();
+        //model.ConLai = model.TongTien - model.ThanhToan;
+
+        // Map từ ViewModel sang Entity
+        var phieuXuat = new PhieuXuat
+        {
+            SoPhieu = model.SoPhieu,
+            NgayPhieu = model.NgayPhieu,
+            Khachhang = model.TenKhachhang,
+            NhanVien = model.TenNVKD,
+            TongTien = model.TongTien,
+            NoCu = model.NoCu,
+            ThanhToan = model.ThanhToan,
+            ConLai = model.ConLai,
+            HanThanhToan = model.HanThanhToan,
+            GhiChu = model.GhiChu,
+            ChiTietPhieuXuats = new List<ChiTietPhieuXuat>()
+        };
+
+        foreach (var chiTiet in model.ChiTietPhieuXuats)
+        {
+            // Tìm Danhmuc trong cơ sở dữ liệu
+            var danhMuc = await _context.Danhmuc
+                .FirstOrDefaultAsync(d => d.Ma_danhmuc == chiTiet.Ma_sanpham);
+
+            if (danhMuc == null)
+            {
+                // Xử lý khi không tìm thấy Danhmuc
+                return BadRequest(new { success = false, message = $"Danh mục với mã {chiTiet.Ma_sanpham} không tồn tại" });
+            }
+
+            // Cập nhật số lượng và giá của sản phẩm
+            danhMuc.Soluong -= chiTiet.SoLuong; // Cộng thêm số lượng mới
+           // danhMuc.Gia = (int)chiTiet.DonGia; // Cập nhật giá mới
+
+            // Thêm chi tiết phiếu nhập
+            phieuXuat.ChiTietPhieuXuats.Add(new ChiTietPhieuXuat
+            {
+                SoPhieu = chiTiet.SoPhieu,
+                Ma_sanpham = chiTiet.Ma_sanpham,
+                Danhmuc = danhMuc, // Gán đối tượng Danhmuc
+                SoLuong = chiTiet.SoLuong,
+                DonGia = chiTiet.DonGia,
+                ThanhTien = chiTiet.ThanhTien,
+                DonViTinh = chiTiet.DonViTinh,
+            });
+
+            // Cập nhật Danhmuc trong cơ sở dữ liệu
+            _context.Danhmuc.Update(danhMuc);
+        }
+
+        _context.PhieuXuats.Add(phieuXuat);
+        await _context.SaveChangesAsync();
+
+        return Ok(new
+        {
+            success = true,
+            soPhieu = phieuXuat.SoPhieu,
+            ngayPhieu = phieuXuat.NgayPhieu.ToString("dd/MM/yyyy"),
+            tenKhachHang = phieuXuat.Khachhang,
+            tenNVKD = phieuXuat.NhanVien,
+            tongTien = phieuXuat.TongTien,
+            noCu = phieuXuat.NoCu,
+            thanhToan = phieuXuat.ThanhToan,
+            conLai = phieuXuat.ConLai,
+            hanThanhToan = phieuXuat.HanThanhToan?.ToString("dd/MM/yyyy"),
+            ghiChu = phieuXuat.GhiChu,
+            chiTietPhieuXuats = phieuXuat.ChiTietPhieuXuats.Select(c => new
+            {
+                id = c.Id,
+                soPhieu = c.SoPhieu,
+                maSanPham = c.Ma_sanpham,
+                tenSanPham = c.Danhmuc.Ten_danhmuc, // Ánh xạ tên danh mục từ đối tượng Danhmuc
+                soLuong = c.SoLuong,
+                donGia = c.DonGia,
+                donViTinh = c.DonViTinh,
+                thanhTien = c.ThanhTien
+            })
+        });
+    }
+
+    return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ" });
+}
+
+
+        // GET: /api/PhieuNhap/XemPhieuNhap?soPhieu={soPhieu}
+        [HttpGet("XemPhieuXuat")]
+        public async Task<IActionResult> XemPhieuXuat([FromQuery] string soPhieu)
+        {
+            var phieuXuat = await _context.PhieuXuats
+                .Include(p => p.ChiTietPhieuXuats) // Đảm bảo rằng bạn cũng bao gồm chi tiết phiếu nhập
+                    .ThenInclude(c => c.Danhmuc) // Bao gồm Danhmuc trong chi tiết phiếu nhập
+                .FirstOrDefaultAsync(p => p.SoPhieu == soPhieu);
+
+            if (phieuXuat == null)
+            {
+                return NotFound(new { success = false, message = "Phiếu nhập không tìm thấy" });
+            }
+
+            return Ok(new
+            {
+                success = true,
+                soPhieu = phieuXuat.SoPhieu,
+                ngayPhieu = phieuXuat.NgayPhieu.ToString("yyyy-MM-dd"),
+                tenKhachHang = phieuXuat.Khachhang,
+                tenNVKD = phieuXuat.NhanVien,
+                tongTien = phieuXuat.TongTien,
+                noCu = phieuXuat.NoCu,
+                thanhToan = phieuXuat.ThanhToan,
+                conLai = phieuXuat.ConLai,
+                hanThanhToan = phieuXuat.HanThanhToan?.ToString("yyyy-MM-dd"),
+                ghiChu = phieuXuat.GhiChu,
+                chiTietPhieuXuats = phieuXuat.ChiTietPhieuXuats.Select(c => new
+                {
+                    id = c.Id,
+                    soPhieu = c.SoPhieu,
+                    maSanPham = c.Ma_sanpham,
+                    tenSanPham = c.Danhmuc?.Ten_danhmuc, // Ánh xạ tên danh mục từ đối tượng Danhmuc
+                    soLuong = c.SoLuong,
+                    donGia = c.DonGia,
+                    donViTinh = c.DonViTinh,
+                    thanhTien = c.ThanhTien
+                })
+            });
+        }
+
+    private string GenerateSoPhieu()
+{
+    var currentDate = DateTime.Now;
+    var yearMonthPrefix = $"{currentDate:yyyyMM}"; // Tạo tiền tố YYYYMM
+
+    // Tìm mã số phiếu mới nhất trong tháng và năm hiện tại
+    var lastPhieuXuat = _context.PhieuXuats
+        .Where(p => p.SoPhieu.StartsWith($"PX-{yearMonthPrefix}"))
+        .OrderByDescending(p => p.SoPhieu)
+        .FirstOrDefault();
+
+    if (lastPhieuXuat != null)
+    {
+        var lastNumberPart = lastPhieuXuat.SoPhieu.Substring(8); // Lấy phần số sau tiền tố YYYYMM
+        if (int.TryParse(lastNumberPart, out int lastNumber))
+        {
+            // Tăng số lên 1 và định dạng lại thành 4 chữ số
+            var newNumber = (lastNumber + 1) % 10000; // Đảm bảo không vượt quá 9999
+            return $"PX-{yearMonthPrefix}{newNumber:D4}";
+        }
+    }
+
+    // Nếu không có phiếu nhập nào trong tháng hiện tại, bắt đầu từ 0001
+    return $"PX-{yearMonthPrefix}0001";
+}
+
+
+    }
+}

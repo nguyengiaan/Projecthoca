@@ -27,7 +27,7 @@
         <i class="fas fa-search"></i> Tìm danh mục
     </span>
     <span class="text-primary ml-3" id="printPhieuNhapBtn" title="In phiếu nhập" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
-    <i class="fas fa-print"></i> In phiếu nhập
+    <i class="fas fa-print"></i> In phiếu xuất
 </span>
 </div>
 
@@ -55,7 +55,7 @@
                                     <th>Số tiền</th>
                                 </tr>
                             </thead>
-                            <tbody id ="dsPhieu">
+                            <tbody>
                                 <!-- Dữ liệu sẽ được nạp ở đây -->
                             </tbody>
                         </table>
@@ -195,8 +195,8 @@
                     <th>Mã sản phẩm</th>
                     <th>Tên sản phẩm</th>
                     <th>Đơn vị tính</th>
-                    <th>Số lượng nhập</th>
-                    <th>Đơn giá nhập</th>
+                    <th>Số lượng xuất</th>
+                    <th>Đơn giá xuất</th>
                     <th>Thành tiền</th>
                     <th>Chọn</th>
                 </tr>
@@ -217,10 +217,11 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                 <!-- Thêm thanh tìm kiếm -->
+                <!-- Thêm thanh tìm kiếm -->
                 <input type="text" id="searchCategoryInput" class="form-control" placeholder="Tìm kiếm tên danh mục...">
                 
                 <br> <!-- Khoảng cách giữa ô tìm kiếm và bảng -->
+                
                 <table class="table table-hover">
                     <thead>
                         <tr>
@@ -228,7 +229,7 @@
                             <th>Tên danh mục</th>
                             <th>Đơn vị tính</th>
                             <th>Số lượng kho</th>
-                            <th>Đơn giá nhập cuối</th>
+                            <th>Đơn giá bán</th>
                             <th>Chọn</th>
                         </tr>
                     </thead>
@@ -242,10 +243,11 @@
 </div>
 
 
+
 <!-- In phiếu nhập -->
 <div id="printablePhieuNhap" class="print-container ">
     <div class="print-header">
-        <h2>Phiếu Nhập Kho</h2>
+        <h2>Phiếu Xuất Kho</h2>
         <p>Ngày: <span id="printNgayPhieu"></span></p>
     </div>
     <div class="print-body">
@@ -313,7 +315,7 @@
             });
 
             $('#addPhieuNhapBtn').on('click', function() {
-            ThemPhieuNhap();
+            ThemPhieuXuat();
             });
 
             // Khi popup hiển thị, tải danh sách danh mục
@@ -321,7 +323,7 @@
                 danhsachdanhmucModels(1, 10);
             });
 
-                   // Bắt sự kiện khi nhập dữ liệu vào thanh tìm kiếm
+                    // Bắt sự kiện khi nhập dữ liệu vào thanh tìm kiếm
             $('#searchCategoryInput').on('keyup', function() {
                 var searchValue = normalizeString($(this).val()); // Chuẩn hóa chuỗi nhập vào
 
@@ -341,6 +343,7 @@
                     $(this).toggle(rowText.indexOf(searchValue) > -1); // Hiển thị những hàng có chuỗi khớp với giá trị tìm kiếm
                 });
             });
+
         @* $('#printPhieuNhapBtn').on('click', function() {
                 preparePhieuNhapForPrinting();
 
@@ -361,6 +364,13 @@
             });
 });
 
+
+function normalizeString(str) {
+        // Loại bỏ dấu tiếng Việt
+        str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        // Chuyển thành chữ thường và loại bỏ khoảng trắng thừa
+        return str.toLowerCase().replace(/\s+/g, ' ').trim();
+    }
 
 
     $(document).on('change', '.item-checkbox', function() {
@@ -460,7 +470,7 @@ $(document).on('change', '.item-checkbox', function() {
         var tenDanhMuc = row.find('td:eq(1)').text();
         var donViTinh = row.find('td:eq(2)').text();
         var soluong = row.find('td:eq(3)').text();
-        var gianhap = row.find('td:eq(4)').text(); 
+        var giaban = row.find('td:eq(4)').text(); 
 
         // Thêm danh mục vào bảng chính
         var newRow = `<tr data-id="${maDanhMuc}">
@@ -468,7 +478,7 @@ $(document).on('change', '.item-checkbox', function() {
             <td>${tenDanhMuc}</td>
             <td>${donViTinh}</td>
             <td><input type="number" class="form-control quantity" value="0" /></td>
-            <td><input type="number" class="form-control unit-price" value="0" /></td>
+            <td><input type="number" class="form-control unit-price" value="${giaban}" /></td>
             <td class="item-total">0</td>
             <td><input type="checkbox" class="item-checkbox" data-id="${maDanhMuc}" /></td>
         </tr>`;
@@ -488,7 +498,7 @@ $(document).on('change', '.item-checkbox', function() {
             }).data('selected-phieu', soPhieu);
 
             $.ajax({
-                url: `/api/PhieuNhap/XemPhieuNhap?soPhieu=${soPhieu}`,
+                url: `/api/PhieuXuat/XemPhieuXuat?soPhieu=${soPhieu}`,
                 type: 'GET',
                 success: function(response) {
                     console.log(response);
@@ -606,7 +616,7 @@ function danhsachdanhmucModels(page, pagesize) {
                         <td>${value.ten_danhmuc}</td>
                         <td>${value.donvitinh}</td>
                         <td>${value.soluong}</td>
-                        <td>${value.gianhap}</td>
+                        <td>${value.gia}</td>
                         <td><span class="select-category text-primary" data-id="${value.ma_danhmuc}" style="cursor: pointer;">Chọn</span></td>
                     </tr>`;
                     $('#categoryList').append(row);
@@ -627,29 +637,29 @@ function danhsachdanhmucModels(page, pagesize) {
 
 
  // Hàm cập nhật thông tin chi tiết phiếu nhập
-    function updateDetailView(chiTietPhieuNhap) {
-        $('input[name="soPhieu"]').val(chiTietPhieuNhap.soPhieu);
-        $('input[name="ngayPhieu"]').val(chiTietPhieuNhap.ngayPhieu);
+    function updateDetailView(chiTietPhieuXuat) {
+        $('input[name="soPhieu"]').val(chiTietPhieuXuat.soPhieu);
+        $('input[name="ngayPhieu"]').val(chiTietPhieuXuat.ngayPhieu);
        // Cập nhật thông tin NVKD
-        $('#customerDropdown').append('<option value="' + chiTietPhieuNhap.tenKhachHang + '">' + chiTietPhieuNhap.tenKhachHang + '</option>');
-        $('#customerDropdown').val(chiTietPhieuNhap.tenKhachHang).trigger('change');
-        $('textarea[name="ghiChu"]').val(chiTietPhieuNhap.ghiChu);
-        $('input[name="hanThanhToan"]').val(chiTietPhieuNhap.hanThanhToan);
+        $('#customerDropdown').append('<option value="' + chiTietPhieuXuat.tenKhachHang + '">' + chiTietPhieuXuat.tenKhachHang + '</option>');
+        $('#customerDropdown').val(chiTietPhieuXuat.tenKhachHang).trigger('change');
+        $('textarea[name="ghiChu"]').val(chiTietPhieuXuat.ghiChu);
+        $('input[name="hanThanhToan"]').val(chiTietPhieuXuat.hanThanhToan);
        // Cập nhật thông tin NVKD
-        $('#nhanvienDropdown').append('<option value="' + chiTietPhieuNhap.tenNVKD + '">' + chiTietPhieuNhap.tenNVKD + '</option>');
-        $('#nhanvienDropdown').val(chiTietPhieuNhap.tenNVKD).trigger('change');
+        $('#nhanvienDropdown').append('<option value="' + chiTietPhieuXuat.tenNVKD + '">' + chiTietPhieuXuat.tenNVKD + '</option>');
+        $('#nhanvienDropdown').val(chiTietPhieuXuat.tenNVKD).trigger('change');
         // Cập nhật thông tin thanh toán
-        $('input[name="tongTienHang"]').val(chiTietPhieuNhap.tongTienHang);
-        $('input[name="tongPhieu"]').val(chiTietPhieuNhap.tongTien);
-        $('input[name="noCu"]').val(chiTietPhieuNhap.noCu);
-        $('input[name="thanhToan"]').val(chiTietPhieuNhap.thanhToan);
-        $('input[name="conLai"]').val(chiTietPhieuNhap.conLai);
+        $('input[name="tongTienHang"]').val(chiTietPhieuXuat.tongTienHang);
+        $('input[name="tongPhieu"]').val(chiTietPhieuXuat.tongTien);
+        $('input[name="noCu"]').val(chiTietPhieuXuat.noCu);
+        $('input[name="thanhToan"]').val(chiTietPhieuXuat.thanhToan);
+        $('input[name="conLai"]').val(chiTietPhieuXuat.conLai);
 
         // Cập nhật bảng chi tiết sản phẩm
         var chiTietTableBody = $('#tblbody');
         chiTietTableBody.empty(); // Xóa dữ liệu cũ
 
-        chiTietPhieuNhap.chiTietPhieuNhaps.forEach(function(item) {
+        chiTietPhieuXuat.chiTietPhieuXuats.forEach(function(item) {
             var row = `<tr>
                 <td>${item.maSanPham}</td>
                 <td>${item.tenSanPham}</td>
@@ -671,7 +681,7 @@ var itemsPerPage = 6;
 
 function loadPhieuNhaps() {
     $.ajax({
-        url: '/api/PhieuNhap/LayTatCaPhieuNhap',
+        url: '/api/PhieuXuat/LayTatCaPhieuXuat',
         type: 'GET',
         success: function (response) {
             if (response.success) {
@@ -732,7 +742,7 @@ function updatePagination() {
     
 
 
-    function ThemPhieuNhap() {
+    function ThemPhieuXuat() {
     // Lấy dữ liệu từ các trường nhập liệu
     var soPhieu = $('input[name="soPhieu"]').val();
     var ngayPhieu = $('input[name="ngayPhieu"]').val();
@@ -747,7 +757,7 @@ function updatePagination() {
 
 
     // Tạo đối tượng chi tiết phiếu nhập từ bảng chỉ khi checkbox được chọn
-    var chiTietPhieuNhaps = [];
+    var chiTietPhieuXuats = [];
     $('#tblbody tr').each(function() {
         var row = $(this);
         if (row.find('.item-checkbox').is(':checked')) { // Kiểm tra checkbox
@@ -758,7 +768,7 @@ function updatePagination() {
             var donGia = parseFloat(row.find('.unit-price').val()) || 0;
             var thanhTien = soLuong * donGia;
 
-            chiTietPhieuNhaps.push({
+            chiTietPhieuXuats.push({
                 SoPhieu: soPhieu,
                 Ma_sanpham: maSanPham,
                 TenSanPham: tenSanPham,
@@ -770,7 +780,7 @@ function updatePagination() {
         }
     });
 
-    if (chiTietPhieuNhaps.length === 0) {
+    if (chiTietPhieuXuats.length === 0) {
         Swal.fire({
             title: "Thông báo",
             text: "Vui lòng chọn ít nhất một danh mục để thêm vào phiếu nhập.",
@@ -791,7 +801,7 @@ function updatePagination() {
         ConLai: conLai,
         HanThanhToan: hanThanhToan,
         GhiChu: ghiChu,
-        ChiTietPhieuNhaps: chiTietPhieuNhaps
+        ChiTietPhieuXuats: chiTietPhieuXuats
     };
 
     console.log(dataToSend);
@@ -799,14 +809,15 @@ function updatePagination() {
     // Gửi dữ liệu tới controller bằng AJAX
     $.ajax({
         type: "POST",
-        url: "/api/PhieuNhap/ThemPhieuNhap",
+        url: "/api/PhieuXuat/ThemPhieuXuat",
         contentType: "application/json", // Thêm contentType
         data: JSON.stringify(dataToSend), 
         success: function(response) {
+            console.log(response);
             if (response.success) {
                 Swal.fire({
                     title: "Thành công",
-                    text: "Phiếu nhập đã được thêm thành công!",
+                    text: "Phiếu Xuất đã được thêm thành công!",
                     icon: "success"
                 }).then(() => {
                     location.reload(); // Tải lại trang hoặc cập nhật giao diện theo yêu cầu

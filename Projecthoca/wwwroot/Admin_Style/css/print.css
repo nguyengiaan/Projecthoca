@@ -1,0 +1,16 @@
+.print-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+.print-body {
+    margin: 20px;
+}
+.print-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.print-table th, .print-table td {
+    border: 1px solid #000;
+    padding: 8px;
+    text-align: left;
+}
