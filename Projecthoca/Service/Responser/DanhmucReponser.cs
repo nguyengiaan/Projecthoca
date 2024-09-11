@@ -24,9 +24,10 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var totalItems = _context.Danhmuc.Count();
+                  var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var totalItems = _context.Danhmuc.Where(x=>x.Id==user.Id).Count();
                 var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
-                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+              
                 var dm = await _context.Danhmuc
                          .Select(x => new DanhmucVM
                          {

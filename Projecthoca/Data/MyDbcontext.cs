@@ -48,11 +48,18 @@ namespace Projecthoca.Data
         public DbSet<Danhsachhhkho> Danhsachhhkhos { get; set; }
 
         public DbSet <Khachhang> Khachhangs {get;set;}
+            
+        public DbSet <PhieuNhap> PhieuNhaps { get; set; }
+
+        public DbSet<PhieuXuat> PhieuXuats { get; set; }
+
+        public DbSet<ChiTietPhieuXuat> ChiTietPhieuXuats { get; set; }
+        public DbSet<ChiTietPhieuNhap> ChiTietPhieuNhaps { get; set; }
         #endregion
 
-        
-      
-  
+
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

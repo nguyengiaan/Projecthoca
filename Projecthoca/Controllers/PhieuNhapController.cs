@@ -130,6 +130,7 @@ public async Task<IActionResult> ThemPhieuNhap([FromBody] PhieuNhapVM model)
                 DonGia = chiTiet.DonGia,
                 ThanhTien = chiTiet.ThanhTien,
                 DonViTinh = chiTiet.DonViTinh,
+                Ngaynhap=DateTime.Now,
             });
 
             // Cập nhật Danhmuc trong cơ sở dữ liệu
