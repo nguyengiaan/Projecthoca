@@ -8,7 +8,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewData["Title"]</title>
-    <link href="~/css/baocaonhapxuatton.css" rel="stylesheet" />
+
     <style>
         /* Đặt tệp này trong thư mục wwwroot/css */
         body {
@@ -79,71 +79,7 @@
         
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.1/xlsx.full.min.js"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const tableBody = document.querySelector('#bangKeKhoTable tbody');
-            const fileInput = document.getElementById('fileInput');
-            const loadDataBtn = document.getElementById('loadDataBtn');
 
-            // Function to add a row to the table
-            const addRow = (item) => {
-                const tr = document.createElement('tr');
-
-                // Calculate the ending inventory
-                const tonCuoiKy = (item.TonDauKy || 0) + (item.NhapTrongKy || 0) - (item.XuatTrongKy || 0);
-
-                tr.innerHTML = `
-                    <td>${item.MaHang || ''}</td>
-                    <td>${item.TenHang || ''}</td>
-                    <td>${item.DVT || ''}</td>
-                    <td>${item.TonDauKy || ''}</td>
-                    <td>${item.NhapTrongKy || ''}</td>
-                    <td>${item.XuatTrongKy || ''}</td>
-                    <td>${tonCuoiKy}</td>
-                `;
-                tableBody.appendChild(tr);
-            };
-
-            // Function to handle file input and process the Excel file
-            const handleFile = (event) => {
-                const file = event.target.files[0];
-                if (!file) return;
-
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const sheetName = workbook.SheetNames[0];
-                    const sheet = workbook.Sheets[sheetName];
-                    const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
-
-                    tableBody.innerHTML = ''; // Clear existing rows
-                    // Skip the header row
-                    rows.slice(1).forEach(row => {
-                        if (row.length > 0) {
-                            // Map each row to an object with the appropriate keys
-                            const item = {
-                                MaHang: row[0] || '',
-                                TenHang: row[1] || '',
-                                DVT: row[2] || '',
-                                TonDauKy: Number(row[3]) || 0,
-                                NhapTrongKy: Number(row[4]) || 0,
-                                XuatTrongKy: Number(row[5]) || 0
-                            };
-                            addRow(item);
-                        }
-                    });
-                };
-                reader.readAsArrayBuffer(file);
-            };
-
-            loadDataBtn.addEventListener('click', () => {
-                fileInput.click(); // Trigger file input click
-            });
-
-            fileInput.addEventListener('change', handleFile);
-        });
-    </script>
 </head>
 <body>
     <div class="container">

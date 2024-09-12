@@ -25,7 +25,7 @@
         </div>
         
         <div class="filter-group">
-            <label for="productCode">Mã sản phẩm:</label>
+            <label for="productCode">Tìm kiếm</label>
             <input type="text" id="productCode" name="productCode" class="form-control">
         </div>
         
@@ -40,7 +40,7 @@
                 <tr>
                     <th>Mã sản phẩm</th>
                     <th>Tên sản phẩm</th>
-
+                    <th>Đơn vị tính</th>
                     @* @{
                         
                         var selectedDay = Convert.ToInt32(ViewData["SelectedDay"] ?? "31");
@@ -181,7 +181,7 @@ $(document).ready(function() {
           });
        });
     $('#reportBtn').on('click', generateReport);
- $('#printBtn').on('click', function() {
+    $('#printBtn').on('click', function() {
                     var printWindow = window.open('', '_blank');
                     printWindow.document.write('<html><head><title>Báo cáo tồn kho</title>');
                     printWindow.document.write('<style>table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid black; padding: 8px; text-align: left; }</style>');
@@ -336,7 +336,8 @@ function danhsachdanhmuc(page, pagesize, today) {
                         if (!productData[innerValue.ma_danhmuc]) {
                             productData[innerValue.ma_danhmuc] = {
                                 ten_danhmuc: innerValue.ten_danhmuc,
-                                tonKho: new Array(totalDays).fill('') 
+                                tonKho: new Array(totalDays).fill('') ,
+                                donvitinh :innerValue.donvitinh
                             };
                         }
                         var day = index; // Chỉ số mảng bắt đầu từ 0
@@ -346,9 +347,12 @@ function danhsachdanhmuc(page, pagesize, today) {
                 });
                 // Hiển thị dữ liệu
                 $.each(productData, function (ma_danhmuc, data) {
+                    console.log(data)
                     var str = `<tr>
                         <td>${ma_danhmuc}</td>
-                        <td>${data.ten_danhmuc}</td>`;
+                        <td>${data.ten_danhmuc}</td>
+                         <td>${data.donvitinh}</td>`
+                        ;
                     const list = data.tonKho.filter(item => item !== null && item !== undefined && item.toString().trim() !== "");
                     list.forEach(function(tonKho) {
                         str += `<td>${tonKho}</td>`;

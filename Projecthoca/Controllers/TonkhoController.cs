@@ -14,6 +14,7 @@ namespace Projecthoca.Controllers
         }
         [HttpPost]
         public async Task<IActionResult> TinhTonKhoNhieuNgay(int page, int pagesize, int endDate)
+
         {
             try
             {
@@ -24,6 +25,57 @@ namespace Projecthoca.Controllers
                 }
                  return Json(new { success = true, dsdm = data.dailyInventories, totalPages = data.totalpages, pageindex = page });
                 
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, messeger = ex.Message });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult>Tinhxuatnhapton(int page,int pagesize)
+        {
+            try
+            {
+                var data=   await _tonkho.Xuatnhapton(page,pagesize);
+                if(data.ds==null)
+                {
+                    return Json(new { success = false, messeger = "Không có dữ liệu" });
+                }
+                return Json(new { success = true, dsdm = data.ds, totalPages = data.totalpages, pageindex = page });
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, messeger = ex.Message });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> Danhsachnhpck(int page, int pagesize, string ma_hanghoa)
+        {
+            try
+            {
+                var data = await _tonkho.dspnck(page, pagesize, ma_hanghoa);
+                if (data.ds == null)
+                {
+                    return Json(new { success = false, messeger = "Không có dữ liệu" });
+                }
+                return Json(new { success = true, dsdm = data.ds, totalPages = data.totalpages, pageindex = page });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, messeger = ex.Message });
+            }
+        }
+         [HttpPost]
+        public async Task<IActionResult> Danhsachxtck(int page, int pagesize, string ma_hanghoa)
+        {
+            try
+            {
+                var data = await _tonkho.dspxck(page, pagesize, ma_hanghoa);
+                if (data.ds == null)
+                {
+                    return Json(new { success = false, messeger = "Không có dữ liệu" });
+                }
+                return Json(new { success = true, dsdm = data.ds, totalPages = data.totalpages, pageindex = page });
             }
             catch (Exception ex)
             {
