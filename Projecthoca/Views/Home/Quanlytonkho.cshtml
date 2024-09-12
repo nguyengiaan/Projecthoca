@@ -171,242 +171,244 @@
         background-color: rgba(0,0,0,.075);
     }
 </style>
-
-<script>
-$(document).ready(function() {
-    $('#productCode').on('keyup', function() {
-          var value = $(this).val().toLowerCase();
-            $("#tblbody tr").filter(function() {
-                   $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-          });
-       });
-    $('#reportBtn').on('click', generateReport);
-    $('#printBtn').on('click', function() {
-                    var printWindow = window.open('', '_blank');
-                    printWindow.document.write('<html><head><title>Báo cáo tồn kho</title>');
-                    printWindow.document.write('<style>table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid black; padding: 8px; text-align: left; }</style>');
-                    printWindow.document.write('</head><body>');
-                    printWindow.document.write('<h1>Báo cáo tồn kho</h1>');
-                    printWindow.document.write($('.table').prop('outerHTML'));
-                    printWindow.document.write('</body></html>');
-                    printWindow.document.close();
-                    printWindow.print();
+@section Scripts {
+    <script>
+        $(function () {
+            $('#productCode').on('keyup', function () {
+                var value = $(this).val().toLowerCase();
+                $("#tblbody tr").filter(function () {
+                    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
                 });
-    function generateReport() {
-        console.log('Generating report...');
-        // Implement report generation logic here
-    }
-
-    function printReport() {
-        console.log('Printing report...');
-        // Implement print functionality here
-    }
-
-    // Add event listener for select tag
-    $('#toDate').on('change', function() {
-        var selectedDay = parseInt(selectedValue);
-
-        // Get table and header row
-        var table = $('.table');
-        var headerRow = table.find('thead tr');
-
-        // Remove all current date columns
-        headerRow.find('th:nth-child(n+5)').remove();
-
-        // Add new columns based on selected day
-        for (var i = 1; i <= selectedDay; i++) {
-            var th = $('<th>').text(i);
-            headerRow.append(th);
-        }
-        danhsachdanhmuc(1, 10, selectedDay);
-        // Call function to filter data (if needed)
-        filterData(selectedDay);
-    });
-
-    // Function to get last day of the current month
-    function getLastDayOfCurrentMonth() {
-        var today = new Date();
-        return today.getDate();
-    }
-
-    // Function to update table with default days
-    function updateTableWithDefaultDays() {
-        var lastDay = getLastDayOfCurrentMonth();
-        $('#toDate').val(lastDay);
-       danhsachdanhmuc(1, 10, lastDay);
-        // Update table
-        updateTable(lastDay);
-    }
-
-    // Function to update the table
-    function updateTable(selectedDay) {
-        var table = $('.table');
-        var headerRow = table.find('thead tr');
-
-        // Remove all current date columns
-        headerRow.find('th:nth-child(n+5)').remove();
-
-        // Add new columns based on selected day
-        for (var i = 1; i <= selectedDay; i++) {
-            var th = $('<th>').text(i);
-            headerRow.append(th);
-        }
-    }
-    // Call function to set the current month when the page loads
-    setCurrentMonth();
-    // Add event listener for month input
-    $('#fromDate').on('change', function() {
-        var selectedMonth = $(this).val();
-        console.log('Selected month:', selectedMonth);
-        // You can add logic to handle the new month here
-        // updateDataBasedOnMonth(selectedMonth);
-    });
-    // Function to set the current month
-    function setCurrentMonth() {
-        var today = new Date();
-        var year = today.getFullYear();
-        var month = (today.getMonth() + 1).toString().padStart(2, '0');
-        var currentMonth = year + '-' + month;
-
-        $('#fromDate').val(currentMonth);
-    }
-    // Function to update the number of days in the month
-    function updateDaysInMonth() {
-        var fromDate = $('#fromDate').val();
-        var toDateSelect = $('#toDate');
-
-        if (fromDate) {
-            var year = parseInt(fromDate.split('-')[0]);
-            var month = parseInt(fromDate.split('-')[1]);
-            var daysInMonth = new Date(year, month, 0).getDate();
-
-            // Clear all current options
-            toDateSelect.empty();
-
-            // Add new options based on the number of days in the month
-            for (var i = 1; i <= daysInMonth; i++) {
-                var option = $('<option>').val(i).text(i);
-                toDateSelect.append(option);
-            }
-
-            // Update table with the new days
-            updateTableWithDefaultDays();
-        }
-    }
-
-    // Add event listener for month input to update days in month
-    $('#fromDate').on('change', function() {
-        updateDaysInMonth();
-    });
-
-
-    // Call updateDaysInMonth when the page loads
-    updateDaysInMonth();
-
-    // Fetch inventory data using AJAX
-    function fetchInventoryData() {
-        $.ajax({
-            url: '/Home/GetInventoryData',
-            type: 'GET',
-            success: function(response) {
-            },
-            error: function(xhr, status, error) {
-                console.error("Error fetching data:", error);
-                alert("An error occurred while fetching the data. Please try again later.");
-            }
-        });
-    }
-});
-
-function danhsachdanhmuc(page, pagesize, today) {
-    $.ajax({
-        type: "POST",
-        url: "/Tonkho/TinhTonKhoNhieuNgay",
-        data: { page: page, pagesize: pagesize, endDate: today },
-        success: function (response) {
-            $('#tblbody').empty();
-            console.log(response.dsdm);
-            if (response.success) {
-                var productData = {};
-                var totalDays = today; // Sử dụng trực tiếp tham số today
-
-                // Nhóm dữ liệu theo sản phẩm
-                $.each(response.dsdm, function (index, value) {
-                    $.each(value, function(innerIndex, innerValue) {
-                        if (!productData[innerValue.ma_danhmuc]) {
-                            productData[innerValue.ma_danhmuc] = {
-                                ten_danhmuc: innerValue.ten_danhmuc,
-                                tonKho: new Array(totalDays).fill('') ,
-                                donvitinh :innerValue.donvitinh
-                            };
-                        }
-                        var day = index; // Chỉ số mảng bắt đầu từ 0
-                        productData[innerValue.ma_danhmuc].tonKho[day] = innerValue.soLuongTon;
-                 
-                    });
-                });
-                // Hiển thị dữ liệu
-                $.each(productData, function (ma_danhmuc, data) {
-                    console.log(data)
-                    var str = `<tr>
-                        <td>${ma_danhmuc}</td>
-                        <td>${data.ten_danhmuc}</td>
-                         <td>${data.donvitinh}</td>`
-                        ;
-                    const list = data.tonKho.filter(item => item !== null && item !== undefined && item.toString().trim() !== "");
-                    list.forEach(function(tonKho) {
-                        str += `<td>${tonKho}</td>`;
-                    });
-                    
-                    str += '</tr>';
-                    $('#tblbody').append(str);
-
-                    // Thêm chức năng tìm kiếm
-         
-                });
-                
-                updatePagination(response.totalPages, today); // Sử dụng tham số page thay vì response.pageindex
-            } else {
-                Swal.fire({
-                    title: "Thông báo lỗi",
-                    text: response.message,
-                    icon: "error"
-                });
-            }
-        },
-        error: function(xhr, status, error) {
-            console.error("Lỗi khi tải dữ liệu:", error);
-            Swal.fire({
-                title: "Lỗi",
-                text: "Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại sau.",
-                icon: "error"
             });
-        }
-    });
-}
-
-function updatePagination(totalPages, currentPage,today) {
-
-    if (totalPages > 0) {
-        var str = `<nav aria-label="Page navigation example">
-                                                                                            <ul class="pagination">`;
-        if (totalPages > 1) {
-            if (currentPage > 1) {
-                str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachdanhmuc(${currentPage - 1}, 10,${today})">Previous</a></li>`;
+            $('#reportBtn').on('click', generateReport);
+            $('#printBtn').on('click', function () {
+                var printWindow = window.open('', '_blank');
+                printWindow.document.write('<html><head><title>Báo cáo tồn kho</title>');
+                printWindow.document.write('<style>table { border-collapse: collapse; width: 100%; } th, td { border: 1px solid black; padding: 8px; text-align: left; }</style>');
+                printWindow.document.write('</head><body>');
+                printWindow.document.write('<h1>Báo cáo tồn kho</h1>');
+                printWindow.document.write($('.table').prop('outerHTML'));
+                printWindow.document.write('</body></html>');
+                printWindow.document.close();
+                printWindow.print();
+            });
+            function generateReport() {
+                console.log('Generating report...');
+                // Implement report generation logic here
             }
-            for (let i = 1; i <= totalPages; i++) {
-                if (currentPage === i) {
-                    str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
-                } else {
-                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachdanhmuc(${currentPage - 1}, 10,${today})">${i}</a></li>`;
+
+            function printReport() {
+                console.log('Printing report...');
+                // Implement print functionality here
+            }
+
+            // Add event listener for select tag
+            $('#toDate').on('change', function () {
+                var selectedDay = parseInt($(this).val());
+
+                // Get table and header row
+                var table = $('.table');
+                var headerRow = table.find('thead tr');
+
+                // Remove all current date columns
+                headerRow.find('th:nth-child(n+5)').remove();
+
+                // Add new columns based on selected day
+                for (var i = 1; i <= selectedDay; i++) {
+                    var th = $('<th>').text(i);
+                    headerRow.append(th);
+                }
+                danhsachdanhmuc(1, 10, selectedDay);
+                // Call function to filter data (if needed)
+                filterData(selectedDay);
+            });
+
+            // Function to get last day of the current month
+            function getLastDayOfCurrentMonth() {
+                var today = new Date();
+                return today.getDate();
+            }
+
+            // Function to update table with default days
+            function updateTableWithDefaultDays() {
+                var lastDay = getLastDayOfCurrentMonth();
+                $('#toDate').val(lastDay);
+                danhsachdanhmuc(1, 10, lastDay);
+                // Update table
+                updateTable(lastDay);
+            }
+
+            // Function to update the table
+            function updateTable(selectedDay) {
+                var table = $('.table');
+                var headerRow = table.find('thead tr');
+
+                // Remove all current date columns
+                headerRow.find('th:nth-child(n+5)').remove();
+
+                // Add new columns based on selected day
+                for (var i = 1; i <= selectedDay; i++) {
+                    var th = $('<th>').text(i);
+                    headerRow.append(th);
                 }
             }
-            if (currentPage < totalPages) {
-                str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachdanhmuc(${currentPage - 1}, 10,${today})">Next</a></li>`;
+            // Call function to set the current month when the page loads
+            setCurrentMonth();
+            // Add event listener for month input
+            $('#fromDate').on('change', function () {
+                var selectedMonth = $(this).val();
+                console.log('Selected month:', selectedMonth);
+                // You can add logic to handle the new month here
+                // updateDataBasedOnMonth(selectedMonth);
+            });
+            // Function to set the current month
+            function setCurrentMonth() {
+                var today = new Date();
+                var year = today.getFullYear();
+                var month = (today.getMonth() + 1).toString().padStart(2, '0');
+                var currentMonth = year + '-' + month;
+
+                $('#fromDate').val(currentMonth);
+            }
+            // Function to update the number of days in the month
+            function updateDaysInMonth() {
+                var fromDate = $('#fromDate').val();
+                var toDateSelect = $('#toDate');
+
+                if (fromDate) {
+                    var year = parseInt(fromDate.split('-')[0]);
+                    var month = parseInt(fromDate.split('-')[1]);
+                    var daysInMonth = new Date(year, month, 0).getDate();
+
+                    // Clear all current options
+                    toDateSelect.empty();
+
+                    // Add new options based on the number of days in the month
+                    for (var i = 1; i <= daysInMonth; i++) {
+                        var option = $('<option>').val(i).text(i);
+                        toDateSelect.append(option);
+                    }
+
+                    // Update table with the new days
+                    updateTableWithDefaultDays();
+                }
+            }
+
+            // Add event listener for month input to update days in month
+            $('#fromDate').on('change', function () {
+                updateDaysInMonth();
+            });
+
+            // Call updateDaysInMonth when the page loads
+            updateDaysInMonth();
+
+            // Fetch inventory data using AJAX
+            function fetchInventoryData() {
+                $.ajax({
+                    url: '/Home/GetInventoryData',
+                    type: 'GET',
+                    success: function (response) {
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching data:", error);
+                        alert("An error occurred while fetching the data. Please try again later.");
+                    }
+                });
+            }
+        });
+
+        function danhsachdanhmuc(page, pagesize, today) {
+            $.ajax({
+                type: "POST",
+                url: "/Tonkho/TinhTonKhoNhieuNgay",
+                data: { page: page, pagesize: pagesize, endDate: today },
+                success: function (response) {
+                    $('#tblbody').empty();
+                    console.log(response.dsdm);
+                    if (response.success) {
+                        var productData = {};
+                        var totalDays = today; // Sử dụng trực tiếp tham số today
+
+                        // Nhóm dữ liệu theo sản phẩm
+                        $.each(response.dsdm, function (index, value) {
+                            $.each(value, function (innerIndex, innerValue) {
+                                if (!productData[innerValue.ma_danhmuc]) {
+                                    productData[innerValue.ma_danhmuc] = {
+                                        ten_danhmuc: innerValue.ten_danhmuc,
+                                        tonKho: new Array(totalDays).fill(''),
+                                        donvitinh: innerValue.donvitinh
+                                    };
+                                }
+                                var day = index; // Chỉ số mảng bắt đầu từ 0
+                                productData[innerValue.ma_danhmuc].tonKho[day] = innerValue.soLuongTon;
+
+                            });
+                        });
+                        // Hiển thị dữ liệu
+                        $.each(productData, function (ma_danhmuc, data) {
+                            console.log(data)
+                            var str = `<tr>
+                                    <td>${ma_danhmuc}</td>
+                                    <td>${data.ten_danhmuc}</td>
+                                     <td>${data.donvitinh}</td>`
+                                ;
+                            const list = data.tonKho.filter(item => item !== null && item !== undefined && item.toString().trim() !== "");
+                            list.forEach(function (tonKho) {
+                                str += `<td>${tonKho}</td>`;
+                            });
+
+                            str += '</tr>';
+                            $('#tblbody').append(str);
+
+                            // Thêm chức năng tìm kiếm
+
+                        });
+
+                        updatePagination(response.totalPages, today); // Sử dụng tham số page thay vì response.pageindex
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Lỗi khi tải dữ liệu:", error);
+                    Swal.fire({
+                        title: "Lỗi",
+                        text: "Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại sau.",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+
+        function updatePagination(totalPages, currentPage, today) {
+
+            if (totalPages > 0) {
+                var str = `<nav aria-label="Page navigation example">
+                                                                                                        <ul class="pagination">`;
+                if (totalPages > 1) {
+                    if (currentPage > 1) {
+                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachdanhmuc(${currentPage - 1}, 10,${today})">Previous</a></li>`;
+                    }
+                    for (let i = 1; i <= totalPages; i++) {
+                        if (currentPage === i) {
+                            str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
+                        } else {
+                            str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachdanhmuc(${currentPage - 1}, 10,${today})">${i}</a></li>`;
+                        }
+                    }
+                    if (currentPage < totalPages) {
+                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachdanhmuc(${currentPage - 1}, 10,${today})">Next</a></li>`;
+                    }
+                }
+                str += `</ul></nav>`;
+                $('#pagination').html(str);
             }
         }
-        str += `</ul></nav>`;
-        $('#pagination').html(str);
-    }
+    </script>
+
+
 }
-</script>

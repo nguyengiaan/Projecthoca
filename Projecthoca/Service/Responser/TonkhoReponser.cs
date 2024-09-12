@@ -238,5 +238,18 @@ namespace Projecthoca.Service.Responser
            }
 
          }
-}
+
+        public async Task<(List<long> ds, long dt, long tongvon, long loinhuan)> baocaodt()
+        {
+           try
+           {
+               var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                return (null,0,0,0);
+           }
+           catch(Exception ex)
+           {
+                return (null,0,0,0);
+           }
+        }
+    }
 }

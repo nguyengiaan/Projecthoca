@@ -1,0 +1,116 @@
+@{
+    ViewData["Title"] = "Báo cáo doanh thu";
+}
+
+<div class="container-fluid mt-4">
+
+
+    <div class="card shadow-lg mb-4">
+        <div class="card-body">
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="startDate" class="form-label">Ngày bắt đầu:</label>
+                        <input type="date" id="startDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-01")" disabled>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="endDate" class="form-label">Ngày kết thúc:</label>
+                        <input type="date" id="endDate" class="form-control" value="@DateTime.Now.AddDays(-(DateTime.Now.Day)).AddMonths(1).ToString("yyyy-MM-dd")" disabled>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="startDate" class="form-label">Doanh thu</label>
+                        <select class="form-control">
+                            <option>Doanh thu theo ngày</option>
+                            <option>Tổng doanh thu theo tháng</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-gradient-info text-white shadow-lg rounded-lg">
+                <div class="card-body">
+                    <h5 class="card-title">Doanh thu</h5>
+                    <p class="card-text display-6" id="totalRevenue">0 VNĐ</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-gradient-primary text-white shadow-lg rounded-lg">
+                <div class="card-body">
+                    <h5 class="card-title">Tổng vốn (trừ vốn hàng trả)</h5>
+                    <p class="card-text display-6" id="totalCost">0 VNĐ</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card bg-gradient-warning text-white shadow-lg rounded-lg">
+                <div class="card-body">
+                    <h5 class="card-title">Lợi nhuận</h5>
+                    <p class="card-text display-6" id="profit">0 VNĐ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card shadow-lg mb-4">
+        <div class="card-body">
+
+            <div class="row">
+                <div class="col-12">
+                    <canvas id="revenueChart" style="height: 400px;"></canvas>
+                </div>
+            
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+                    document.addEventListener('DOMContentLoaded', function() {
+                        var ctx = document.getElementById('revenueChart').getContext('2d');
+                        var myChart = new Chart(ctx, {
+                            type: 'bar',
+                            data: {
+                                labels: Array.from({length: 30}, (_, i) => `Ngày ${i + 1}`),
+                                datasets: [{
+                                    label: 'Doanh thu (VNĐ)',
+                                    data: [12000000, 19000000, 3000000, 5000000, 2000000, 3000000],
+                                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                                    borderColor: 'rgba(75, 192, 192, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        title: {
+                                            display: true,
+                                            text: 'Doanh thu (VNĐ)'
+                                        }
+                                    },
+                                    x: {
+                                        title: {
+                                            display: true,
+                                            text: 'Tháng'
+                                        }
+                                    }
+                                }
+                            }
+                        });
+                    });
+        </script>
+  
+}

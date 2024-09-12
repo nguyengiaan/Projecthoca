@@ -18,6 +18,9 @@ namespace Projecthoca.Models.Enitity
     public DateTime? HanThanhToan { get; set; }
     public string GhiChu { get; set; }
 
+    public string Id {get;set;}
+
+    public ApplicationUser nguoidung{get;set;}
     // Navigation property for ChiTietPhieuNhap
     public ICollection<ChiTietPhieuNhap> ChiTietPhieuNhaps { get; set; }
 }

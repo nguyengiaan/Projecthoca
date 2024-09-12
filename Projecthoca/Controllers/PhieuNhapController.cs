@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Projecthoca.Data;
@@ -11,10 +13,13 @@ namespace Projecthoca.Controllers
     public class PhieuNhapController : ControllerBase
     {
         private readonly MyDbcontext _context;
+         private readonly UserManager<ApplicationUser> _userManager;
 
-        public PhieuNhapController(MyDbcontext context)
+
+        public PhieuNhapController(MyDbcontext context,UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager=userManager;
         }
 
 
@@ -80,6 +85,7 @@ public async Task<IActionResult> ThemPhieuNhap([FromBody] PhieuNhapVM model)
 {
     if (ModelState.IsValid)
     {
+        var user = await _userManager.GetUserAsync(User);
         // Sinh số phiếu tự động
         model.SoPhieu = GenerateSoPhieu();
 
@@ -101,6 +107,7 @@ public async Task<IActionResult> ThemPhieuNhap([FromBody] PhieuNhapVM model)
             ConLai = model.ConLai,
             HanThanhToan = model.HanThanhToan,
             GhiChu = model.GhiChu,
+            Id=user.Id,
             ChiTietPhieuNhaps = new List<ChiTietPhieuNhap>()
         };
 
@@ -131,6 +138,7 @@ public async Task<IActionResult> ThemPhieuNhap([FromBody] PhieuNhapVM model)
                 ThanhTien = chiTiet.ThanhTien,
                 DonViTinh = chiTiet.DonViTinh,
                 Ngaynhap=DateTime.Now,
+
             });
 
             // Cập nhật Danhmuc trong cơ sở dữ liệu
@@ -214,29 +222,36 @@ public async Task<IActionResult> ThemPhieuNhap([FromBody] PhieuNhapVM model)
 
     private string GenerateSoPhieu()
 {
-    var currentDate = DateTime.Now;
-    var yearMonthPrefix = $"{currentDate:yyyyMM}"; // Tạo tiền tố YYYYMM
+            try
+            {
+                var currentDate = DateTime.Now;
+                var yearMonthPrefix = $"{currentDate:yyyyMM}"; // Tạo tiền tố YYYYMM
 
-    // Tìm mã số phiếu mới nhất trong tháng và năm hiện tại
-    var lastPhieuNhap = _context.PhieuNhaps
-        .Where(p => p.SoPhieu.StartsWith($"PN-{yearMonthPrefix}"))
-        .OrderByDescending(p => p.SoPhieu)
-        .FirstOrDefault();
+                // Tìm mã số phiếu mới nhất trong tháng và năm hiện tại
+                var lastPhieuNhap = _context.PhieuNhaps
+                    .Where(p => p.SoPhieu.StartsWith($"PN-{yearMonthPrefix}"))
+                    .OrderByDescending(p => p.SoPhieu)
+                    .FirstOrDefault();
 
-    if (lastPhieuNhap != null)
-    {
-        var lastNumberPart = lastPhieuNhap.SoPhieu.Substring(8); // Lấy phần số sau tiền tố YYYYMM
-        if (int.TryParse(lastNumberPart, out int lastNumber))
-        {
-            // Tăng số lên 1 và định dạng lại thành 4 chữ số
-            var newNumber = (lastNumber + 1) % 10000; // Đảm bảo không vượt quá 9999
-            return $"PN-{yearMonthPrefix}{newNumber:D4}";
+                if (lastPhieuNhap != null)
+                {
+                    var lastNumberPart = lastPhieuNhap.SoPhieu.Substring(8); // Lấy phần số sau tiền tố YYYYMM
+                    if (int.TryParse(lastNumberPart, out int lastNumber))
+                    {
+                        // Tăng số lên 1 và định dạng lại thành 4 chữ số
+                        var newNumber = (lastNumber + 1) % 10000; // Đảm bảo không vượt quá 9999
+                        return $"PN-{yearMonthPrefix}{newNumber:D4}";
+                    }
+                }
+
+                // Nếu không có phiếu nhập nào trong tháng hiện tại, bắt đầu từ 0001
+                return $"PN-{yearMonthPrefix}0001";
+            }
+            catch (Exception ex)
+            {
+                return "";
+            }
         }
-    }
-
-    // Nếu không có phiếu nhập nào trong tháng hiện tại, bắt đầu từ 0001
-    return $"PN-{yearMonthPrefix}0001";
-}
 
 
     }

@@ -254,6 +254,7 @@ namespace Projecthoca.Data
             modelBuilder.Entity<Hoadonxuatban>().Property(e => e.Ma_phieuxuatkho).HasMaxLength(100);
             modelBuilder.Entity<Hoadonxuatban>().HasOne(x => x.Danhmuc).WithMany(x => x.Hoadonxuatbans).HasForeignKey(x => x.Ma_danhmuc);
             modelBuilder.Entity<Hoadonxuatban>().HasOne(x => x.Phieuxuatkho).WithMany(x => x.Hoadonxuatbans).HasForeignKey(x => x.Ma_phieuxuatkho);
+            
 
         }
 

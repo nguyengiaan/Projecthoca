@@ -9,9 +9,10 @@ namespace Projecthoca.Service.Interface
         public Task<(List<XuatnhaptonVM>ds,int totalpages)> Xuatnhapton(int page, int pagesize); 
 
         public Task<(List<ChiTietPhieuNhapVM>ds, int totalpages)>dspnck(int page, int pagesize,string ma_hanghoa);
-
         
         public Task<(List<ChiTietPhieuXuatVM>ds, int totalpages)>dspxck(int page, int pagesize,string ma_hanghoa);
+        // báo cáo doanh thu
+        public Task<(List<long>ds,long dt,long tongvon,long loinhuan)> baocaodt();
 
     }
 }

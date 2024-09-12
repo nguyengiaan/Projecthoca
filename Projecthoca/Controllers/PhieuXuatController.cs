@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Projecthoca.Data;
@@ -12,9 +13,11 @@ namespace Projecthoca.Controllers
     {
         private readonly MyDbcontext _context;
 
-        public PhieuXuatController(MyDbcontext context)
+      private readonly UserManager<ApplicationUser> _userManager;
+        public PhieuXuatController(MyDbcontext context,UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager=userManager;
         }
 
 
@@ -82,6 +85,7 @@ public async Task<IActionResult> ThemPhieuXuat([FromBody] PhieuXuatVM model)
             {
                 if (ModelState.IsValid)
                 {
+                      var user = await _userManager.GetUserAsync(User);
                     // Sinh số phiếu tự động
                     model.SoPhieu = GenerateSoPhieu();
 
@@ -103,7 +107,7 @@ public async Task<IActionResult> ThemPhieuXuat([FromBody] PhieuXuatVM model)
                         ConLai = model.ConLai,
                         HanThanhToan = model.HanThanhToan,
                         GhiChu = model.GhiChu,
-                        
+                        Id=user.Id,
                         ChiTietPhieuXuats = new List<ChiTietPhieuXuat>()
                     };
 
