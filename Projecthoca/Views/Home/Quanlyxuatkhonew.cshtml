@@ -840,12 +840,13 @@ function danhsachdanhmucModels(page, pagesize) {
             var soLuong = item.soLuong;
             var giaban = item.donGia;
             var thanhTien = item.thanhTien;
+            
             var row = `<tr>
             <td>${maDanhMuc}</td>
             <td>${tenDanhMuc}</td>
             <td>${donViTinh}</td>
-            <td><input type="number" class="form-control quantity" value="${soLuong}" /></td>
-            <td><input type="number" class="form-control unit-price" value="${giaban}" /></td>
+            <td><input type="number" class="form-control quantity" disabled value="${soLuong}" /></td>
+            <td><input type="number" class="form-control unit-price" disabled value="${giaban}" /></td>
             <td class="item-total">${thanhTien}</td>
             <td><input type="checkbox" class="item-checkbox" checked disabled data-id="${maDanhMuc}" /></td>
             </tr>`;

@@ -2139,8 +2139,8 @@ function Themphieuxuat() {
         var tenSanPham = row.find('td:eq(1)').text();
         var donViTinh = row.find('td:eq(2)').text();
         var soLuong = parseFloat(row.find('td:eq(3) input').val()) || 0;
-        var donGia = parseFloat(row.find('td:eq(4)').text().replace(/[^0-9.-]+/g,"")) || 0;
-        var thanhTien = parseFloat(row.find('td:eq(5)').text().replace(/[^0-9.-]+/g,"")) || 0;
+        var donGia = parseInt(row.find('td:eq(4)').text().replace(/[^\d]/g, '')) || 0;
+        var thanhTien = parseInt(row.find('td:eq(5)').text().replace(/[^\d]/g, '')) || 0;
 
         chiTietPhieuXuats.push({
             SoPhieu: soPhieu,
@@ -2203,7 +2203,7 @@ function Themphieuxuat() {
             });
         }
     });
-    Inhoadon();
+   // Inhoadon();
 }
         
         function Kiemtrabamgioin(KhuvucId) {

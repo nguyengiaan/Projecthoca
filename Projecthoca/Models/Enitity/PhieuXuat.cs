@@ -12,15 +12,15 @@ namespace Projecthoca.Models.Enitity
     public DateTime NgayPhieu { get; set; }
     public string Khachhang { get; set; } 
     public string NhanVien { get; set; }
-    public decimal TongTien { get; set; }
-    public decimal NoCu { get; set; }
-    public decimal ThanhToan { get; set; }
-    public decimal ConLai { get; set; }
+    public int TongTien { get; set; }
+    public int NoCu { get; set; }
+    public int ThanhToan { get; set; }
+    public int ConLai { get; set; }
     public DateTime? HanThanhToan { get; set; }
     public string GhiChu { get; set; }
-    public decimal GiamGia { get; set; }
-    public decimal TienMat { get; set; }
-    public decimal ChuyenKhoan { get; set; }
+    public int GiamGia { get; set; }
+    public int TienMat { get; set; }
+    public int ChuyenKhoan { get; set; }
     public string TenKhuvuc { get; set; }
   
 
