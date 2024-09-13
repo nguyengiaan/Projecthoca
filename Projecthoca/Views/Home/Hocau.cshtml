@@ -154,14 +154,16 @@
                 <input type="text" hidden id="nhanvien" name="nhanvien" value="">
                 <input type="text" hidden id="tenkhuvuc" name="tenkhuvuc" value="">
                 <div class="d-flex flex-row">
-                    <button type="button" class="btn btn-primary m-2" id="Themphieuxuatbtn">In hóa đơn</button>
+                   
                     <button type="button" class="btn btn-info m-2" id="Themthoigianbtn" data-toggle="modal"
                         data-target="#Themthoigian">Thêm ca câu</button>
                     <!-- Di chuyển nút vào trong div -->
-                    <button type="button" class="btn btn-primary m-2" id="Themdichvubtn" data-toggle="modal"
-                        data-target="#Themdichvu">Thêm dịch vụ</button>
+                    @* <button type="button" class="btn btn-primary m-2" id="Themdichvubtn" data-toggle="modal"
+                        data-target="#Themdichvu">Thêm dịch vụ</button> *@
                     @* <button type="button" class="btn btn-success m-2" id="Inhoadon">In hóa đơn</button> *@
+                     <button type="button" class="btn btn-primary m-2" id="Themphieuxuatbtn">In hóa đơn</button>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
+                    
                 </div>
             </div>
             <div class="modal-body">
@@ -2201,7 +2203,7 @@ function Themphieuxuat() {
             });
         }
     });
-    //Inhoadon();
+    Inhoadon();
 }
         
         function Kiemtrabamgioin(KhuvucId) {

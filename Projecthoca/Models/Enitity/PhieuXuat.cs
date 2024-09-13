@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Projecthoca.Models.Enitity
 {
@@ -23,7 +24,13 @@ namespace Projecthoca.Models.Enitity
     public string TenKhuvuc { get; set; }
   
 
+     [ForeignKey("nguoidung")]
+     public string Id { get; set; }
+
+    public virtual ApplicationUser nguoidung { get; set; }
+
     // Navigation property for ChiTietPhieuNhap
     public ICollection<ChiTietPhieuXuat> ChiTietPhieuXuats { get; set; }
+
     }
 }

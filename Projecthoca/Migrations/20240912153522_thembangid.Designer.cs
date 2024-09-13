@@ -12,8 +12,8 @@ using Projecthoca.Data;
 namespace Projecthoca.Migrations
 {
     [DbContext(typeof(MyDbcontext))]
-    [Migration("20240912172724_PhieuXuatHocau")]
-    partial class PhieuXuatHocau
+    [Migration("20240912153522_thembangid")]
+    partial class thembangid
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -771,6 +771,9 @@ namespace Projecthoca.Migrations
                     b.Property<DateTime?>("HanThanhToan")
                         .HasColumnType("datetime2");
 
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Khachhang")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -791,7 +794,13 @@ namespace Projecthoca.Migrations
                     b.Property<decimal>("TongTien")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("nguoidungId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("SoPhieu");
+
+                    b.HasIndex("nguoidungId");
 
                     b.ToTable("PhieuNhaps");
                 });
@@ -825,9 +834,6 @@ namespace Projecthoca.Migrations
                     b.Property<string>("SoPhieu")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<decimal>("ChuyenKhoan")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<decimal>("ConLai")
                         .HasColumnType("decimal(18,2)");
 
@@ -835,11 +841,11 @@ namespace Projecthoca.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<decimal>("GiamGia")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<DateTime?>("HanThanhToan")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Khachhang")
                         .IsRequired()
@@ -855,20 +861,19 @@ namespace Projecthoca.Migrations
                     b.Property<decimal>("NoCu")
                         .HasColumnType("decimal(18,2)");
 
-                    b.Property<string>("TenKhuvuc")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<decimal>("ThanhToan")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<decimal>("TienMat")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<decimal>("TongTien")
                         .HasColumnType("decimal(18,2)");
 
+                    b.Property<string>("nguoidungId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("SoPhieu");
+
+                    b.HasIndex("nguoidungId");
 
                     b.ToTable("PhieuXuats");
                 });
@@ -1371,6 +1376,17 @@ namespace Projecthoca.Migrations
                     b.Navigation("Nguoidung");
                 });
 
+            modelBuilder.Entity("Projecthoca.Models.Enitity.PhieuNhap", b =>
+                {
+                    b.HasOne("Projecthoca.Models.Enitity.ApplicationUser", "nguoidung")
+                        .WithMany("PhieuNhaps")
+                        .HasForeignKey("nguoidungId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("nguoidung");
+                });
+
             modelBuilder.Entity("Projecthoca.Models.Enitity.Phieunhapkho", b =>
                 {
                     b.HasOne("Projecthoca.Models.Enitity.ApplicationUser", "Nguoidung")
@@ -1378,6 +1394,17 @@ namespace Projecthoca.Migrations
                         .HasForeignKey("Id");
 
                     b.Navigation("Nguoidung");
+                });
+
+            modelBuilder.Entity("Projecthoca.Models.Enitity.PhieuXuat", b =>
+                {
+                    b.HasOne("Projecthoca.Models.Enitity.ApplicationUser", "nguoidung")
+                        .WithMany("PhieuXuats")
+                        .HasForeignKey("nguoidungId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("nguoidung");
                 });
 
             modelBuilder.Entity("Projecthoca.Models.Enitity.Phieuxuatkho", b =>
@@ -1466,6 +1493,10 @@ namespace Projecthoca.Migrations
                     b.Navigation("Mathangs");
 
                     b.Navigation("Nhacungcaps");
+
+                    b.Navigation("PhieuNhaps");
+
+                    b.Navigation("PhieuXuats");
 
                     b.Navigation("Quanlyhanghoas");
 

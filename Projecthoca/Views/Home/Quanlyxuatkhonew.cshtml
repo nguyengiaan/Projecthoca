@@ -349,11 +349,8 @@
                 });
             });
 
-        @* $('#printPhieuNhapBtn').on('click', function() {
-                preparePhieuNhapForPrinting();
+        
 
-                $('#printablePhieuNhap').show();
-            }); *@
             // Xử lý sự kiện click nút in phiếu
             $('#printPhieuNhapBtn').on('click', function() {
                 var selectedPhieu = $(this).data('selected-phieu');
@@ -367,6 +364,7 @@
                     });
                 }
             });
+            
             // Xử lý sự kiện click nút "Sửa phiếu"
             $('#suaPhieuBtn').on('click', function() {
                 var selectedPhieu = $(this).data('selected-phieu');
@@ -380,6 +378,8 @@
                     });
                 }
             });
+            
+            
             // Xử lý sự kiện click nút "Xóa phiếu"
             $('#xoaPhieuBtn').on('click', function() {
                 var selectedPhieu = $(this).data('selected-phieu');
@@ -431,6 +431,7 @@
                     });
                 }
             });
+
 
          // Xử lý sự kiện click nút "Lưu" sau khi chỉnh sửa
             $('#luuPhieuBtn').on('click', function() {
@@ -527,6 +528,7 @@ function enableEditing() {
             updateRowTotal($(this).closest('tr'));
             updateTotalAmount();
         }
+
 
 function normalizeString(str) {
         // Loại bỏ dấu tiếng Việt

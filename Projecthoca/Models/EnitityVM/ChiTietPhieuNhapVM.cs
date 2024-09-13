@@ -15,6 +15,8 @@ namespace Projecthoca.Models.EnitityVM
         public decimal DonGia { get; set; }
         public string DonViTinh { get; set; }
         public decimal ThanhTien { get; set; }
+
+        public DateTime NgayNhap { get; set; }
         
     }
 }

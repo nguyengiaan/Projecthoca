@@ -1,0 +1,469 @@
+@{
+    ViewData["Title"] = "Báo cáo nhập xuất tồn";
+}
+<!-- Modal -->
+<div class="modal fade" id="detailModal" tabindex="-1" role="dialog" aria-labelledby="detailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailModalLabel">Chi tiết sản phẩm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <ul class="nav nav-tabs" id="myTab" role="tablist">
+          
+                    <li class="nav-item">
+                        <a class="nav-link active" id="nhaptrongky-tab" data-toggle="tab" href="#nhaptrongky" role="tab" aria-controls="nhaptrongky" aria-selected="true">Nhập trong kỳ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="xuattrongky-tab" data-toggle="tab" href="#xuattrongky" role="tab" aria-controls="xuattrongky" aria-selected="false">Xuất trong kỳ</a>
+                    </li>
+      
+                </ul>
+                <div class="tab-content" id="myTabContent">
+                  
+                    <div class="tab-pane fade" id="nhaptrongky" role="tabpanel" aria-labelledby="nhaptrongky-tab">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                </div>
+                                <input type="text" class="form-control" id="searchNhapTrongKy" placeholder="Tìm kiếm tất cả các thông tin có trong bảng.....">
+                          
+                            </div>
+                        </div>
+                        <table class="table table-bordered table-sm mt-3">
+                            <thead>
+                                <tr>
+             
+                            <th>Mã sản phẩm</th>
+                            <th>Tên sản phẩm</th>
+                             <th>Số lượng</th>
+                             <th>Đơn giá</th>
+                              <th>Đơn vị tính</th>
+                             <th>Ngày nhập</th>
+                                <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody id="nhaptrongkyBody">
+                            </tbody>
+                            <tfoot id="Paginationnck">
+
+                            </tfoot>
+                        </table>
+                    </div>
+                    <div class="tab-pane fade" id="xuattrongky" role="tabpanel" aria-labelledby="xuattrongky-tab">
+                             <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                </div>
+                                <input type="text" class="form-control" id="searchXuatTrongKy" placeholder="Tìm kiếm tất cả các thông tin có trong bảng.....">
+                          
+                            </div>
+                        </div>
+                        <table class="table table-bordered table-sm mt-3">
+                            <thead>
+                                <tr>
+                                    <th>Mã sản phẩm</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>Đơn vị tính</th>
+                                    <th>Số lượng xuất</th>
+                                    <th>Đơn giá xuất</th>
+                                    <th>Ngày xuất</th>
+                                    <th>Thành tiền</th>
+                                </tr>
+                            </thead>
+                            <tbody id="xuattrongkyBody">
+                            </tbody>
+                            <tfoot id="Paginationxnk">
+
+                            </tfoot>
+                        </table>
+                    </div>
+         
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <h2 class="text-center mb-4 text-primary">@ViewData["Title"]</h2>
+
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Thông tin báo cáo</h6>
+            <div>
+
+                <button id="printReport" class="btn btn-sm btn-primary ml-2">
+                    <i class="fas fa-print mr-1"></i>In báo cáo
+                </button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="fromDate" class="small font-weight-bold">Từ ngày:</label>
+                        <input type="date" id="fromDate" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-01")" disabled/>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="toDate" class="small font-weight-bold">Đến ngày:</label>
+                        <input type="date" id="toDate" class="form-control form-control-sm" value="@DateTime.Now.AddDays(-(DateTime.Now.Day)).AddMonths(1).ToString("yyyy-MM-dd")" disabled/>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label for="search" class="small font-weight-bold">Tìm kiếm:</label>
+                        <input type="text" id="search" class="form-control form-control-sm" placeholder="Mã hoặc tên sản phẩm" />
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover table-sm" id="dataTable" width="100%" cellspacing="0">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã sản phẩm</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Đơn vị tính</th>
+                            <th>Tồn đầu kỳ</th>
+                            <th>Nhập trong kỳ</th>
+                            <th>Xuất trong kỳ</th>
+                            <th>Tồn cuối kỳ</th>
+                            <th>Xem</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportBody">
+                        <!-- Data will be populated here dynamically -->
+                    </tbody>
+                </table>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-6">
+                    <div class="dataTables_info" id="dataTable_info" role="status" aria-live="polite"></div>
+                </div>
+                <div class="col-md-6">
+                    <nav aria-label="Page navigation">
+                        <ul class="pagination justify-content-end pagination-sm" id="pagination">
+                            <!-- Pagination will be added here dynamically -->
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+    var ma_danhmuc_phu ;
+    $(document).on('click', '#Xemct', function() {
+        $('#detailModal').modal('show');
+        var ma_hanghoa = $(this).data('id');
+        ma_danhmuc_phu=ma_hanghoa;
+        danhsachnhapck(1,10,ma_hanghoa);
+        Danhsachxtck(1,10,ma_hanghoa);
+    });
+    $(document).ready(function () {
+    $('#search').on('keyup', function() {
+          var value = $(this).val().toLowerCase();
+            $("#reportBody tr").filter(function() {
+                   $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+       });
+    $('#searchNhapTrongKy').on('keyup', function() {
+          var value = $(this).val().toLowerCase();
+            $("#nhaptrongkyBody tr").filter(function() {
+                   $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+       });
+    $('#searchXuatTrongKy').on('keyup', function() {
+          var value = $(this).val().toLowerCase();
+            $("#xuattrongkyBody tr").filter(function() {
+                   $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+       });
+        danhsachdanhmuc(1, 10);
+    $(document).on('click','#printReport',function()
+    {
+        printReport();
+    })
+ });
+    
+    function danhsachdanhmuc(page, pagesize) {
+        $.ajax({
+            type: "POST",
+            url: "/Tonkho/Tinhxuatnhapton",
+            data: { page: page, pagesize: pagesize },
+            success: function (response) {
+                if (response.success) {
+                    var reportBody = $('#reportBody');
+                    reportBody.empty();
+                    $.each(response.dsdm, function(index, item) {
+                        var row = $('<tr>');
+                        row.append($('<td>').text(index + 1));
+                        row.append($('<td>').text(item.ma_hanghoa));
+                        row.append($('<td>').text(item.ten_hanghoa));
+                        row.append($('<td>').text(item.donvitinh));
+                        row.append($('<td>').text(item.tondauky));
+                        row.append($('<td>').text(item.nhaptrongky));
+                        row.append($('<td>').text(item.xuattrongky));
+                        row.append($('<td>').text(item.toncuoiky));
+                        row.append($('<td>').html('<button class="btn btn-primary btn-sm" id="Xemct" data-id="' + item.ma_hanghoa + '">Xem</button>'));
+                        reportBody.append(row);
+                    });
+
+                    // Update pagination
+                    updatePagination(response.totalPages, response.pageindex);
+                } else {
+                    Swal.fire({
+                        title: "Thông báo lỗi",
+                        text: response.message,
+                        icon: "error"
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi khi tải dữ liệu:", error);
+                Swal.fire({
+                    title: "Lỗi",
+                    text: "Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại sau.",
+                    icon: "error"
+                });
+            }
+        });
+    }
+    function updatePagination(totalPages, currentPage) {
+        if (totalPages > 0) {
+            var str = `<nav aria-label="Page navigation example">
+                                                                        <ul class="pagination">`;
+            if (totalPages > 1) {
+                if (currentPage > 1) {
+                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachdanhmuc(${currentPage - 1}, 10)">Previous</a></li>`;
+                }
+                for (let i = 1; i <= totalPages; i++) {
+                    if (currentPage === i) {
+                        str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
+                    } else {
+                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachdanhmuc(${i}, 10)">${i}</a></li>`;
+                    }
+                }
+                if (currentPage < totalPages) {
+                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachdanhmuc(${currentPage + 1}, 10)">Next</a></li>`;
+                }
+            }
+            str += `</ul></nav>`;
+            $('#pagination').html(str);
+        }
+    }
+    function danhsachnhapck(page, pagesize,ma_hanghoa) {
+        $.ajax({
+            type: "POST",
+            url: "/Tonkho/Danhsachnhpck",
+            data: { page: page, pagesize: pagesize,ma_hanghoa:ma_hanghoa },
+            success: function (response) {
+                if (response.success) {
+                    var reportBody = $('#nhaptrongkyBody');
+                    reportBody.empty();
+                    $.each(response.dsdm, function(index, item) {
+                        var row = $('<tr>');
+                        row.append($('<td>').text(item.ma_sanpham));
+                        row.append($('<td>').text(item.tenSanPham));
+                        row.append($('<td>').text(item.soLuong));
+                        row.append($('<td>').text(item.donGia));
+                        row.append($('<td>').text(item.donViTinh));
+                        row.append($('<td>').text(item.ngayNhap.split('T')[0]));
+                        row.append($('<td>').text(formatCurrency(item.thanhTien)));
+                        reportBody.append(row);
+                    });
+
+                    // Update pagination
+                updatePaginationnck(response.totalPages, response.pageindex);
+                } else {
+                    Swal.fire({
+                        title: "Thông báo lỗi",
+                        text: response.message,
+                        icon: "error"
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi khi tải dữ liệu:", error);
+                Swal.fire({
+                    title: "Lỗi",
+                    text: "Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại sau.",
+                    icon: "error"
+                });
+            }
+        });
+    }
+  //danh sách nhập trong kỳ
+    function updatePaginationnck(totalPages, currentPage) {
+        if (totalPages > 0) {
+            var str = `<nav aria-label="Page navigation example">
+                                                                        <ul class="pagination">`;
+            if (totalPages > 1) {
+                if (currentPage > 1) {
+                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachnhapck(${currentPage - 1}, 10,${ ma_danhmuc_phu})">Previous</a></li>`;
+                }
+                for (let i = 1; i <= totalPages; i++) {
+                    if (currentPage === i) {
+                        str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
+                    } else {
+                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachnhapck(${i}, 10,${ ma_danhmuc_phu})">${i}</a></li>`;
+                    }
+                }
+                if (currentPage < totalPages) {
+                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachnhapck(${currentPage + 1}, 10,${ ma_danhmuc_phu})">Next</a></li>`;
+                }
+            }
+            str += `</ul></nav>`;
+            $('#pagination').html(str);
+        }
+    }
+    function formatCurrency(value) {
+                return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+   }
+   // danh sách xuất trong kỳ
+     function Danhsachxtck(page, pagesize,ma_hanghoa) {
+        $.ajax({
+            type: "POST",
+            url: "/Tonkho/Danhsachxtck",
+            data: { page: page, pagesize: pagesize,ma_hanghoa:ma_hanghoa },
+            success: function (response) {
+                if (response.success) {
+                    var reportBody = $('#xuattrongkyBody');
+                    reportBody.empty();
+                    $.each(response.dsdm, function(index, item) {
+                        var row = $('<tr>');
+                        row.append($('<td>').text(item.ma_sanpham));
+                        row.append($('<td>').text(item.tenSanPham));
+                        row.append($('<td>').text(item.soLuong));
+                        row.append($('<td>').text(item.donGia));
+                        row.append($('<td>').text(item.donViTinh));
+                        row.append($('<td>').text(item.ngayxuat.split('T')[0]));
+                        row.append($('<td>').text(formatCurrency(item.thanhTien)));
+                        reportBody.append(row);
+                    });
+
+                    // Update pagination
+                updatePaginationxck(response.totalPages, response.pageindex);
+                } else {
+                    Swal.fire({
+                        title: "Thông báo lỗi",
+                        text: response.message,
+                        icon: "error"
+                    });
+                }
+            },
+            error: function(xhr, status, error) {
+                console.error("Lỗi khi tải dữ liệu:", error);
+                Swal.fire({
+                    title: "Lỗi",
+                    text: "Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại sau.",
+                    icon: "error"
+                });
+            }
+        });
+    }
+     function updatePaginationxck(totalPages, currentPage) {
+        if (totalPages > 0) {
+            var str = `<nav aria-label="Page navigation example">
+                                                                        <ul class="pagination">`;
+            if (totalPages > 1) {
+                if (currentPage > 1) {
+                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="Danhsachxtck(${currentPage - 1}, 10,${ ma_danhmuc_phu})">Previous</a></li>`;
+                }
+                for (let i = 1; i <= totalPages; i++) {
+                    if (currentPage === i) {
+                        str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
+                    } else {
+                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="Danhsachxtck(${i}, 10,${ ma_danhmuc_phu})">${i}</a></li>`;
+                    }
+                }
+                if (currentPage < totalPages) {
+                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="Danhsachxtck(${currentPage + 1}, 10,${ ma_danhmuc_phu})">Next</a></li>`;
+                }
+            }
+            str += `</ul></nav>`;
+            $('#Paginationxnk').html(str);
+        }
+    }
+
+    // hàm in 
+    function printReport() {
+        // Get the table data
+        var tableData = [];
+        $('#reportBody tr').each(function() {
+            var rowData = [];
+            $(this).find('td').each(function() {
+                rowData.push($(this).text());
+            });
+            tableData.push(rowData);
+        });
+
+        // Create a new window for printing
+        var printWindow = window.open('', '_blank');
+        
+        // Generate the HTML content for printing
+        var htmlContent = `
+            <html>
+            <head>
+                <title>Báo Cáo Nhập Xuất Tồn</title>
+                <style>
+                    table { border-collapse: collapse; width: 100%; }
+                    th, td { border: 1px solid black; padding: 5px; text-align: left; }
+                    th { background-color: #f2f2f2; }
+                </style>
+            </head>
+            <body>
+                <h2 style="text-align: center;">Báo Cáo Nhập Xuất Tồn</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã sản phẩm</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Đơn vị tính</th>
+                            <th>Tồn đầu kỳ</th>
+                            <th>Nhập trong kỳ</th>
+                            <th>Xuất trong kỳ</th>
+                            <th>Tồn cuối kỳ</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+        `;
+
+        // Add table data to HTML content
+        tableData.forEach(function(row) {
+            htmlContent += '<tr>';
+            row.slice(0, -1).forEach(function(cell) { // Exclude the last cell (Xem button)
+                htmlContent += '<td>' + cell + '</td>';
+            });
+            htmlContent += '</tr>';
+        });
+
+        htmlContent += `
+                    </tbody>
+                </table>
+            </body>
+            </html>
+        `;
+
+        // Write the HTML content to the new window and print
+        printWindow.document.write(htmlContent);
+        printWindow.document.close();
+        printWindow.print();
+    }
+    </script>
+}

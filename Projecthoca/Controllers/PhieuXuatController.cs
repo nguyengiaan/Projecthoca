@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Projecthoca.Data;
@@ -12,9 +13,11 @@ namespace Projecthoca.Controllers
     {
         private readonly MyDbcontext _context;
 
-        public PhieuXuatController(MyDbcontext context)
+      private readonly UserManager<ApplicationUser> _userManager;
+        public PhieuXuatController(MyDbcontext context,UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager=userManager;
         }
 
 
@@ -24,7 +27,16 @@ namespace Projecthoca.Controllers
 [HttpGet("LayTatCaPhieuXuat")]
 public async Task<IActionResult> LayTatCaPhieuXuat()
 {
+
+    var user = await _userManager.GetUserAsync(User);
+    if (user == null)
+    {
+        return Unauthorized(new { success = false, message = "Người dùng chưa đăng nhập" });
+    }
+
+
     var phieuXuats = await _context.PhieuXuats
+        .Where(p => p.Id == user.Id)
         .Include(p => p.ChiTietPhieuXuats) // Bao gồm chi tiết phiếu nhập
             .ThenInclude(c => c.Danhmuc) // Bao gồm Danhmuc trong chi tiết phiếu nhập
         .ToListAsync();
@@ -82,6 +94,7 @@ public async Task<IActionResult> ThemPhieuXuat([FromBody] PhieuXuatVM model)
             {
                 if (ModelState.IsValid)
                 {
+                      var user = await _userManager.GetUserAsync(User);
                     // Sinh số phiếu tự động
                     model.SoPhieu = GenerateSoPhieu();
 
@@ -107,6 +120,7 @@ public async Task<IActionResult> ThemPhieuXuat([FromBody] PhieuXuatVM model)
                         TienMat = model.TienMat,
                         ChuyenKhoan = model.ChuyenKhoan,
                         TenKhuvuc = model.TenKhuvuc,
+                        Id=user.Id,
                         ChiTietPhieuXuats = new List<ChiTietPhieuXuat>()
                     };
 
@@ -365,6 +379,7 @@ public async Task<IActionResult> CapNhatPhieuXuat([FromBody] PhieuXuatVM model)
 }
 
 
+
 // DELETE: /api/PhieuXuat/XoaPhieuXuat
 [HttpDelete("XoaPhieuXuat")]
 public async Task<IActionResult> XoaPhieuXuat([FromQuery] string soPhieu)
@@ -387,5 +402,7 @@ public async Task<IActionResult> XoaPhieuXuat([FromQuery] string soPhieu)
 
     return Ok(new { success = true, message = "Phiếu xuất đã được xóa thành công" });
 }
+
+
     }
 }

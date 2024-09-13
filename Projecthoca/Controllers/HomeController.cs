@@ -208,7 +208,16 @@ namespace Projecthoca.Controllers
         {
             return View();
         }
-        
+        [Authorize(Roles = "Admin,Customer")]
+        public IActionResult Nhapxuatton()
+        {
+            return View();
+        }
+        [Authorize(Roles = "Admin,Customer")]
+        public IActionResult Doanhthubanhang()
+        {
+            return View();
+        }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

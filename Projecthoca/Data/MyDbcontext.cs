@@ -63,6 +63,21 @@ namespace Projecthoca.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            
+            modelBuilder.Entity<PhieuXuat>()
+        .HasOne(p => p.nguoidung)
+        .WithMany(u => u.PhieuXuats)
+        .HasForeignKey(p => p.Id)
+        .IsRequired();
+
+            modelBuilder.Entity<PhieuNhap>()
+        .HasOne(p => p.nguoidung)
+        .WithMany(u => u.PhieuNhaps)
+        .HasForeignKey(p => p.Id)
+        .IsRequired();
+
+
+
 
             modelBuilder.Entity<PhieuXuat>()
             .HasKey(p => p.SoPhieu);
@@ -254,6 +269,7 @@ namespace Projecthoca.Data
             modelBuilder.Entity<Hoadonxuatban>().Property(e => e.Ma_phieuxuatkho).HasMaxLength(100);
             modelBuilder.Entity<Hoadonxuatban>().HasOne(x => x.Danhmuc).WithMany(x => x.Hoadonxuatbans).HasForeignKey(x => x.Ma_danhmuc);
             modelBuilder.Entity<Hoadonxuatban>().HasOne(x => x.Phieuxuatkho).WithMany(x => x.Hoadonxuatbans).HasForeignKey(x => x.Ma_phieuxuatkho);
+            
 
         }
 
