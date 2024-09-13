@@ -23,7 +23,7 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="startDate" class="form-label">Doanh thu</label>
-                        <select class="form-control">
+                        <select class="form-control" disabled>
                             <option>Doanh thu theo ngày</option>
                             <option>Tổng doanh thu theo tháng</option>
                         </select>
@@ -45,7 +45,7 @@
         <div class="col-md-3">
             <div class="card bg-gradient-primary text-white shadow-lg rounded-lg">
                 <div class="card-body">
-                    <h5 class="card-title">Tổng vốn (trừ vốn hàng trả)</h5>
+                    <h5 class="card-title">Tổng vốn</h5>
                     <p class="card-text display-6" id="totalCost">0 VNĐ</p>
                 </div>
             </div>
@@ -76,16 +76,33 @@
 
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-        <script>
-                    document.addEventListener('DOMContentLoaded', function() {
+        <script>   
+        $(document).ready(function () {
+            danhsachdoanhthu();
+        });
+        function danhsachdoanhthu() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = today.getMonth() + 1;
+         const daysInMonth = new Date(year, month, 0).getDate();
+           const labels = Array.from({ length: daysInMonth }, (_, i) => `Ngày ${i + 1}`);
+        $.ajax({
+            type: "GET",
+            url: "/Tonkho/Baocaodoanhthu",
+            success: function (response) {
+          
+                        $('#totalRevenue').text(response.doanhthu.toLocaleString('vi-VN') + " VNĐ");
+                            $('#totalCost').text(response.tongvon.toLocaleString('vi-VN') + " VNĐ");
+                            $('#profit').text(response.loinhuan.toLocaleString('vi-VN') + " VNĐ");
+                console.log(response);
                         var ctx = document.getElementById('revenueChart').getContext('2d');
                         var myChart = new Chart(ctx, {
                             type: 'bar',
                             data: {
-                                labels: Array.from({length: 30}, (_, i) => `Ngày ${i + 1}`),
+                                labels: labels,
                                 datasets: [{
                                     label: 'Doanh thu (VNĐ)',
-                                    data: [12000000, 19000000, 3000000, 5000000, 2000000, 3000000],
+                                    data: response.doanhso,
                                     backgroundColor: 'rgba(75, 192, 192, 0.6)',
                                     borderColor: 'rgba(75, 192, 192, 1)',
                                     borderWidth: 1
@@ -110,7 +127,18 @@
                                 }
                             }
                         });
-                    });
-        </script>
+            },
+            error: function (xhr, status, error) {
+                console.error("Lỗi khi tải dữ liệu:", error);
+                Swal.fire({
+                    title: "Lỗi",
+                    text: "Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại sau.",
+                    icon: "error"
+                });
+            }
+        });
+    }
+    </script>
+
   
 }

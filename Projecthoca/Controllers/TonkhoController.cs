@@ -82,5 +82,19 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, messeger = ex.Message });
             }
         }
+        // báo cáo doanh thu
+        [HttpGet]
+        public async Task<IActionResult> Baocaodoanhthu()
+        {
+            try
+            {
+                var item=await _tonkho.baocaodt();
+                return Json(new {doanhso=item.ds,doanhthu=item.dt,tongvon=item.tongvon,loinhuan=item.loinhuan});
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, messeger = ex.Message });
+            }
+        }
     }
 }

@@ -108,6 +108,7 @@ public async Task<IActionResult> ThemPhieuXuat([FromBody] PhieuXuatVM model)
                         HanThanhToan = model.HanThanhToan,
                         GhiChu = model.GhiChu,
                         Id=user.Id,
+
                         ChiTietPhieuXuats = new List<ChiTietPhieuXuat>()
                     };
 
@@ -227,18 +228,20 @@ public async Task<IActionResult> ThemPhieuXuat([FromBody] PhieuXuatVM model)
 
     private string GenerateSoPhieu()
 {
-    var currentDate = DateTime.Now;
+    try
+    {
+  var currentDate = DateTime.Now;
     var yearMonthPrefix = $"{currentDate:yyyyMM}"; // Tạo tiền tố YYYYMM
 
     // Tìm mã số phiếu mới nhất trong tháng và năm hiện tại
     var lastPhieuXuat = _context.PhieuXuats
         .Where(p => p.SoPhieu.StartsWith($"PX-{yearMonthPrefix}"))
-        .OrderByDescending(p => p.SoPhieu)
+        .OrderByDescending(p => p.SoPhieu).Select(x=>x.SoPhieu)
         .FirstOrDefault();
 
     if (lastPhieuXuat != null)
     {
-        var lastNumberPart = lastPhieuXuat.SoPhieu.Substring(8); // Lấy phần số sau tiền tố YYYYMM
+        var lastNumberPart = lastPhieuXuat.Substring(8); // Lấy phần số sau tiền tố YYYYMM
         if (int.TryParse(lastNumberPart, out int lastNumber))
         {
             // Tăng số lên 1 và định dạng lại thành 4 chữ số
@@ -249,6 +252,11 @@ public async Task<IActionResult> ThemPhieuXuat([FromBody] PhieuXuatVM model)
 
     // Nếu không có phiếu nhập nào trong tháng hiện tại, bắt đầu từ 0001
     return $"PX-{yearMonthPrefix}0001";
+    }
+    catch(Exception ex)
+    {
+        return ex.Message;
+    }
 }
 
 

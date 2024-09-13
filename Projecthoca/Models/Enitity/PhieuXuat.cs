@@ -19,7 +19,6 @@ namespace Projecthoca.Models.Enitity
     public string GhiChu { get; set; }
 
     public string Id {get;set;}
-
     public ApplicationUser nguoidung{get;set;}
 
     // Navigation property for ChiTietPhieuNhap

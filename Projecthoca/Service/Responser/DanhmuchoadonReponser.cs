@@ -279,7 +279,7 @@ namespace Projecthoca.Service.Responser
                     .Where(x => x.Ma_thuehoca == thuehoca.Ma_thuehoca)
                     .SumAsync(x => (decimal?)x.Thanhtien) ?? 0;
 
-                totalSum += await _context.Tongsokg
+                totalSum -= await _context.Tongsokg
                     .Where(x => x.Ma_thuehoca == thuehoca.Ma_thuehoca)
                     .SumAsync(x => (decimal?)x.Tongsotien) ?? 0;
 
