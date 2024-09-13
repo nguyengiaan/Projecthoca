@@ -103,7 +103,10 @@ public async Task<IActionResult> ThemPhieuXuat([FromBody] PhieuXuatVM model)
                         ConLai = model.ConLai,
                         HanThanhToan = model.HanThanhToan,
                         GhiChu = model.GhiChu,
-                        
+                        GiamGia = model.GiamGia,
+                        TienMat = model.TienMat,
+                        ChuyenKhoan = model.ChuyenKhoan,
+                        TenKhuvuc = model.TenKhuvuc,
                         ChiTietPhieuXuats = new List<ChiTietPhieuXuat>()
                     };
 
@@ -156,6 +159,10 @@ public async Task<IActionResult> ThemPhieuXuat([FromBody] PhieuXuatVM model)
                         conLai = phieuXuat.ConLai,
                         hanThanhToan = phieuXuat.HanThanhToan?.ToString("dd/MM/yyyy"),
                         ghiChu = phieuXuat.GhiChu,
+                        giamGia = phieuXuat.GiamGia,
+                        tienMat = phieuXuat.TienMat,
+                        chuyenKhoan = phieuXuat.ChuyenKhoan,
+                        tenKhuvuc = phieuXuat.TenKhuvuc,
                         chiTietPhieuXuats = phieuXuat.ChiTietPhieuXuats.Select(c => new
                         {
                             id = c.Id,
@@ -207,6 +214,10 @@ public async Task<IActionResult> ThemPhieuXuat([FromBody] PhieuXuatVM model)
                 conLai = phieuXuat.ConLai,
                 hanThanhToan = phieuXuat.HanThanhToan?.ToString("yyyy-MM-dd"),
                 ghiChu = phieuXuat.GhiChu,
+                giamGia = phieuXuat.GiamGia,
+                tienMat = phieuXuat.TienMat,
+                chuyenKhoan = phieuXuat.ChuyenKhoan,
+                tenKhuvuc = phieuXuat.TenKhuvuc,
                 chiTietPhieuXuats = phieuXuat.ChiTietPhieuXuats.Select(c => new
                 {
                     id = c.Id,
@@ -248,5 +259,133 @@ public async Task<IActionResult> ThemPhieuXuat([FromBody] PhieuXuatVM model)
 }
 
 
+// PUT: /api/PhieuXuat/CapNhatPhieuXuat
+[HttpPut("CapNhatPhieuXuat")]
+public async Task<IActionResult> CapNhatPhieuXuat([FromBody] PhieuXuatVM model)
+{
+    try
+    {
+        if (ModelState.IsValid)
+        {
+            var phieuXuat = await _context.PhieuXuats
+                .Include(p => p.ChiTietPhieuXuats)
+                .FirstOrDefaultAsync(p => p.SoPhieu == model.SoPhieu);
+
+            if (phieuXuat == null)
+            {
+                return NotFound(new { success = false, message = "Phiếu xuất không tìm thấy" });
+            }
+
+            // Cập nhật thông tin phiếu xuất
+            phieuXuat.NgayPhieu = model.NgayPhieu;
+            phieuXuat.Khachhang = model.TenKhachhang;
+            phieuXuat.NhanVien = model.TenNVKD;
+            phieuXuat.TongTien = model.TongTien;
+            phieuXuat.NoCu = model.NoCu;
+            phieuXuat.ThanhToan = model.ThanhToan;
+            phieuXuat.ConLai = model.ConLai;
+            phieuXuat.HanThanhToan = model.HanThanhToan;
+            phieuXuat.GhiChu = model.GhiChu;
+            phieuXuat.GiamGia = model.GiamGia;
+            phieuXuat.TienMat = model.TienMat;
+            phieuXuat.ChuyenKhoan = model.ChuyenKhoan;
+            phieuXuat.TenKhuvuc = model.TenKhuvuc;
+
+            // Xóa các chi tiết phiếu xuất cũ
+            _context.ChiTietPhieuXuats.RemoveRange(phieuXuat.ChiTietPhieuXuats);
+
+            // Cập nhật các chi tiết phiếu xuất mới
+            foreach (var chiTiet in model.ChiTietPhieuXuats)
+            {
+                var danhMuc = await _context.Danhmuc
+                    .FirstOrDefaultAsync(d => d.Ma_danhmuc == chiTiet.Ma_sanpham);
+
+                if (danhMuc == null)
+                {
+                    return BadRequest(new { success = false, message = $"Danh mục với mã {chiTiet.Ma_sanpham} không tồn tại" });
+                }
+
+                danhMuc.Soluong -= chiTiet.SoLuong; // Cập nhật số lượng
+
+                phieuXuat.ChiTietPhieuXuats.Add(new ChiTietPhieuXuat
+                {
+                    SoPhieu = chiTiet.SoPhieu,
+                    Ma_sanpham = chiTiet.Ma_sanpham,
+                    Danhmuc = danhMuc,
+                    SoLuong = chiTiet.SoLuong,
+                    DonGia = chiTiet.DonGia,
+                    ThanhTien = chiTiet.ThanhTien,
+                    DonViTinh = chiTiet.DonViTinh,
+                    Ngayxuat = DateTime.Now,
+                });
+
+                _context.Danhmuc.Update(danhMuc);
+            }
+
+            _context.PhieuXuats.Update(phieuXuat);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                success = true,
+                soPhieu = phieuXuat.SoPhieu,
+                ngayPhieu = phieuXuat.NgayPhieu.ToString("dd/MM/yyyy"),
+                tenKhachHang = phieuXuat.Khachhang,
+                tenNVKD = phieuXuat.NhanVien,
+                tongTien = phieuXuat.TongTien,
+                noCu = phieuXuat.NoCu,
+                thanhToan = phieuXuat.ThanhToan,
+                conLai = phieuXuat.ConLai,
+                hanThanhToan = phieuXuat.HanThanhToan?.ToString("dd/MM/yyyy"),
+                ghiChu = phieuXuat.GhiChu,
+                giamGia = phieuXuat.GiamGia,
+                tienMat = phieuXuat.TienMat,
+                chuyenKhoan = phieuXuat.ChuyenKhoan,
+                tenKhuvuc = phieuXuat.TenKhuvuc,
+                chiTietPhieuXuats = phieuXuat.ChiTietPhieuXuats.Select(c => new
+                {
+                    id = c.Id,
+                    soPhieu = c.SoPhieu,
+                    maSanPham = c.Ma_sanpham,
+                    tenSanPham = c.Danhmuc.Ten_danhmuc,
+                    soLuong = c.SoLuong,
+                    donGia = c.DonGia,
+                    donViTinh = c.DonViTinh,
+                    thanhTien = c.ThanhTien
+                })
+            });
+        }
+    }
+    catch (Exception ex)
+    {
+        return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ" });
+    }
+
+    return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ" });
+}
+
+
+// DELETE: /api/PhieuXuat/XoaPhieuXuat
+[HttpDelete("XoaPhieuXuat")]
+public async Task<IActionResult> XoaPhieuXuat([FromQuery] string soPhieu)
+{
+    var phieuXuat = await _context.PhieuXuats
+        .Include(p => p.ChiTietPhieuXuats)
+        .FirstOrDefaultAsync(p => p.SoPhieu == soPhieu);
+
+    if (phieuXuat == null)
+    {
+        return NotFound(new { success = false, message = "Phiếu xuất không tìm thấy" });
+    }
+
+    // Xóa các chi tiết phiếu xuất liên quan
+    _context.ChiTietPhieuXuats.RemoveRange(phieuXuat.ChiTietPhieuXuats);
+
+    // Xóa phiếu xuất
+    _context.PhieuXuats.Remove(phieuXuat);
+    await _context.SaveChangesAsync();
+
+    return Ok(new { success = true, message = "Phiếu xuất đã được xóa thành công" });
+}
     }
 }

@@ -29,6 +29,7 @@ namespace Projecthoca.Service.Responser
                 var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
               
                 var dm = await _context.Danhmuc
+                        .Where(x => x.Id == user.Id && x.Ma_danhmuc != "DM0000")
                          .Select(x => new DanhmucVM
                          {
                              Ma_danhmuc = x.Ma_danhmuc,
@@ -434,7 +435,9 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var data = await _context.Danhmuc.Where(x => x.Id == user.Id).Select(x => new DanhmucVM
+                var data = await _context.Danhmuc
+                .Where(x => x.Id == user.Id && x.Ma_danhmuc != "DM0000")
+                .Select(x => new DanhmucVM
                 {
                     Ma_danhmuc = x.Ma_danhmuc,
                     Ten_danhmuc = x.Ten_danhmuc,

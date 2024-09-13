@@ -18,7 +18,7 @@
     <!-- Lưu phiếu -->
    <div class="text-right">
     <span class="text-primary ml-3" id="lammoi" title="Làm mới" style="cursor: pointer;" data-toggle="tooltip">
-        <i class="fas fa-sync-alt"></i> Làm mới
+        <i class="fas fa-sync-alt"></i> Thêm phiếu nhập
     </span>
     <span class="text-primary ml-3" id="addPhieuNhapBtn" title="Thêm" style="cursor: pointer;" data-toggle="tooltip">
         <i class="fas fa-plus"></i> Lưu phiếu
@@ -50,7 +50,7 @@
                             <thead class="thead-light">
                                 <tr>
                                     <th>Số phiếu</th>
-                                    <th>Tên khách hàng</th>
+                                    <th>Tên nhà cung cấp</th>
                                     <th>Tên nhân viên</th>
                                     <th>Số tiền</th>
                                 </tr>
@@ -88,7 +88,7 @@
         </div>
         <!-- Khách hàng -->
         <div class="form-group row mb-1">
-            <label class="col-sm-4 col-form-label col-form-label-sm">Khách hàng</label>
+            <label class="col-sm-4 col-form-label col-form-label-sm">Nhà cung cấp</label>
             <div class="col-sm-8">
                 <select id="customerDropdown" class="form-control form-control-sm">
                     <option value="">Chọn Khách hàng</option>
@@ -112,10 +112,10 @@
         </div>
         <!-- NVKD -->
         <div class="form-group row mb-1">
-            <label class="col-sm-4 col-form-label col-form-label-sm">NVKD</label>
+            <label class="col-sm-4 col-form-label col-form-label-sm">Người nhập</label>
             <div class="col-sm-8">
-                <select id="nhanvienDropdown" name="nhanvienDropdown" class="form-control form-control-sm">
-                    <option value="">Chọn NVKD</option>
+                <select id="nhanvienDropdown" name="nhanvienDropdown" disabled class="form-control form-control-sm">
+                   
                     <!-- Các tùy chọn NVKD sẽ được thêm vào đây -->
                 </select>
                 @* <input type="text" name="nhanvienDropdown"> *@
@@ -184,7 +184,6 @@
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between">
         <h6 class="m-0 font-weight-bold text-primary">Chi tiết sản phẩm</h6>
-        <!-- Nút tìm kiếm với icon -->
         
     </div>
     <!-- Bảng danh mục -->
@@ -287,7 +286,8 @@
              loadPhieuNhaps();
              //danhsachdanhmuc(1, 10, '');
              Danhsachkh(1, 10);
-             danhsachNVKD(1, 10);
+            var currentUserID = ''; 
+            danhsachNVKD(1, 10, currentUserID);
 
             $('#lammoi').on('click', function() {
                 location.reload();
@@ -361,6 +361,12 @@
             });
 });
 
+ function normalizeString(str) {
+        // Loại bỏ dấu tiếng Việt
+        str = str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        // Chuyển thành chữ thường và loại bỏ khoảng trắng thừa
+        return str.toLowerCase().replace(/\s+/g, ' ').trim();
+    }
 
 
     $(document).on('change', '.item-checkbox', function() {
@@ -510,7 +516,7 @@ $(document).on('change', '.item-checkbox', function() {
         }
     });
 
-    
+   
 
 
 
@@ -542,8 +548,9 @@ $(document).on('change', '.item-checkbox', function() {
     });
 
     // Thêm tổng tiền
-    $('#printTongTien').text($('input[name="tongPhieu"]').val());
-
+   // $('#printTongTien').text($('input[name="tongPhieu"]').val());
+    var tongTien = parseFloat($('input[name="tongPhieu"]').val()) || 0;
+    $('#printTongTien').text(tongTien.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
     // Tạo style cho phiếu in
     var printStyle = `
         <style>
@@ -700,7 +707,7 @@ function updateTable() {
             <td>${phieuNhap.soPhieu}</td>
             <td>${phieuNhap.tenKhachHang}</td>
             <td>${phieuNhap.tenNVKD}</td>
-            <td>${phieuNhap.tongTien}</td>
+            <td>${formatCurrency(phieuNhap.tongTien)}</td>
         </tr>`;
         tableBody.append(row);
     });
@@ -770,6 +777,16 @@ function updatePagination() {
         }
     });
 
+    // Kiểm tra nếu tên khách hàng chưa được chọn
+    if (!tenKhachHang) {
+        Swal.fire({
+            title: "Thông báo",
+            text: "Vui lòng chọn nhà cung cấp.",
+            icon: "warning"
+        });
+        return; // Ngừng nếu tên khách hàng không được chọn
+    }
+
     if (chiTietPhieuNhaps.length === 0) {
         Swal.fire({
             title: "Thông báo",
@@ -778,6 +795,8 @@ function updatePagination() {
         });
         return; // Ngừng nếu không có mục nào được chọn
     }
+
+    
 
      // Tạo dữ liệu sẽ gửi
     var dataToSend = {
@@ -831,20 +850,24 @@ function updatePagination() {
 }
 
     
-        function danhsachNVKD(page, pagesize) {
+     function danhsachNVKD(page, pagesize) {
     $.ajax({
-        type: "POST",
-        url: "/Quanlynguoidung/Danhsachtaikhoan", // Thay URL nếu cần
+        type: "GET",
+        url: "/Quanlynguoidung/LayThongTinNguoiDungDaDangNhap", // Thay URL nếu cần
         data: { page: page, pagesize: pagesize },
         success: function (response) {
             $('#nhanvienDropdown').empty();
-            $('#nhanvienDropdown').append('<option value="">Chọn NVKD...</option>');
 
             if (response.success) {
-                $.each(response.users, function (index, value) {
-                    var option = `<option value="${value.ma_user}" data-name="${value.hovaten}">${value.hovaten}</option>`;
+            
+                // Kiểm tra nếu response.users là một đối tượng đơn lẻ
+                if (response.users) {
+                    var value = response.users;
+                    var option = `<option value="${value.ma_user}" data-name="${value.hovaten}" selected>${value.hovaten}</option>`;
                     $('#nhanvienDropdown').append(option);
-                });
+                } else {
+                    $('#nhanvienDropdown').append('<option value="">Không có người dùng nào</option>');
+                }
             } else {
                 Swal.fire({
                     title: "Thông báo lỗi",
@@ -852,23 +875,32 @@ function updatePagination() {
                     icon: "error"
                 });
             }
+        },
+        error: function (xhr, status, error) {
+            Swal.fire({
+                title: "Thông báo lỗi",
+                text: "Có lỗi xảy ra khi tải dữ liệu.",
+                icon: "error"
+            });
         }
     });
 }
 
 
+
+
         function Danhsachkh(page, pagesize) {
             $.ajax({
-                type: "POST",
-                url: "/Khachhang/Danhsachkh",
+                type: "GET",
+                url: "/Danhmuc/Danhsachnhacungcap",
                 data: { page: page, pagesize: pagesize },
                 success: function (response) {
                     $('#customerDropdown').empty();
-                    $('#customerDropdown').append('<option value="">Chọn khách hàng...</option>');
+                    $('#customerDropdown').append('<option value="">Chọn nhà cung cấp...</option>');
 
                     if (response.success) {
-                        $.each(response.dsdm, function (index, value) {
-                            var option = `<option value="${value.ma_khachhang}" data-name="${value.ten_khachhang}">${value.ten_khachhang}</option>`;
+                        $.each(response.data, function (index, value) {
+                            var option = `<option value="${value.ma_nhacungcap}" data-name="${value.nhacungcap}">${value.nhacungcap}</option>`;
                             $('#customerDropdown').append(option);
                         });
                     } else {

@@ -15,6 +15,6 @@ namespace Projecthoca.Service.Interface
         public Task<(List<NguoidungVM> ds, int totalpages)> Laydanhsachnv(int page, int pagesize);
 
         public Task<bool> Xoanhanvien(string id);
-
+        public Task<NguoidungVM> LayThongTinNguoiDungDaDangNhap();
     }
 }

@@ -406,7 +406,8 @@ namespace Projecthoca.Service.Responser
                 {
                     if(Roles.Contains("Staff"))
                     {
-                        var data = await _context.Danhmuc.Where(x => x.Id == user.IdCustomer).Select(x => new DanhmucVM
+                        var data = await _context.Danhmuc.Where(x => x.Id == user.IdCustomer && x.Ma_danhmuc != "DM0000")
+                        .Select(x => new DanhmucVM
                         {
                             Ma_danhmuc = x.Ma_danhmuc,
                             Ten_danhmuc = x.Ten_danhmuc,
@@ -420,7 +421,8 @@ namespace Projecthoca.Service.Responser
                     }
                     else
                     {
-                        var data = await _context.Danhmuc.Where(x => x.Id == user.Id).Select(x => new DanhmucVM
+                        var data = await _context.Danhmuc.Where(x => x.Id == user.Id && x.Ma_danhmuc != "DM0000")
+                        .Select(x => new DanhmucVM
                         {
                             Ma_danhmuc = x.Ma_danhmuc,
                             Ten_danhmuc = x.Ten_danhmuc,
@@ -436,7 +438,8 @@ namespace Projecthoca.Service.Responser
                 }
                 else
                 {
-                    var data = await _context.Danhmuc.Where(x => x.Ten_danhmuc.Contains(Timkiem) && x.Id == user.Id).Select(x => new DanhmucVM
+                    var data = await _context.Danhmuc.Where(x => x.Ten_danhmuc.Contains(Timkiem) && x.Id == user.Id && x.Ma_danhmuc != "DM0000")
+                    .Select(x => new DanhmucVM
                     {
                         Ma_danhmuc = x.Ma_danhmuc,
                         Ten_danhmuc = x.Ten_danhmuc,

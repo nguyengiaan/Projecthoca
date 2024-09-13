@@ -91,12 +91,14 @@ namespace Projecthoca.Service.Responser
             }
             return new Status { StatusCode = 0, Message = "Đăng ký thất bại" };
         }
+        
         public async Task<Status> Dangnhap(DangnhapVM user)
         {
             try
             {
                 var status = new Status();
                 var username = await _userManager.FindByNameAsync(user.Taikhoan);
+                
                 if (username == null)
                 {
                     status.StatusCode = 0;
@@ -135,6 +137,8 @@ namespace Projecthoca.Service.Responser
             }
             return new Status { StatusCode = 0, Message = "Đăng nhập thất bại" };
         }
+       
+       
         public async Task<(List<NguoidungVM> ds, int totalpages)> Laydanhsachnguoidung(int page, int pagesize)
         {
             try
@@ -321,6 +325,56 @@ namespace Projecthoca.Service.Responser
                 return true;
             }
         }
+
+
+        public async Task<NguoidungVM> LayThongTinNguoiDungDaDangNhap()
+{
+    try
+    {
+        // Lấy thông tin người dùng hiện tại từ HttpContext
+        var userId = _httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+        {
+            // Nếu không có thông tin người dùng (người dùng chưa đăng nhập), trả về null
+            return null;
+        }
+
+        // Tìm người dùng trong cơ sở dữ liệu theo ID
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null)
+        {
+            // Nếu không tìm thấy người dùng, trả về null
+            return null;
+        }
+
+        // Lấy thông tin của người dùng
+        var userRoles = await _userManager.GetRolesAsync(user);
+        var nguoidungVM = new NguoidungVM
+        {
+            Id = user.Id,
+            Ma_user = user.Ma_user,
+            hovaten = user.Hovaten,
+            UserName = user.UserName,
+            Email = user.Email,
+            Telephone = user.PhoneNumber,
+            diachi = user.Diachi,
+            Ngaysinh = user.Ngaysinh,
+            Role = userRoles.FirstOrDefault()
+        };
+
+        return nguoidungVM;
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+        // Trong trường hợp có lỗi, có thể trả về null hoặc một đối tượng NguoidungVM với thông báo lỗi
+        return null;
+    }
+}
+
+
+
+
 
     }
     

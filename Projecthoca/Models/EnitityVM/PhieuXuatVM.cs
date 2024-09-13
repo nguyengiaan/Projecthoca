@@ -17,6 +17,10 @@ namespace Projecthoca.Models.EnitityVM
         public decimal ConLai { get; set; }
         public DateTime? HanThanhToan { get; set; }
         public string GhiChu { get; set; }
+        public decimal GiamGia { get; set; }
+        public decimal TienMat { get; set; }
+        public decimal ChuyenKhoan { get; set; }
+        public string TenKhuvuc { get; set; }
 
         // List of ChiTietPhieuNhapVM
         public List<ChiTietPhieuXuatVM> ChiTietPhieuXuats { get; set; }
