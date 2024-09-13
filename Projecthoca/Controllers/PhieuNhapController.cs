@@ -238,12 +238,12 @@ public async Task<IActionResult> ThemPhieuNhap([FromBody] PhieuNhapVM model)
                 // Tìm mã số phiếu mới nhất trong tháng và năm hiện tại
                 var lastPhieuNhap = _context.PhieuNhaps
                     .Where(p => p.SoPhieu.StartsWith($"PN-{yearMonthPrefix}"))
-                    .OrderByDescending(p => p.SoPhieu)
+                    .OrderByDescending(p => p.SoPhieu).Select(x=>x.SoPhieu)
                     .FirstOrDefault();
 
                 if (lastPhieuNhap != null)
                 {
-                    var lastNumberPart = lastPhieuNhap.SoPhieu.Substring(8); // Lấy phần số sau tiền tố YYYYMM
+                    var lastNumberPart = lastPhieuNhap.Substring(8); // Lấy phần số sau tiền tố YYYYMM
                     if (int.TryParse(lastNumberPart, out int lastNumber))
                     {
                         // Tăng số lên 1 và định dạng lại thành 4 chữ số

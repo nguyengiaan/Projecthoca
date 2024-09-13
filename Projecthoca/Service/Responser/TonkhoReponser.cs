@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using Projecthoca.Data;
+using Projecthoca.Migrations;
 using Projecthoca.Models.Enitity;
 using Projecthoca.Models.EnitityVM;
 using Projecthoca.Service.Interface;
@@ -238,18 +239,60 @@ namespace Projecthoca.Service.Responser
            }
 
          }
-
         public async Task<(List<long> ds, long dt, long tongvon, long loinhuan)> baocaodt()
         {
-           try
-           {
-               var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                return (null,0,0,0);
-           }
-           catch(Exception ex)
-           {
-                return (null,0,0,0);
-           }
+    try
+    {
+        var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+        DateTime firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+        DateTime lastDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
+
+        List<long> dsdt = new List<long>();
+        long doanhthu = 0;
+        long tongvon = 0;
+        long loinhuan = 0;
+
+        // Truy vấn tất cả các phiếu nhập và phiếu xuất trong khoảng thời gian cần thiết
+        var dsphieunhap = await _context.PhieuNhaps
+            .Where(x => x.Id == user.Id && x.NgayPhieu.Date >= firstDayOfMonth.Date && x.NgayPhieu.Date <= lastDayOfMonth.Date)
+            .Include(x => x.ChiTietPhieuNhaps)
+            .AsNoTracking()
+            .ToListAsync();
+
+        var dsphieuxuat = await _context.PhieuXuats
+            .Where(x => x.Id == user.Id && x.NgayPhieu.Date >= firstDayOfMonth.Date && x.NgayPhieu.Date <= lastDayOfMonth.Date)
+            .Include(x => x.ChiTietPhieuXuats)
+            .AsNoTracking()
+            .ToListAsync();
+
+        // Tạo từ điển để nhóm các phiếu theo ngày
+        var nhapTheoNgay = dsphieunhap
+            .GroupBy(x => x.NgayPhieu.Date)
+            .ToDictionary(g => g.Key, g => g.Sum(x => x.ChiTietPhieuNhaps.Sum(ct => ct.ThanhTien)));
+
+        var xuatTheoNgay = dsphieuxuat
+            .GroupBy(x => x.NgayPhieu.Date)
+            .ToDictionary(g => g.Key, g => g.Sum(x => x.ChiTietPhieuXuats.Sum(ct => ct.ThanhTien)));
+
+        for (DateTime date = firstDayOfMonth; date <= lastDayOfMonth; date = date.AddDays(1))
+        {
+            long tt = (long)(xuatTheoNgay.ContainsKey(date.Date) ? xuatTheoNgay[date.Date] : 0);
+            long tv = (long)(nhapTheoNgay.ContainsKey(date.Date) ? nhapTheoNgay[date.Date] : 0);
+
+            dsdt.Add(tt);
+            doanhthu += tt;
+            tongvon += tv;
         }
+
+        loinhuan = doanhthu - tongvon;
+
+        return (dsdt, doanhthu, tongvon, loinhuan);
+    }
+    catch (Exception ex)
+    {
+        return (null, 0, 0, 0);
+    }
+}
+      
     }
 }

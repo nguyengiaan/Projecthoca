@@ -280,7 +280,7 @@
                         row.append($('<td>').text(item.ma_sanpham));
                         row.append($('<td>').text(item.tenSanPham));
                         row.append($('<td>').text(item.soLuong));
-                        row.append($('<td>').text(item.donGia));
+                        row.append($('<td>').text(formatCurrency(item.donGia)));
                         row.append($('<td>').text(item.donViTinh));
                         row.append($('<td>').text(item.ngayNhap.split('T')[0]));
                         row.append($('<td>').text(formatCurrency(item.thanhTien)));
@@ -348,9 +348,10 @@
                         var row = $('<tr>');
                         row.append($('<td>').text(item.ma_sanpham));
                         row.append($('<td>').text(item.tenSanPham));
-                        row.append($('<td>').text(item.soLuong));
-                        row.append($('<td>').text(item.donGia));
                         row.append($('<td>').text(item.donViTinh));
+                        row.append($('<td>').text(item.soLuong));
+                        row.append($('<td>').text(formatCurrency(item.donGia)));
+          
                         row.append($('<td>').text(item.ngayxuat.split('T')[0]));
                         row.append($('<td>').text(formatCurrency(item.thanhTien)));
                         reportBody.append(row);
