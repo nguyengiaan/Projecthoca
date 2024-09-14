@@ -31,9 +31,9 @@ namespace Projecthoca.Service.Responser
                 List<ChiTietPhieuNhap> chiTietPhieuNhaps;
                 List<ChiTietPhieuXuat> chiTietPhieuXuats;
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var totalItems = _context.Danhmuc.Where(x=>x.Id==user.Id).Count();
+                var totalItems = _context.Danhmuc.Where(x=>x.Id==user.Id && x.Ma_danhmuc != "DM0000").Count();
                 var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
-                var danhMucs=await _context.Danhmuc.Where(x=>x.Id==user.Id).Skip((page - 1) * pagesize).Take(pagesize).ToListAsync();
+                var danhMucs=await _context.Danhmuc.Where(x=>x.Id==user.Id && x.Ma_danhmuc != "DM0000").Skip((page - 1) * pagesize).Take(pagesize).ToListAsync();
                 if(danhMucs==null)
                 {
                     return (null,0);    
@@ -107,9 +107,9 @@ namespace Projecthoca.Service.Responser
                 List<ChiTietPhieuXuat> chiTietPhieuXuatsck;
                 List<XuatnhaptonVM> xuatnhaptonVMs = new List<XuatnhaptonVM>();
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var totalItems = _context.Danhmuc.Where(x => x.Id == user.Id).Count();
+                var totalItems = _context.Danhmuc.Where(x => x.Id == user.Id && x.Ma_danhmuc != "DM0000").Count();
                 var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
-                var danhMucs = await _context.Danhmuc.Where(x => x.Id == user.Id).Skip((page - 1) * pagesize).Take(pagesize).ToListAsync();
+                var danhMucs = await _context.Danhmuc.Where(x => x.Id == user.Id && x.Ma_danhmuc != "DM0000").Skip((page - 1) * pagesize).Take(pagesize).ToListAsync();
                 if (danhMucs == null)
                 {
                     return (null, 0);
@@ -179,10 +179,10 @@ namespace Projecthoca.Service.Responser
                 {
                     return (null,0);
                 }
-                var totalItems = _context.ChiTietPhieuNhaps.Where(x => x.Ma_sanpham == ma_hanghoa).Count();
+                var totalItems = _context.ChiTietPhieuNhaps.Where(x => x.Ma_sanpham == ma_hanghoa && x.Ma_sanpham != "DM0000").Count();
                 var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
                 var chiTietPhieuNhaps = await _context.ChiTietPhieuNhaps
-                    .Where(x => x.Ma_sanpham == ma_hanghoa && x.Ngaynhap.Date >= firstDayOfMonth.Date && x.Ngaynhap.Date <= Trongky.Date)
+                    .Where(x => x.Ma_sanpham == ma_hanghoa && x.Ma_sanpham != "DM0000" && x.Ngaynhap.Date >= firstDayOfMonth.Date && x.Ngaynhap.Date <= Trongky.Date)
                     .Skip((page - 1) * pagesize).Take(pagesize).Select(x=>new ChiTietPhieuNhapVM
                     {
                         Id=x.Id,
@@ -215,10 +215,10 @@ namespace Projecthoca.Service.Responser
                 {
                     return (null,0);
                 }
-                var totalItems = _context.ChiTietPhieuXuats.Where(x => x.Ma_sanpham == ma_hanghoa).Count();
+                var totalItems = _context.ChiTietPhieuXuats.Where(x => x.Ma_sanpham == ma_hanghoa && x.Ma_sanpham != "DM0000").Count();
                 var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
                 var chiTietPhieuNhaps = await _context.ChiTietPhieuXuats
-                    .Where(x => x.Ma_sanpham == ma_hanghoa && x.Ngayxuat.Date >= firstDayOfMonth.Date && x.Ngayxuat.Date <= Trongky.Date)
+                    .Where(x => x.Ma_sanpham == ma_hanghoa && x.Ma_sanpham != "DM0000" && x.Ngayxuat.Date >= firstDayOfMonth.Date && x.Ngayxuat.Date <= Trongky.Date)
                     .Skip((page - 1) * pagesize).Take(pagesize).Select(x=>new ChiTietPhieuXuatVM
                     {
                         Id=x.Id,

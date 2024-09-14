@@ -32,7 +32,10 @@
     <span class="text-primary ml-3" id="suaPhieuBtn" title="Sửa phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
     <i class="fas fa-edit"></i> Sửa phiếu
     </span>
-    <span class="text-primary ml-3" id="xoaPhieuBtn" title="Xóa phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
+    <span class="text-danger ml-3" id="huyPhieuBtn" title="Hủy phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
+    <i class="fas fa-times"></i> Hủy thêm mới/sửa
+    </span>
+    <span class="text-danger ml-3" id="xoaPhieuBtn" title="Xóa phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
     <i class="fas fa-trash"></i> Xóa phiếu
     </span>
     <span class="text-primary ml-3" id="luuPhieuBtn" title="Lưu phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
@@ -299,7 +302,7 @@
             danhsachNVKD(1, 10, currentUserID);
 
             $('#lammoi').on('click', function() {
-                location.reload();
+                startNewEntry();
             });
 
             // Lắng nghe sự thay đổi trong ô nhập liệu số lượng và đơn giá
@@ -426,6 +429,31 @@
                     });
                 }
             });
+            
+             $('#huyPhieuBtn').on('click', function() {
+    if (currentAction) {
+        Swal.fire({
+            title: "Xác nhận",
+            text: "Bạn có chắc chắn muốn hủy các thay đổi?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Đồng ý",
+            cancelButtonText: "Hủy bỏ"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                currentAction = null;
+                location.reload();
+            }
+        });
+    } else {
+        Swal.fire({
+            title: "Thông báo",
+            text: "Không có thay đổi nào để hủy.",
+            icon: "info"
+        });
+    }
+});
+
 
             // Xử lý sự kiện click nút "Xóa phiếu"
             $('#xoaPhieuBtn').on('click', function() {
@@ -514,14 +542,44 @@
         }
 
 function enableEditing() {
-            // Mở khóa các trường để chỉnh sửa
-            $('input, select, textarea').prop('disabled', false);
-            $('.item-checkbox').prop('disabled', false);
-            $('.item-checkbox').prop('checked', false);
+    currentAction = 'edit';
+    // Mở khóa các trường để chỉnh sửa
+    $('input, select, textarea').prop('disabled', false);
+    $('.item-checkbox').prop('disabled', false);
+    $('.item-checkbox').prop('checked', false);
 
-            updateRowTotal($(this).closest('tr'));
-            updateTotalAmount();
-        }
+    updateRowTotal($(this).closest('tr'));
+    updateTotalAmount();
+    updateButtonStates();
+}
+
+function startNewEntry() {
+    currentAction = 'new';
+    // Xóa dữ liệu cũ và mở khóa các trường
+    $('input, select, textarea').val('').prop('disabled', false);
+    $('#tblbody').empty();
+    updateButtonStates();
+}
+
+
+function updateButtonStates() {
+    if (currentAction === 'new' || currentAction === 'edit') {
+        $('#huyPhieuBtn').css({
+            'cursor': 'pointer',
+            'opacity': '1'
+        });
+    } else {
+        $('#huyPhieuBtn').css({
+            'cursor': 'not-allowed',
+            'opacity': '0.5'
+        });
+    }
+
+    // Cập nhật trạng thái các nút khác nếu cần
+}
+
+
+
 
 
  function normalizeString(str) {

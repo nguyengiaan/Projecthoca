@@ -32,7 +32,10 @@
     <span class="text-primary ml-3" id="suaPhieuBtn" title="Sửa phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
     <i class="fas fa-edit"></i> Sửa phiếu
     </span>
-    <span class="text-primary ml-3" id="xoaPhieuBtn" title="Xóa phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
+    <span class="text-danger ml-3" id="huyPhieuBtn" title="Hủy phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
+    <i class="fas fa-times"></i> Hủy thêm mới/sửa
+    </span>
+    <span class="text-danger ml-3" id="xoaPhieuBtn" title="Xóa phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
     <i class="fas fa-trash"></i> Xóa phiếu
     </span>
     <span class="text-primary ml-3" id="luuPhieuBtn" title="Lưu phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
@@ -297,7 +300,7 @@
              danhsachNVKD(1, 10);
 
             $('#lammoi').on('click', function() {
-                location.reload();
+                startNewEntry();
             });
 
             // Lắng nghe sự thay đổi trong ô nhập liệu số lượng và đơn giá
@@ -378,7 +381,30 @@
                     });
                 }
             });
-            
+
+            $('#huyPhieuBtn').on('click', function() {
+    if (currentAction) {
+        Swal.fire({
+            title: "Xác nhận",
+            text: "Bạn có chắc chắn muốn hủy các thay đổi?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Đồng ý",
+            cancelButtonText: "Hủy bỏ"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                currentAction = null;
+                location.reload();
+            }
+        });
+    } else {
+        Swal.fire({
+            title: "Thông báo",
+            text: "Không có thay đổi nào để hủy.",
+            icon: "info"
+        });
+    }
+});
             
             // Xử lý sự kiện click nút "Xóa phiếu"
             $('#xoaPhieuBtn').on('click', function() {
@@ -431,6 +457,8 @@
                     });
                 }
             });
+
+            
 
 
          // Xử lý sự kiện click nút "Lưu" sau khi chỉnh sửa
@@ -520,6 +548,7 @@
         }
         
 function enableEditing() {
+            currentAction = 'edit';
             // Mở khóa các trường để chỉnh sửa
             $('input, select, textarea').prop('disabled', false);
             $('.item-checkbox').prop('disabled', false);
@@ -527,7 +556,35 @@ function enableEditing() {
 
             updateRowTotal($(this).closest('tr'));
             updateTotalAmount();
+            updateButtonStates();
         }
+
+function startNewEntry() {
+    currentAction = 'new';
+    // Xóa dữ liệu cũ và mở khóa các trường
+    $('input, select, textarea').val('').prop('disabled', false);
+    $('#tblbody').empty();
+    $('input[name="ngayPhieu"]').val(new Date().toISOString().split('T')[0]);
+    $('input[name="hanThanhToan"]').val(new Date().toISOString().split('T')[0]);
+    updateButtonStates();
+}
+
+function updateButtonStates() {
+    if (currentAction === 'new' || currentAction === 'edit') {
+        $('#huyPhieuBtn').css({
+            'cursor': 'pointer',
+            'opacity': '1'
+        });
+    } else {
+        $('#huyPhieuBtn').css({
+            'cursor': 'not-allowed',
+            'opacity': '0.5'
+        });
+    }
+
+    // Cập nhật trạng thái các nút khác nếu cần
+}
+
 
 
 function normalizeString(str) {
@@ -632,27 +689,53 @@ $(document).on('change', '.item-checkbox', function() {
 
 
 // Sự kiện click cho nút "Chọn" trong bảng danh mục
-    $(document).on('click', '.select-category', function() {
-        var row = $(this).closest('tr');
-        var maDanhMuc = row.data('id');
-        var tenDanhMuc = row.find('td:eq(1)').text();
-        var donViTinh = row.find('td:eq(2)').text();
-        var soluong = row.find('td:eq(3)').text();
-        var giaban = row.find('td:eq(4)').text(); 
-    
-        // Thêm danh mục vào bảng chính
-        var newRow = `<tr data-id="${maDanhMuc}">
-            <td>${maDanhMuc}</td>
-            <td>${tenDanhMuc}</td>
-            <td>${donViTinh}</td>
-            <td><input type="number" class="form-control quantity" value="0" /></td>
-            <td><input type="number" class="form-control unit-price" value="${giaban}" /></td>
-            <td class="item-total">0</td>
-            <td><input type="checkbox" class="item-checkbox" data-id="${maDanhMuc}" /></td>
-        </tr>`;
-        $('#tblbody').append(newRow);
-    });
+$(document).on('click', '.select-category', function() {
+    var row = $(this).closest('tr');
+    var maDanhMuc = row.data('id');
+    var tenDanhMuc = row.find('td:eq(1)').text();
+    var donViTinh = row.find('td:eq(2)').text();
+    var soluong = parseFloat(row.find('td:eq(3)').text());
+    var giaban = row.find('td:eq(4)').text(); 
 
+    // Kiểm tra số lượng
+    if (soluong <= 0) {
+        Swal.fire({
+            title: "Thông báo",
+            text: "Kho hết hàng.",
+            icon: "warning"
+        });
+        return; // Dừng thực thi hàm nếu số lượng không hợp lệ
+    }
+
+    // Kiểm tra xem sản phẩm đã tồn tại trong bảng chính chưa
+    var existingRow = $(`#tblbody tr[data-id="${maDanhMuc}"]`);
+    if (existingRow.length > 0) {
+        Swal.fire({
+            title: "Thông báo",
+            text: "Sản phẩm này đã được thêm vào danh sách.",
+            icon: "info"
+        });
+        return; // Dừng thực thi hàm nếu sản phẩm đã tồn tại
+    }
+
+    // Thêm danh mục vào bảng chính
+    var newRow = `<tr data-id="${maDanhMuc}">
+        <td>${maDanhMuc}</td>
+        <td>${tenDanhMuc}</td>
+        <td>${donViTinh}</td>
+        <td><input type="number" class="form-control quantity" value="1" min="1" max="${soluong}" /></td>
+        <td><input type="number" class="form-control unit-price" value="${giaban}" /></td>
+        <td class="item-total">${giaban}</td>
+        <td><input type="checkbox" class="item-checkbox" data-id="${maDanhMuc}" /></td>
+    </tr>`;
+    $('#tblbody').append(newRow);
+
+    // Cập nhật tổng số tiền
+    //updateTotalAmount();
+
+    // Đóng modal sau khi thêm sản phẩm
+    //$('#categoryModal').modal('hide');
+});
 
 
 

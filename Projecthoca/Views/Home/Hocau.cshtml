@@ -978,14 +978,14 @@
                 Xoakhachang(kvc);
 
             });
-            $(document).on("click ", "#Inhoadon", function () {
+            $(document).on("click ", "#Themphieuxuatbtn", function () {
                 $('#ds1').hide();
                 Kiemtrabamgioin(kvc);
 
             })
-            $(document).on("click ", "#Themphieuxuatbtn", function () {
+            @* $(document).on("click ", "#Themphieuxuatbtn", function () {
                 Themphieuxuat();
-            });
+            }); *@
 
             $(document).on('change', '#Timkiem', function () {
                 var Ma_mathang = $(this).val();
@@ -1725,9 +1725,11 @@
 
                         var html = `
                                             <tr>
+                                                <td>DM0000</td>
                                                 <td>Cá câu</td>
                                                 <td>Kí</td>
-                                                        <td>${response.data.sokg}</td>
+                                                <td><input type="number" readonly class="form-control text-center" value="${response.data.sokg}"</td>
+                                                        @* <td>${response.data.sokg}</td> *@
                                                                     <td>${formatCurrency(response.data.tongsotien)} </td>
                                                 <td>${formatCurrency(response.data.tongsotien)}</td>
 
@@ -1824,7 +1826,7 @@
                                                                             <td>DM0000</td>
                                                                             <td>Dịch vụ câu</td>
                                                                             <td>${value.ca} Giờ</td>
-                                                                            <td><input type="number" disabled class="form-control text-center" value="${value.soluong}"</td>
+                                                                            <td><input type="number" readonly class="form-control text-center" value="${value.soluong}"</td>
                                                                             <td>${value.giaca}</td>
                                                                             <td>${value.thanhtien}</td>
                                                                             <td><button class="btn btn-danger" data-id="${value.ma_giachothuehc}" onclick="Xoathoigian('${value.ma_giachothuehc}')" >Xóa</button></td>
@@ -2224,8 +2226,8 @@ function Themphieuxuat() {
                         });
                     }
                     else {
-                        Capnhatsoluonghh(kvc);
-                        Inhoadon();
+                        //Capnhatsoluonghh(kvc);
+                        Themphieuxuat();
 
                     }
                 },
@@ -2366,7 +2368,10 @@ function Themphieuxuat() {
                     
                     // Nếu số lượng > 0, hiển thị nút "Chọn"
                     if (value.soluong > 0) {
-                        selectButton = `<button class="btn btn-success" data-id="${value.ma_danhmuc}" id="btnChondm">Chọn</button>`;
+                        selectButton = `<button class="btn btn-primary btn-sm select-item" id="btnChondm" data-id="${value.ma_danhmuc}">Chọn</button>
+                                        `
+                    } else {
+                        selectButton = '<span class="text-danger">Hết hàng</span>';
                     }
 
                     // Tạo chuỗi HTML cho từng hàng trong bảng
@@ -2546,7 +2551,7 @@ function Themphieuxuat() {
 
          if (soluong > 0) {
          soluong--; // Giảm số lượng
-         soluongCell.text(soluong); // Cập nhật lại số lượng hiển thị
+         //soluongCell.text(soluong); // Cập nhật lại số lượng hiển thị
 
         // Ẩn nút "Chọn" nếu số lượng = 0
             if (soluong === 0) {
@@ -2554,27 +2559,30 @@ function Themphieuxuat() {
             }
 
         // Gọi hàm Capnhatsoluonghh để cập nhật số lượng trong database
-         Capnhatsoluonghh(button.data('id')); // Truyền mã khu vực cầu (hoặc mã sản phẩm)
+        // Capnhatsoluonghh(kvc); // Truyền mã khu vực cầu (hoặc mã sản phẩm)
     }
 });
 
         // hàm cập nhật số lượng hàng hóa
         function Capnhatsoluonghh(ma_khuvuccau) {
+            console.log("Mã khu vực cầu:", ma_khuvuccau);
             $.ajax({
                 url: "/Danhmuc/Capnhatsoluong",
                 type: "POST",
                 data: { ma_khuvuccau: ma_khuvuccau },
 
                 success: function (response) {
+                    console.log("Phản hồi từ server:", response);
                     if (response.success) {
                         console.log("Thành công");
 
                     } else {
-                        console.log("Thất bại");
+                        console.log("Cập nhật số lượng thất bại:", response.message);
                     }
                 },
                 error: function (xhr, status, error) {
                     console.error("Có lỗi xảy ra: ", error);
+                    console.error("Chi tiết lỗi:", xhr.responseText);
                     alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
                 }
             });
