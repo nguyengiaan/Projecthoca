@@ -18,17 +18,30 @@
     <!-- Lưu phiếu -->
    <div class="text-right">
     <span class="text-primary ml-3" id="lammoi" title="Làm mới" style="cursor: pointer;" data-toggle="tooltip">
-        <i class="fas fa-sync-alt"></i> Làm mới
+        <i class="fas fa-plus"></i> Thêm phiếu xuất
     </span>
     <span class="text-primary ml-3" id="addPhieuNhapBtn" title="Thêm" style="cursor: pointer;" data-toggle="tooltip">
-        <i class="fas fa-plus"></i> Lưu phiếu
+        <i class="fas fa-save"></i> Lưu phiếu mới
     </span>
     <span class="text-primary ml-3" data-toggle="modal" data-target="#categoryModal" style="cursor: pointer;">
-        <i class="fas fa-search"></i> Tìm danh mục
+        <i class="fas fa-search"></i> Thêm sản phẩm
     </span>
     <span class="text-primary ml-3" id="printPhieuNhapBtn" title="In phiếu nhập" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
     <i class="fas fa-print"></i> In phiếu xuất
+    </span>
+    <span class="text-primary ml-3" id="suaPhieuBtn" title="Sửa phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
+    <i class="fas fa-edit"></i> Sửa phiếu
+    </span>
+    <span class="text-danger ml-3" id="huyPhieuBtn" title="Hủy phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
+    <i class="fas fa-times"></i> Hủy thêm mới/sửa
+    </span>
+    <span class="text-danger ml-3" id="xoaPhieuBtn" title="Xóa phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
+    <i class="fas fa-trash"></i> Xóa phiếu
+    </span>
+    <span class="text-primary ml-3" id="luuPhieuBtn" title="Lưu phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
+    <i class="fas fa-save"></i> Lưu phiếu sửa
 </span>
+    
 </div>
 
 </div>
@@ -112,11 +125,10 @@
         </div>
         <!-- NVKD -->
         <div class="form-group row mb-1">
-            <label class="col-sm-4 col-form-label col-form-label-sm">NVKD</label>
+            <label class="col-sm-4 col-form-label col-form-label-sm">Nhân viên</label>
             <div class="col-sm-8">
-                <select id="nhanvienDropdown" name="nhanvienDropdown" class="form-control form-control-sm">
-                    <option value="">Chọn NVKD</option>
-                    <!-- Các tùy chọn NVKD sẽ được thêm vào đây -->
+                <select id="nhanvienDropdown" name="nhanvienDropdown" disabled class="form-control form-control-sm">
+                    
                 </select>
                 @* <input type="text" name="nhanvienDropdown"> *@
             </div>
@@ -184,7 +196,6 @@
 <div class="card shadow mb-4">
     <div class="card-header py-3 d-flex justify-content-between">
         <h6 class="m-0 font-weight-bold text-primary">Chi tiết sản phẩm</h6>
-        <!-- Nút tìm kiếm với icon -->
         
     </div>
     <!-- Bảng danh mục -->
@@ -273,9 +284,6 @@
         <p>Tổng tiền: <span id="printTongTien"></span></p>
     </div>
 </div>
-
-
-
 </div>
 
 
@@ -292,7 +300,7 @@
              danhsachNVKD(1, 10);
 
             $('#lammoi').on('click', function() {
-                location.reload();
+                startNewEntry();
             });
 
             // Lắng nghe sự thay đổi trong ô nhập liệu số lượng và đơn giá
@@ -344,11 +352,8 @@
                 });
             });
 
-        @* $('#printPhieuNhapBtn').on('click', function() {
-                preparePhieuNhapForPrinting();
+        
 
-                $('#printablePhieuNhap').show();
-            }); *@
             // Xử lý sự kiện click nút in phiếu
             $('#printPhieuNhapBtn').on('click', function() {
                 var selectedPhieu = $(this).data('selected-phieu');
@@ -362,7 +367,224 @@
                     });
                 }
             });
+            
+            // Xử lý sự kiện click nút "Sửa phiếu"
+            $('#suaPhieuBtn').on('click', function() {
+                var selectedPhieu = $(this).data('selected-phieu');
+                if (selectedPhieu && $(this).css('opacity') == '1') {
+                    enableEditing();
+                } else {
+                    Swal.fire({
+                        title: "Thông báo",
+                        text: "Vui lòng chọn một phiếu để sửa.",
+                        icon: "warning"
+                    });
+                }
+            });
+
+            $('#huyPhieuBtn').on('click', function() {
+    if (currentAction) {
+        Swal.fire({
+            title: "Xác nhận",
+            text: "Bạn có chắc chắn muốn hủy các thay đổi?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Đồng ý",
+            cancelButtonText: "Hủy bỏ"
+        }).then((result) => {
+            if (result.isConfirmed) {
+                currentAction = null;
+                location.reload();
+            }
+        });
+    } else {
+        Swal.fire({
+            title: "Thông báo",
+            text: "Không có thay đổi nào để hủy.",
+            icon: "info"
+        });
+    }
 });
+            
+            // Xử lý sự kiện click nút "Xóa phiếu"
+            $('#xoaPhieuBtn').on('click', function() {
+                var selectedPhieu = $(this).data('selected-phieu');
+                if (selectedPhieu && $(this).css('opacity') == '1') {
+                    Swal.fire({
+                        title: "Xác nhận",
+                        text: "Bạn có chắc chắn muốn xóa phiếu này?",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonText: "Xóa",
+                        cancelButtonText: "Hủy"
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            $.ajax({
+                                url: `/api/PhieuXuat/XoaPhieuXuat?soPhieu=${selectedPhieu}`,
+                                type: 'DELETE',
+                                success: function(response) {
+                                    if (response.success) {
+                                        Swal.fire({
+                                            title: "Thành công",
+                                            text: response.message,
+                                            icon: "success"
+                                        }).then(() => {
+                                            location.reload(); // Tải lại trang hoặc cập nhật giao diện theo yêu cầu
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: "Thông báo lỗi",
+                                            text: response.message,
+                                            icon: "error"
+                                        });
+                                    }
+                                },
+                                error: function(error) {
+                                    Swal.fire({
+                                        title: "Lỗi",
+                                        text: "Đã xảy ra lỗi khi xóa phiếu.",
+                                        icon: "error"
+                                    });
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Thông báo",
+                        text: "Vui lòng chọn một phiếu để xóa.",
+                        icon: "warning"
+                    });
+                }
+            });
+
+            
+
+
+         // Xử lý sự kiện click nút "Lưu" sau khi chỉnh sửa
+            $('#luuPhieuBtn').on('click', function() {
+                var selectedPhieu = $('#suaPhieuBtn').data('selected-phieu');
+                if (selectedPhieu) {
+                    var updatedPhieu = collectUpdatedPhieuData();
+                    console.log(updatedPhieu); // Kiểm tra dữ liệu trước khi gửi
+                    $.ajax({
+                        url: `/api/PhieuXuat/CapNhatPhieuXuat`,
+                        type: 'PUT',
+                        contentType: 'application/json',
+                        data: JSON.stringify(updatedPhieu),
+                        success: function(response) {
+                            if (response.success) {
+                                Swal.fire({
+                                    title: "Thành công",
+                                    text: "Phiếu đã được cập nhật thành công.",
+                                    icon: "success"
+                                }).then(() => {
+                                    location.reload(); // Tải lại trang hoặc cập nhật giao diện theo yêu cầu
+                                });
+                            } else {
+                                Swal.fire({
+                                    title: "Thông báo lỗi",
+                                    text: response.message,
+                                    icon: "error"
+                                });
+                            }
+                        },
+                        error: function(error) {
+                            console.log(error.responseText);
+                            Swal.fire({
+                                title: "Lỗi",
+                                text: "Đã xảy ra lỗi khi cập nhật phiếu.",
+                                icon: "error"
+                            });
+                        }
+                    });
+                } else {
+                    Swal.fire({
+                        title: "Thông báo",
+                        text: "Vui lòng chọn một phiếu để lưu.",
+                        icon: "warning"
+                    });
+                }
+            });
+
+
+
+});
+ function collectUpdatedPhieuData() {
+            // Thu thập dữ liệu phiếu đã được chỉnh sửa từ giao diện
+            var updatedPhieu = {
+                soPhieu: $('input[name="soPhieu"]').val(),
+                ngayPhieu: $('input[name="ngayPhieu"]').val(),
+                tenKhachhang: $('#customerDropdown').val(),
+                tenNVKD: $('#nhanvienDropdown').val(),
+                tongTien: parseFloat($('input[name="tongPhieu"]').val()) || 0,
+                noCu: parseFloat($('input[name="noCu"]').val()) || 0,
+                thanhToan: parseFloat($('input[name="thanhToan"]').val()) || 0,
+                conLai: parseFloat($('input[name="conLai"]').val()) || 0,
+                hanThanhToan: $('input[name="hanThanhToan"]').val(),
+                ghiChu: $('textarea[name="ghiChu"]').val(),
+                giamGia: parseFloat($('input[name="giamGia"]').val()) || 0,
+                tienMat: parseFloat($('input[name="tienMat"]').val()) || 0,
+                chuyenKhoan: parseFloat($('input[name="chuyenKhoan"]').val()) || 0,
+                tenKhuvuc: $('input[name="tenKhuvuc"]').val()|| "Khách mua hàng",
+
+                chiTietPhieuXuats: []
+            };
+
+            $('#tblbody tr').each(function() {
+                var chiTiet = {
+                    soPhieu: updatedPhieu.soPhieu,
+                    ma_sanpham: $(this).find('td:eq(0)').text(),
+                    tenSanPham: $(this).find('td:eq(1)').text(), // Thêm trường tenSanPham
+                    soLuong: parseFloat($(this).find('.quantity').val()) || 0,
+                    donGia: parseFloat($(this).find('.unit-price').val()) || 0,
+                    thanhTien: parseFloat($(this).find('.quantity').val()) * parseFloat($(this).find('.unit-price').val()) || 0,
+                    donViTinh: $(this).find('td:eq(2)').text()
+                };
+                updatedPhieu.chiTietPhieuXuats.push(chiTiet);
+            });
+
+            return updatedPhieu;
+        }
+        
+function enableEditing() {
+            currentAction = 'edit';
+            // Mở khóa các trường để chỉnh sửa
+            $('input, select, textarea').prop('disabled', false);
+            $('.item-checkbox').prop('disabled', false);
+            $('.item-checkbox').prop('checked', false);
+
+            updateRowTotal($(this).closest('tr'));
+            updateTotalAmount();
+            updateButtonStates();
+        }
+
+function startNewEntry() {
+    currentAction = 'new';
+    // Xóa dữ liệu cũ và mở khóa các trường
+    $('input, select, textarea').val('').prop('disabled', false);
+    $('#tblbody').empty();
+    $('input[name="ngayPhieu"]').val(new Date().toISOString().split('T')[0]);
+    $('input[name="hanThanhToan"]').val(new Date().toISOString().split('T')[0]);
+    updateButtonStates();
+}
+
+function updateButtonStates() {
+    if (currentAction === 'new' || currentAction === 'edit') {
+        $('#huyPhieuBtn').css({
+            'cursor': 'pointer',
+            'opacity': '1'
+        });
+    } else {
+        $('#huyPhieuBtn').css({
+            'cursor': 'not-allowed',
+            'opacity': '0.5'
+        });
+    }
+
+    // Cập nhật trạng thái các nút khác nếu cần
+}
+
 
 
 function normalizeString(str) {
@@ -446,6 +668,9 @@ $(document).on('input', '.quantity, .unit-price', function() {
     }
 });
 
+
+
+
 // Khi checkbox được chọn hoặc bỏ chọn, vô hiệu hóa hoặc kích hoạt các ô nhập liệu
 $(document).on('change', '.item-checkbox', function() {
     var row = $(this).closest('tr');
@@ -464,26 +689,55 @@ $(document).on('change', '.item-checkbox', function() {
 
 
 // Sự kiện click cho nút "Chọn" trong bảng danh mục
-    $(document).on('click', '.select-category', function() {
-        var row = $(this).closest('tr');
-        var maDanhMuc = row.data('id');
-        var tenDanhMuc = row.find('td:eq(1)').text();
-        var donViTinh = row.find('td:eq(2)').text();
-        var soluong = row.find('td:eq(3)').text();
-        var giaban = row.find('td:eq(4)').text(); 
+$(document).on('click', '.select-category', function() {
+    var row = $(this).closest('tr');
+    var maDanhMuc = row.data('id');
+    var tenDanhMuc = row.find('td:eq(1)').text();
+    var donViTinh = row.find('td:eq(2)').text();
+    var soluong = parseFloat(row.find('td:eq(3)').text());
+    var giaban = row.find('td:eq(4)').text(); 
 
-        // Thêm danh mục vào bảng chính
-        var newRow = `<tr data-id="${maDanhMuc}">
-            <td>${maDanhMuc}</td>
-            <td>${tenDanhMuc}</td>
-            <td>${donViTinh}</td>
-            <td><input type="number" class="form-control quantity" value="0" /></td>
-            <td><input type="number" class="form-control unit-price" value="${giaban}" /></td>
-            <td class="item-total">0</td>
-            <td><input type="checkbox" class="item-checkbox" data-id="${maDanhMuc}" /></td>
-        </tr>`;
-        $('#tblbody').append(newRow);
-    });
+    // Kiểm tra số lượng
+    if (soluong <= 0) {
+        Swal.fire({
+            title: "Thông báo",
+            text: "Kho hết hàng.",
+            icon: "warning"
+        });
+        return; // Dừng thực thi hàm nếu số lượng không hợp lệ
+    }
+
+    // Kiểm tra xem sản phẩm đã tồn tại trong bảng chính chưa
+    var existingRow = $(`#tblbody tr[data-id="${maDanhMuc}"]`);
+    if (existingRow.length > 0) {
+        Swal.fire({
+            title: "Thông báo",
+            text: "Sản phẩm này đã được thêm vào danh sách.",
+            icon: "info"
+        });
+        return; // Dừng thực thi hàm nếu sản phẩm đã tồn tại
+    }
+
+    // Thêm danh mục vào bảng chính
+    var newRow = `<tr data-id="${maDanhMuc}">
+        <td>${maDanhMuc}</td>
+        <td>${tenDanhMuc}</td>
+        <td>${donViTinh}</td>
+        <td><input type="number" class="form-control quantity" value="1" min="1" max="${soluong}" /></td>
+        <td><input type="number" class="form-control unit-price" value="${giaban}" /></td>
+        <td class="item-total">${giaban}</td>
+        <td><input type="checkbox" class="item-checkbox" data-id="${maDanhMuc}" /></td>
+    </tr>`;
+    $('#tblbody').append(newRow);
+
+    // Cập nhật tổng số tiền
+    //updateTotalAmount();
+
+    // Đóng modal sau khi thêm sản phẩm
+    //$('#categoryModal').modal('hide');
+});
+
+
 
 
 
@@ -492,10 +746,14 @@ $(document).on('change', '.item-checkbox', function() {
         var soPhieu = $(this).find('td:eq(0)').text(); // Lấy số phiếu từ cột đầu tiên
         if (soPhieu) {
 
-             $('#printPhieuNhapBtn').css({
+             $('#printPhieuNhapBtn,#suaPhieuBtn, #xoaPhieuBtn, #luuPhieuBtn').css({
                 'cursor': 'pointer',
                 'opacity': '1'
             }).data('selected-phieu', soPhieu);
+            $('#addPhieuNhapBtn').css({
+                'cursor': 'not-allowed',
+                'opacity': '0.5'
+            });
 
             $.ajax({
                 url: `/api/PhieuXuat/XemPhieuXuat?soPhieu=${soPhieu}`,
@@ -552,7 +810,9 @@ $(document).on('change', '.item-checkbox', function() {
     });
 
     // Thêm tổng tiền
-    $('#printTongTien').text($('input[name="tongPhieu"]').val());
+    //$('#printTongTien').text($('input[name="tongPhieu"]').val());
+    var tongTien = parseFloat($('input[name="tongPhieu"]').val()) || 0;
+    $('#printTongTien').text(tongTien.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' }));
 
     // Tạo style cho phiếu in
     var printStyle = `
@@ -633,9 +893,6 @@ function danhsachdanhmucModels(page, pagesize) {
 }
 
 
-
-
-
  // Hàm cập nhật thông tin chi tiết phiếu nhập
     function updateDetailView(chiTietPhieuXuat) {
         $('input[name="soPhieu"]').val(chiTietPhieuXuat.soPhieu);
@@ -660,19 +917,28 @@ function danhsachdanhmucModels(page, pagesize) {
         chiTietTableBody.empty(); // Xóa dữ liệu cũ
 
         chiTietPhieuXuat.chiTietPhieuXuats.forEach(function(item) {
+            var maDanhMuc = item.maSanPham;
+            var tenDanhMuc = item.tenSanPham;
+            var donViTinh = item.donViTinh;
+            var soLuong = item.soLuong;
+            var giaban = item.donGia;
+            var thanhTien = item.thanhTien;
+            
             var row = `<tr>
-                <td>${item.maSanPham}</td>
-                <td>${item.tenSanPham}</td>
-                <td>${item.donViTinh}</td>
-                <td>${item.soLuong}</td>
-                <td>${formatCurrency(item.donGia)}</td>
-                <td>${formatCurrency(item.thanhTien)}</td>
-                <td><input type="checkbox" class="item-checkbox" data-id="${item.maSanPham}" checked disabled /></td>
+            <td>${maDanhMuc}</td>
+            <td>${tenDanhMuc}</td>
+            <td>${donViTinh}</td>
+            <td><input type="number" class="form-control quantity" disabled value="${soLuong}" /></td>
+            <td><input type="number" class="form-control unit-price" disabled value="${giaban}" /></td>
+            <td class="item-total">${thanhTien}</td>
+            <td><input type="checkbox" class="item-checkbox" checked disabled data-id="${maDanhMuc}" /></td>
             </tr>`;
             chiTietTableBody.append(row);
         });
-
+        updateTotalAmount();
     }
+
+
 
 
 var phieuNhaps = [];
@@ -710,7 +976,7 @@ function updateTable() {
             <td>${phieuNhap.soPhieu}</td>
             <td>${phieuNhap.tenKhachHang}</td>
             <td>${phieuNhap.tenNVKD}</td>
-            <td>${phieuNhap.tongTien}</td>
+            <td>${formatCurrency(phieuNhap.tongTien)}</td>
         </tr>`;
         tableBody.append(row);
     });
@@ -754,6 +1020,10 @@ function updatePagination() {
     var conLai = parseFloat($('input[name="conLai"]').val()) || 0;
     var hanThanhToan = $('input[name="hanThanhToan"]').val();
     var ghiChu = $('textarea[name="ghiChu"]').val();
+    var giamGia =  0;
+    var tienMat =  0;
+    var chuyenKhoan =  0;
+   
 
 
     // Tạo đối tượng chi tiết phiếu nhập từ bảng chỉ khi checkbox được chọn
@@ -780,6 +1050,16 @@ function updatePagination() {
         }
     });
 
+    // Kiểm tra nếu tên khách hàng chưa được chọn
+    if (!tenKhachHang) {
+        Swal.fire({
+            title: "Thông báo",
+            text: "Vui lòng chọn khách hàng.",
+            icon: "warning"
+        });
+        return; // Ngừng nếu tên khách hàng không được chọn
+    }
+
     if (chiTietPhieuXuats.length === 0) {
         Swal.fire({
             title: "Thông báo",
@@ -801,7 +1081,11 @@ function updatePagination() {
         ConLai: conLai,
         HanThanhToan: hanThanhToan,
         GhiChu: ghiChu,
-        ChiTietPhieuXuats: chiTietPhieuXuats
+        ChiTietPhieuXuats: chiTietPhieuXuats,
+        GiamGia: giamGia,
+        TienMat: tienMat,
+        ChuyenKhoan: chuyenKhoan,
+        TenKhuvuc: 'Khách mua hàng'
     };
 
     console.log(dataToSend);
@@ -842,20 +1126,25 @@ function updatePagination() {
 }
 
     
-        function danhsachNVKD(page, pagesize) {
+     
+     function danhsachNVKD(page, pagesize) {
     $.ajax({
-        type: "POST",
-        url: "/Quanlynguoidung/Danhsachtaikhoan", // Thay URL nếu cần
+        type: "GET",
+        url: "/Quanlynguoidung/LayThongTinNguoiDungDaDangNhap", // Thay URL nếu cần
         data: { page: page, pagesize: pagesize },
         success: function (response) {
             $('#nhanvienDropdown').empty();
-            $('#nhanvienDropdown').append('<option value="">Chọn NVKD...</option>');
 
             if (response.success) {
-                $.each(response.users, function (index, value) {
-                    var option = `<option value="${value.ma_user}" data-name="${value.hovaten}">${value.hovaten}</option>`;
+            
+                // Kiểm tra nếu response.users là một đối tượng đơn lẻ
+                if (response.users) {
+                    var value = response.users;
+                    var option = `<option value="${value.ma_user}" data-name="${value.hovaten}" selected>${value.hovaten}</option>`;
                     $('#nhanvienDropdown').append(option);
-                });
+                } else {
+                    $('#nhanvienDropdown').append('<option value="">Không có người dùng nào</option>');
+                }
             } else {
                 Swal.fire({
                     title: "Thông báo lỗi",
@@ -863,9 +1152,18 @@ function updatePagination() {
                     icon: "error"
                 });
             }
+        },
+        error: function (xhr, status, error) {
+            Swal.fire({
+                title: "Thông báo lỗi",
+                text: "Có lỗi xảy ra khi tải dữ liệu.",
+                icon: "error"
+            });
         }
     });
 }
+
+
 
 
         function Danhsachkh(page, pagesize) {
@@ -905,13 +1203,36 @@ function updatePagination() {
             $row.find('.item-total').text(formatCurrency(itemTotal));
         }
 
-        function updateTotalAmount() {
-            let totalAmount = 0;
-            $('#tblbody .item-total').each(function() {
-                totalAmount += parseFloat($(this).text().replace(/[^0-9.-]+/g, "")) || 0;
-            });
-            $('#totalAmount').text(formatCurrency(totalAmount));
+    function updateTotalAmount() {
+    let totalAmount = 0;
+    let anyChecked = false;
+
+    // Duyệt qua tất cả các hàng trong danh sách
+    $('#tblbody tr').each(function() {
+        let checkbox = $(this).find('.item-checkbox');
+        if (checkbox.is(':checked')) {
+            anyChecked = true;
+            let quantity = parseFloat($(this).find('.quantity').val()) || 0;
+            let price = parseFloat($(this).find('.unit-price').val()) || 0;
+            let amount = quantity * price;
+
+            // Cập nhật thành tiền cho hàng hiện tại
+            $(this).find('.item-total').text(amount.toFixed(2));
+
+            // Cộng vào tổng tiền
+            totalAmount += amount;
         }
+    });
+
+    // Nếu không có checkbox nào được chọn, đặt tổng tiền về 0
+    if (!anyChecked) {
+        totalAmount = 0;
+    }
+
+    // Cập nhật tổng tiền
+    $('input[name="tongPhieu"]').val(totalAmount);
+    $('input[name="conLai"]').val(totalAmount - (parseFloat($('input[name="thanhToan"]').val()) || 0));
+}
 
 function danhsachdanhmuc(page, pagesize) {
     $.ajax({

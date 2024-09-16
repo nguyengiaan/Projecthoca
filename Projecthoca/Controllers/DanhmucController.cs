@@ -291,7 +291,7 @@ public async Task<IActionResult> Capnhatsoluong(string ma_khuvuccau)
     catch (Exception ex)
     {
         // Xử lý lỗi và trả về thông báo lỗi
-        return Json(new { success = false, message = ex.Message });
+        return Json(new { success = false, message = "Đã xảy ra lỗi: " + ex.Message });
     }
 }
 

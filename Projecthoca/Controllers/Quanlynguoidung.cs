@@ -168,5 +168,28 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, messege = ex.Message });
             }
         }
+
+
+        // Phương thức mới để lấy thông tin người dùng đã đăng nhập
+        [HttpGet]
+        public async Task<IActionResult> LayThongTinNguoiDungDaDangNhap()
+        {
+            try
+            {
+                var user = await _nguoidung.LayThongTinNguoiDungDaDangNhap();
+                if (user != null)
+                {
+                    return Json(new { success = true, users = user });
+                }
+                else
+                {
+                    return Json(new { success = false, message = "Không tìm thấy thông tin người dùng." });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = $"Có lỗi xảy ra: {ex.Message}" });
+            }
+        }
     }
 }

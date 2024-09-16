@@ -322,6 +322,7 @@
         @section Scripts {
             <script>
                 $(document).ready(function () {
+                    loadDanhmucFromLocalStorage();
                     $(document).on('click', '#submitBtndm', function () {
                         Themdanhmuc();
                     });
@@ -387,7 +388,36 @@
                         }
                     });
                     Laynhacungcap();
+                     
                 });
+
+
+// Load danh mục from localStorage on page load
+            function loadDanhmucFromLocalStorage() {
+                var danhmucList = localStorage.getItem('danhmucList');
+                if (danhmucList) {
+                    danhmucList = JSON.parse(danhmucList);
+                    $('#tblbody').empty();
+                    $.each(danhmucList, function (index, value) {
+                        var str = `<tr>
+                            <td>${value.ma_danhmuc}</td>
+                            <td>${value.ten_danhmuc}</td>
+                            <td>${formatCurrency(value.gianhap)}</td>
+                            <td>${formatCurrency(value.gia)}</td>
+                            <td>${value.ma_mathang}</td>
+                            <td>${value.nhacungcap}</td>
+                            <td>${value.donvitinh}</td>
+                            <td>${value.soluong}</td>
+                            <td><button class="btn btn-danger" data-id='${value.ma_danhmuc}' onclick="Xoadanhmuc('${value.ma_danhmuc}')">Xóa</button></td>
+                            <td><button class="btn btn-warning" data-id='${value.ma_danhmuc}' onclick="LaydmID('${value.ma_danhmuc}')" >Sửa</button></td>
+                        </tr>`;
+                        $('#tblbody').append(str);
+                    });
+                }
+            }
+
+
+
                 function Themnhacungcap(){
                     var form = $("#formnhacungcap")[0];
                     var data = new FormData(form);
@@ -451,6 +481,7 @@
                         }
                     });
                 }
+
                 function Themdanhmuc() {
                     var form = $("#formThemdanhmuc")[0];
                     var data = new FormData(form);
@@ -500,6 +531,7 @@
                             $('#tblbody').empty();
                             console.log(response.dsdm);
                             if (response.success) {
+                                localStorage.setItem('danhmucList', JSON.stringify(response.dsdm));
                                 $.each(response.dsdm, function (index, value) {
                                     var str = `<tr>
                                                                                                     <td>${value.ma_danhmuc}</td>
@@ -585,7 +617,9 @@
                         type: "POST",
                         url: "/Danhmuc/Laytheoma",
                         data: { Ma_danhmuc: Ma_danhmuc },
+
                         success: function (response) {
+                            console.log(response)
                             if (response.success) {
                                 $('#Ma_danhmuc').val(response.data.ma_danhmuc);
                                 $('#Ten_danhmuc').val(response.data.ten_danhmuc);
@@ -611,7 +645,65 @@
                     form.reset();
 
                 }
+
+function validateForm() {
+    var isValid = true;
+    var errorMessage = "";
+
+    // Kiểm tra Tên danh mục
+    if ($("#Ten_danhmuc").val().trim() === "") {
+        errorMessage += "Vui lòng nhập Tên danh mục.\n";
+        isValid = false;
+    }
+
+    // Kiểm tra Nhà cung cấp
+    if ($("#Nhacungcap").val() === null) {
+        errorMessage += "Vui lòng chọn Nhà cung cấp.\n";
+        isValid = false;
+    }
+
+    // Kiểm tra Giá nhập
+    if ($("#Gianhap").val().trim() === "") {
+        errorMessage += "Vui lòng nhập Giá nhập.\n";
+        isValid = false;
+    }
+
+    // Kiểm tra Giá bán
+    if ($("#Gia").val().trim() === "") {
+        errorMessage += "Vui lòng nhập Giá bán.\n";
+        isValid = false;
+    }
+
+    // Kiểm tra Đơn vị tính
+    if ($("#Donvitinh").val() === null) {
+        errorMessage += "Vui lòng chọn Đơn vị tính.\n";
+        isValid = false;
+    }
+
+    // Kiểm tra Mặt hàng
+    if ($("#Ma_mathang").val() === null) {
+        errorMessage += "Vui lòng chọn Mặt hàng.\n";
+        isValid = false;
+    }
+
+    if (!isValid) {
+        Swal.fire({
+            title: "Thông báo",
+            text: errorMessage,
+            icon: "warning"
+        });
+    }
+
+    return isValid;
+}
+
+
+
                 function Capnhatdanhmuc() {
+
+                    if (!validateForm()) {
+                        return;
+                    }
                     var form = $("#formThemdanhmuc")[0];
                     var data = new FormData(form);
                     $.ajax({
@@ -650,9 +742,21 @@
                                     icon: "error"
                                 });
                             }
+
+                        }, 
+                        error: function (xhr, status, error) {
+                            console.log(xhr.responseText); // In ra lỗi chi tiết
+                            Swal.fire({
+                                title: "Lỗi",
+                                text: "Đã xảy ra lỗi khi gửi yêu cầu.",
+                                icon: "error"
+                            });
                         }
+                        
                     });
                 }
+                
+                
                 //Thêm đon vị tính
                 function Themdonvitinh() {
                     var form = $("#formdonvitinh")[0];

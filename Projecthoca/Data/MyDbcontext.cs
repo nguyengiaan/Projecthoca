@@ -63,6 +63,21 @@ namespace Projecthoca.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            
+            modelBuilder.Entity<PhieuXuat>()
+        .HasOne(p => p.nguoidung)
+        .WithMany(u => u.PhieuXuats)
+        .HasForeignKey(p => p.Id)
+        .IsRequired();
+
+            modelBuilder.Entity<PhieuNhap>()
+        .HasOne(p => p.nguoidung)
+        .WithMany(u => u.PhieuNhaps)
+        .HasForeignKey(p => p.Id)
+        .IsRequired();
+
+
+
 
             modelBuilder.Entity<PhieuXuat>()
             .HasKey(p => p.SoPhieu);

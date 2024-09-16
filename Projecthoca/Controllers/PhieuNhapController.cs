@@ -29,7 +29,15 @@ namespace Projecthoca.Controllers
 [HttpGet("LayTatCaPhieuNhap")]
 public async Task<IActionResult> LayTatCaPhieuNhap()
 {
+
+    var user = await _userManager.GetUserAsync(User);
+    if (user == null)
+    {
+        return Unauthorized(new { success = false, message = "Người dùng chưa đăng nhập" });
+    }
+
     var phieuNhaps = await _context.PhieuNhaps
+        .Where(p => p.Id == user.Id)
         .Include(p => p.ChiTietPhieuNhaps) // Bao gồm chi tiết phiếu nhập
             .ThenInclude(c => c.Danhmuc) // Bao gồm Danhmuc trong chi tiết phiếu nhập
         .ToListAsync();
@@ -252,6 +260,151 @@ public async Task<IActionResult> ThemPhieuNhap([FromBody] PhieuNhapVM model)
                 return "";
             }
         }
+
+
+    
+  // PUT: /api/PhieuNhap/CapNhatPhieuNhap
+[HttpPut("CapNhatPhieuNhap")]
+public async Task<IActionResult> CapNhatPhieuNhap([FromBody] PhieuNhapVM model)
+{
+    try
+    {
+        if (ModelState.IsValid)
+        {
+            var phieuNhap = await _context.PhieuNhaps
+                .Include(p => p.ChiTietPhieuNhaps)
+                .FirstOrDefaultAsync(p => p.SoPhieu == model.SoPhieu);
+
+            if (phieuNhap == null)
+            {
+                return NotFound(new { success = false, message = "Phiếu nhập không tìm thấy" });
+            }
+
+            // Cập nhật thông tin phiếu nhập
+            phieuNhap.NgayPhieu = model.NgayPhieu;
+            phieuNhap.Khachhang = model.TenKhachhang;
+            phieuNhap.NhanVien = model.TenNVKD;
+            phieuNhap.TongTien = model.TongTien;
+            phieuNhap.NoCu = model.NoCu;
+            phieuNhap.ThanhToan = model.ThanhToan;
+            phieuNhap.ConLai = model.ConLai;
+            phieuNhap.HanThanhToan = model.HanThanhToan;
+            phieuNhap.GhiChu = model.GhiChu;
+
+            // Xóa các chi tiết phiếu nhập cũ
+            _context.ChiTietPhieuNhaps.RemoveRange(phieuNhap.ChiTietPhieuNhaps);
+
+            // Cập nhật các chi tiết phiếu nhập mới
+            foreach (var chiTiet in model.ChiTietPhieuNhaps)
+            {
+                var danhMuc = await _context.Danhmuc
+                    .FirstOrDefaultAsync(d => d.Ma_danhmuc == chiTiet.Ma_sanpham);
+
+                if (danhMuc == null)
+                {
+                    return BadRequest(new { success = false, message = $"Danh mục với mã {chiTiet.Ma_sanpham} không tồn tại" });
+                }
+
+                danhMuc.Soluong += chiTiet.SoLuong; // Cập nhật số lượng
+                danhMuc.Gia = (int)chiTiet.DonGia; // Cập nhật giá mới
+
+                phieuNhap.ChiTietPhieuNhaps.Add(new ChiTietPhieuNhap
+                {
+                    SoPhieu = chiTiet.SoPhieu,
+                    Ma_sanpham = chiTiet.Ma_sanpham,
+                    Danhmuc = danhMuc,
+                    SoLuong = chiTiet.SoLuong,
+                    DonGia = chiTiet.DonGia,
+                    ThanhTien = chiTiet.ThanhTien,
+                    DonViTinh = chiTiet.DonViTinh,
+                    Ngaynhap = DateTime.Now,
+                });
+
+                _context.Danhmuc.Update(danhMuc);
+            }
+
+            _context.PhieuNhaps.Update(phieuNhap);
+            await _context.SaveChangesAsync();
+
+            return Ok(new
+            {
+                success = true,
+                soPhieu = phieuNhap.SoPhieu,
+                ngayPhieu = phieuNhap.NgayPhieu.ToString("dd/MM/yyyy"),
+                tenKhachHang = phieuNhap.Khachhang,
+                tenNVKD = phieuNhap.NhanVien,
+                tongTien = phieuNhap.TongTien,
+                noCu = phieuNhap.NoCu,
+                thanhToan = phieuNhap.ThanhToan,
+                conLai = phieuNhap.ConLai,
+                hanThanhToan = phieuNhap.HanThanhToan?.ToString("dd/MM/yyyy"),
+                ghiChu = phieuNhap.GhiChu,
+                chiTietPhieuNhaps = phieuNhap.ChiTietPhieuNhaps.Select(c => new
+                {
+                    id = c.Id,
+                    soPhieu = c.SoPhieu,
+                    maSanPham = c.Ma_sanpham,
+                    tenSanPham = c.Danhmuc.Ten_danhmuc,
+                    soLuong = c.SoLuong,
+                    donGia = c.DonGia,
+                    donViTinh = c.DonViTinh,
+                    thanhTien = c.ThanhTien
+                })
+            });
+        }
+    }
+    catch (Exception ex)
+    {
+        return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ" });
+    }
+
+    return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ" });
+}
+
+
+
+
+// DELETE: /api/PhieuNhap/XoaPhieuNhap
+[HttpDelete("XoaPhieuNhap")]
+public async Task<IActionResult> XoaPhieuNhap([FromQuery] string soPhieu)
+{
+    var phieuNhap = await _context.PhieuNhaps
+        .Include(p => p.ChiTietPhieuNhaps)
+        .FirstOrDefaultAsync(p => p.SoPhieu == soPhieu);
+
+    if (phieuNhap == null)
+    {
+        return NotFound(new { success = false, message = "Phiếu nhập không tìm thấy" });
+    }
+
+    // Cập nhật lại số lượng trong Danhmuc
+    foreach (var chiTiet in phieuNhap.ChiTietPhieuNhaps)
+    {
+        var danhMuc = await _context.Danhmuc
+            .FirstOrDefaultAsync(d => d.Ma_danhmuc == chiTiet.Ma_sanpham);
+
+        if (danhMuc != null)
+        {
+            danhMuc.Soluong -= chiTiet.SoLuong; // Giảm số lượng
+            _context.Danhmuc.Update(danhMuc);
+        }
+    }
+
+    // Xóa các chi tiết phiếu nhập liên quan
+    _context.ChiTietPhieuNhaps.RemoveRange(phieuNhap.ChiTietPhieuNhaps);
+
+    // Xóa phiếu nhập
+    _context.PhieuNhaps.Remove(phieuNhap);
+    await _context.SaveChangesAsync();
+
+    return Ok(new { success = true, message = "Phiếu nhập đã được xóa thành công" });
+}
+
+
+
+
+
+
 
 
     }

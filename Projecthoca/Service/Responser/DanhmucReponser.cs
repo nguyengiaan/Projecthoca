@@ -29,6 +29,7 @@ namespace Projecthoca.Service.Responser
                 var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
               
                 var dm = await _context.Danhmuc
+                        .Where(x => x.Id == user.Id && x.Ma_danhmuc != "DM0000")
                          .Select(x => new DanhmucVM
                          {
                              Ma_danhmuc = x.Ma_danhmuc,
@@ -62,6 +63,9 @@ namespace Projecthoca.Service.Responser
                     Ten_danhmuc = x.Ten_danhmuc,
                     Gia = x.Gia,
                     Donvitinh = x.Donvitinh,
+                    Nhacungcap = x.Nhacungcap,
+                    Gianhap = x.Gianhap,
+                    Ma_mathang = x.Mathang.Ten_mathang,
                   
                   
 
@@ -381,6 +385,7 @@ namespace Projecthoca.Service.Responser
     {
         if (string.IsNullOrEmpty(ma_khuvuc))
         {
+            Console.WriteLine("Mã khu vực cầu trống hoặc null.");
             return false;
         }
 
@@ -404,6 +409,7 @@ namespace Projecthoca.Service.Responser
                 var dm = await _context.Danhmuc.FindAsync(item.Ma_danhmuc);
                 if (dm != null && item.SoluongGiam > 0)
                 {
+                    Console.WriteLine($"Cập nhật số lượng cho danh mục: {dm.Ma_danhmuc}, Số lượng giảm: {item.SoluongGiam}");
                     dm.Soluong -= item.SoluongGiam; // Giảm số lượng theo số lượng cần giảm
 
                     // Đảm bảo số lượng không âm
@@ -414,27 +420,41 @@ namespace Projecthoca.Service.Responser
 
                     _context.Danhmuc.Update(dm); // Cập nhật trong context
                 }
+                 else
+                {
+                    Console.WriteLine($"Không tìm thấy danh mục hoặc số lượng giảm không hợp lệ: {item.Ma_danhmuc}");
+                }
+
             }
+
 
             // Lưu thay đổi vào database
             await _context.SaveChangesAsync();
             return true;
         }
 
+         Console.WriteLine("Không có dữ liệu để cập nhật.");
         return false; // Trả về false nếu không có dữ liệu để cập nhật
     }
     catch (Exception ex)
     {
-        // Ghi log lỗi nếu cần
-        return false; // Trả về false nếu có lỗi xảy ra
+
+        Console.WriteLine($"Lỗi xảy ra khi cập nhật số lượng: {ex.Message}");
+        throw; // Ném lại ngoại lệ để controller có thể bắt và trả về thông tin lỗi chi tiết
     }
 }
+
+
+
+
         public async Task<List<DanhmucVM>> Laydanhsachdanhmuc()
         {
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var data = await _context.Danhmuc.Where(x => x.Id == user.Id).Select(x => new DanhmucVM
+                var data = await _context.Danhmuc
+                .Where(x => x.Id == user.Id && x.Ma_danhmuc != "DM0000")
+                .Select(x => new DanhmucVM
                 {
                     Ma_danhmuc = x.Ma_danhmuc,
                     Ten_danhmuc = x.Ten_danhmuc,

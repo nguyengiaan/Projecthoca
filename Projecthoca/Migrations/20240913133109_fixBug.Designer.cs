@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projecthoca.Data;
 
@@ -11,9 +12,10 @@ using Projecthoca.Data;
 namespace Projecthoca.Migrations
 {
     [DbContext(typeof(MyDbcontext))]
-    partial class MyDbcontextModelSnapshot : ModelSnapshot
+    [Migration("20240913133109_fixBug")]
+    partial class fixBug
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -759,8 +761,8 @@ namespace Projecthoca.Migrations
                     b.Property<string>("SoPhieu")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("ConLai")
-                        .HasColumnType("int");
+                    b.Property<decimal>("ConLai")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("GhiChu")
                         .IsRequired()
@@ -784,14 +786,14 @@ namespace Projecthoca.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NoCu")
-                        .HasColumnType("int");
+                    b.Property<decimal>("NoCu")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ThanhToan")
-                        .HasColumnType("int");
+                    b.Property<decimal>("ThanhToan")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("TongTien")
-                        .HasColumnType("int");
+                    b.Property<decimal>("TongTien")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("SoPhieu");
 
@@ -829,18 +831,18 @@ namespace Projecthoca.Migrations
                     b.Property<string>("SoPhieu")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("ChuyenKhoan")
-                        .HasColumnType("int");
+                    b.Property<decimal>("ChuyenKhoan")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("ConLai")
-                        .HasColumnType("int");
+                    b.Property<decimal>("ConLai")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("GhiChu")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GiamGia")
-                        .HasColumnType("int");
+                    b.Property<decimal>("GiamGia")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<DateTime?>("HanThanhToan")
                         .HasColumnType("datetime2");
@@ -860,21 +862,21 @@ namespace Projecthoca.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("NoCu")
-                        .HasColumnType("int");
+                    b.Property<decimal>("NoCu")
+                        .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("TenKhuvuc")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ThanhToan")
-                        .HasColumnType("int");
+                    b.Property<decimal>("ThanhToan")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("TienMat")
-                        .HasColumnType("int");
+                    b.Property<decimal>("TienMat")
+                        .HasColumnType("decimal(18,2)");
 
-                    b.Property<int>("TongTien")
-                        .HasColumnType("int");
+                    b.Property<decimal>("TongTien")
+                        .HasColumnType("decimal(18,2)");
 
                     b.HasKey("SoPhieu");
 
