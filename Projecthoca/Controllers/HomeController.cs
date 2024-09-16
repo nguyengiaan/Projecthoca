@@ -217,6 +217,11 @@ namespace Projecthoca.Controllers
         public IActionResult Doanhthubanhang()
         {
             return View();
+        }       
+        [Authorize(Roles = "Admin,Customer")]
+        public IActionResult Baocaodoanhthuct()
+        {
+            return View();
         }
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

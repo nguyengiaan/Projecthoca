@@ -32,11 +32,11 @@ namespace Projecthoca.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult>Tinhxuatnhapton(int page,int pagesize)
+        public async Task<IActionResult>Tinhxuatnhapton(int page,int pagesize,DateTime Ngaybd,DateTime Ngaykt)
         {
             try
             {
-                var data=   await _tonkho.Xuatnhapton(page,pagesize);
+                var data=   await _tonkho.Xuatnhapton(page,pagesize,Ngaybd,Ngaykt);
                 if(data.ds==null)
                 {
                     return Json(new { success = false, messeger = "Không có dữ liệu" });
@@ -49,11 +49,11 @@ namespace Projecthoca.Controllers
             }
         }
         [HttpPost]
-        public async Task<IActionResult> Danhsachnhpck(int page, int pagesize, string ma_hanghoa)
+        public async Task<IActionResult> Danhsachnhpck(int page, int pagesize, string ma_hanghoa,DateTime Ngaybd,DateTime Ngaykt)
         {
             try
             {
-                var data = await _tonkho.dspnck(page, pagesize, ma_hanghoa);
+                var data = await _tonkho.dspnck(page, pagesize, ma_hanghoa,Ngaybd,Ngaykt);
                 if (data.ds == null)
                 {
                     return Json(new { success = false, messeger = "Không có dữ liệu" });
@@ -66,11 +66,11 @@ namespace Projecthoca.Controllers
             }
         }
          [HttpPost]
-        public async Task<IActionResult> Danhsachxtck(int page, int pagesize, string ma_hanghoa)
+        public async Task<IActionResult> Danhsachxtck(int page, int pagesize, string ma_hanghoa,DateTime Ngaybd,DateTime Ngaykt)
         {
             try
             {
-                var data = await _tonkho.dspxck(page, pagesize, ma_hanghoa);
+                var data = await _tonkho.dspxck(page, pagesize, ma_hanghoa,Ngaybd,Ngaykt);
                 if (data.ds == null)
                 {
                     return Json(new { success = false, messeger = "Không có dữ liệu" });
@@ -96,5 +96,40 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, messeger = ex.Message });
             }
         }
+        [HttpPost]
+        public async Task<IActionResult> Baocaodoanhthuct(DateTime NgayBd, DateTime NgayKt,int page,int pagesize)
+        {
+            try
+            {
+                var item=await _tonkho.Baocaodoanhthuct(NgayBd,NgayKt,page,pagesize);
+                if(item!=null)
+                {
+                    return Json(new { success = true, dsdm = item,page=page,totalpages=item.Count });
+                }   
+                return Json(new { success = false, messeger = "Không có dữ liệu" });
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, messeger = ex.Message });
+            }
+        }
+        [HttpPost]
+        public async Task<IActionResult> Baocaodoanhthuct1(DateTime NgayBd, DateTime NgayKt)
+        {
+            try
+            {
+                var item=await _tonkho.Baocaodoanhthuct1(NgayBd,NgayKt);
+                if(item!=null)
+                {
+                    return Json(new { success = true, dsdm = item });
+                }   
+                return Json(new { success = false, messeger = "Không có dữ liệu" });
+            }
+            catch(Exception ex)
+            {
+                return Json(new { success = false, messeger = ex.Message });
+            }
+        }
+
     }
 }

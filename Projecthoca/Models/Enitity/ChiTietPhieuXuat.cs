@@ -18,5 +18,10 @@ namespace Projecthoca.Models.Enitity
     public decimal ThanhTien { get; set; }
 
     public DateTime Ngayxuat { get; set; }
+
+        internal int Sum(Func<object, object> value)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

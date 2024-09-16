@@ -1,0 +1,268 @@
+@{
+    ViewData["Title"] = "Báo cáo doanh thu";
+}
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">Báo cáo doanh thu</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="startDate">Từ ngày</label>
+                            <input type="date" id="startDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-01")" />
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <label for="endDate">Đến ngày</label>
+                            <input type="date" id="endDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+                        </div>
+                    </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="search">Tìm kiếm</label>
+                        <input type="text" id="search" class="form-control" />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="search">In báo cáo</label>
+                        <button type="button" class="btn btn-success form-control" onclick="printReport()"><i class="fas fa-print"></i> In báo cáo</button>
+                    </div>
+            
+                </div>
+                </div>
+
+                    
+                <div id="reportContent" style="margin-top: 20px;">
+                    <div class="table-responsive">
+                        <table id="reportTable" class="table table-striped table-bordered" style="width:100%">
+                            <thead>
+                                <tr>
+                                    <th>Số phiếu</th>
+                                    <th>Ngày phiếu</th>
+                                    <th>Tên khách</th>
+                                    <th>Mã sản phẩm</th>
+                                    <th>Tên sản phẩm</th>
+                                    <th>DVT</th>
+                                    <th>Số lượng</th>
+                                    <th>Đơn giá</th>
+                                    <th>Tổng cộng</th>
+                                    <th>Tên nhân viên kinh doanh</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reportTableBody">
+                                <!-- Report data will be inserted here -->
+                            </tbody>
+                            <tfoot id="pagination">
+
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).ready(function() {
+    $('#search').on('keyup', function() {
+          var value = $(this).val().toLowerCase();
+            $("#reportTableBody tr").filter(function() {
+                   $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+          });
+       });
+    bcdtct(1,10);
+    $('#startDate, #endDate').change(function() {
+        var endDate=$('#endDate').val();
+        var startDate=$('#startDate').val();
+        if(startDate>endDate){
+            alert('Ngày bắt đầu không được lớn hơn ngày kết thúc');
+            $('#startDate').val('');
+            return;
+        }
+        else if(endDate<startDate){
+            alert('Ngày kết thúc không được nhỏ hơn ngày bắt đầu');
+            $('#endDate').val('');
+            return;
+        }
+
+        bcdtct(1,10);
+    });
+});
+function bcdtct(page,pagesize) {
+    var startDate=$('#startDate').val();
+    var endDate=$('#endDate').val();
+
+    if (!startDate || !endDate) {
+        alert('Vui lòng chọn ngày bắt đầu và ngày kết thúc.');
+        return;
+    }
+    
+    $.ajax({
+        type: 'POST',
+        url: '/Tonkho/Baocaodoanhthuct',
+        data: {NgayBd :startDate,NgayKt:endDate,page:page,pagesize:pagesize },
+        success: function (data) {
+            var reportTableBody = document.getElementById('reportTableBody');
+            reportTableBody.innerHTML = '';
+
+            if (data.success) {
+                console.log(data);
+                data.dsdm.forEach(function(item) {
+                    var row = document.createElement('tr');
+                    row.innerHTML = `<td>${item.soPhieu}</td><td>${item.ngayphieu.split('T')[0]}</td><td>${item.tenkhachhang}</td><td>${item.masanpham}</td><td>${item.tensanpham}</td>
+                     <td>${item.donvitinh}</td> <td>${item.soluong}</td> <td>${formatCurrency(item.donGia)}</td> <td>${formatCurrency(item.tongcong)}</td><td>${item.tenNV}</td>`;
+                    reportTableBody.appendChild(row);
+                });
+                updatePagination(data.totalPages, data.page);
+            } else {
+                reportTableBody.innerHTML = `<tr><td colspan="5">${data.messeger}</td></tr>`;
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error(xhr.responseText);
+        }
+    });
+}
+function updatePagination(totalPages, currentPage) {
+        if (totalPages > 0) {
+            var str = `<nav aria-label="Page navigation example">
+                                                            <ul class="pagination">`;
+            if (totalPages > 1) {
+                if (currentPage > 1) {
+                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachnhapck(${currentPage - 1}, 10,${ ma_danhmuc_phu})">Previous</a></li>`;
+                }
+                for (let i = 1; i <= totalPages; i++) {
+                    if (currentPage === i) {
+                        str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
+                    } else {
+                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachnhapck(${i}, 10,${ ma_danhmuc_phu})">${i}</a></li>`;
+                    }
+                }
+                if (currentPage < totalPages) {
+                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachnhapck(${currentPage + 1}, 10,${ ma_danhmuc_phu})">Next</a></li>`;
+                }
+            }
+            str += `</ul></nav>`;
+            $('#pagination').html(str);
+        }
+    }
+function formatCurrency(value) {
+         return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+   }
+function printReport() {
+    var startDate = $('#startDate').val();
+    var endDate = $('#endDate').val();
+
+    if (!startDate || !endDate) {
+        alert('Vui lòng chọn ngày bắt đầu và ngày kết thúc.');
+        return;
+    }
+
+    var reportContent = `
+        <html>
+        <head>
+            <title>Báo cáo doanh thu</title>
+            <style>
+                body { font-family: Arial, sans-serif; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { border: 1px solid black; padding: 8px; text-align: left; }
+                th { background-color: #f2f2f2; }
+            </style>
+        </head>
+        <body>
+
+            <h3>BÁO CÁO DOANH THU BÁN LẺ</h3>
+            <p>Từ ngày: ${startDate} đến ngày: ${endDate}</p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>NGÀY</th>
+                        <th>DOANH THU</th>
+                        <th>TIỀN MẶT</th>
+                        <th>CHUYỂN KHOẢN</th>
+                        <th>PHIẾU GIẢM GIÁ</th>
+                    </tr>
+                </thead>
+                <tbody id="printTableBody">
+                    <!-- Dữ liệu báo cáo sẽ được chèn vào đây -->
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="1">TỔNG CỘNG</td>
+                        <td id="totalRevenue"></td>
+                        <td id="totalCash"></td>
+                        <td id="totalTransfer"></td>
+                        <td id="totalDiscount"></td>
+                    </tr>
+                </tfoot>
+            </table>
+            <p>NGƯỜI LẬP BÁO CÁO: ________________ Ngày ____ tháng ____ năm ____</p>
+        </body>
+        </html>
+    `;
+
+    // Gọi hàm để lấy dữ liệu báo cáo
+    fetchReportData( reportContent);
+}
+function fetchReportData(reportContent) {
+    var startDate = $('#startDate').val();
+    var endDate = $('#endDate').val();
+    $.ajax({
+        type: 'POST',
+        url: '/Tonkho/Baocaodoanhthuct1',
+        data: { NgayBd: startDate, NgayKt: endDate },
+        success: function(data) {
+            if (data.success) {
+                var totalRevenue = 0; // Tổng doanh thu
+                var totalCash = 0; // Tổng tiền mặt
+                var totalTransfer = 0; // Tổng chuyển khoản
+                var totalDiscount = 0; // Tổng phiếu giảm giá
+
+                var rows = ''; // Biến để lưu trữ các hàng dữ liệu
+                console.log(data);
+                data.dsdm.forEach(function(item) {
+                    rows += `<tr>
+                        <td>${item.ngayphieu.split('T')[0]}</td>
+                        <td>${formatCurrency(item.doanhthu)}</td>
+                        <td>${formatCurrency(item.tienmat)}</td>
+                        <td>${formatCurrency(item.chuyenkhoan)}</td>
+                        <td>0</td>
+                    </tr>`;
+                    
+                    totalRevenue += item.doanhthu;
+                    totalCash += item.tienmat;
+                    totalTransfer += item.chuyenkhoan;
+                    totalDiscount += 0;
+                });
+
+                // Mở cửa sổ in
+                var printWindow = window.open('', '', 'height=600,width=800');
+                printWindow.document.write(reportContent);
+                printWindow.document.close();
+
+                // Sau khi cửa sổ in được mở, cập nhật dữ liệu bảng
+                $(printWindow.document).find('#printTableBody').html(rows);
+                $(printWindow.document).find('#totalRevenue').text(formatCurrency(totalRevenue));
+                $(printWindow.document).find('#totalCash').text(formatCurrency(totalCash));
+                $(printWindow.document).find('#totalTransfer').text(formatCurrency(totalTransfer));
+                $(printWindow.document).find('#totalDiscount').text(totalDiscount);
+
+                // In báo cáo
+                printWindow.print();
+            } else {
+                alert(data.messeger);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+        }
+    });
+}
+</script>

@@ -111,13 +111,13 @@
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="fromDate" class="small font-weight-bold">Từ ngày:</label>
-                        <input type="date" id="fromDate" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-01")" disabled/>
+                        <input type="date" id="fromDate" class="form-control form-control-sm" value="@DateTime.Now.ToString("yyyy-MM-01")" />
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
                         <label for="toDate" class="small font-weight-bold">Đến ngày:</label>
-                        <input type="date" id="toDate" class="form-control form-control-sm" value="@DateTime.Now.AddDays(-(DateTime.Now.Day)).AddMonths(1).ToString("yyyy-MM-dd")" disabled/>
+                        <input type="date" id="toDate" class="form-control form-control-sm" value="@DateTime.Now.AddDays(-(DateTime.Now.Day)).AddMonths(1).ToString("yyyy-MM-dd")" />
                     </div>
                 </div>
                 <div class="col-md-4">
@@ -198,13 +198,19 @@
     {
         printReport();
     })
+    $(document).on('change', '#fromDate, #toDate', function() {
+        
+        danhsachdanhmuc(1, 10);
+    });
  });
     
     function danhsachdanhmuc(page, pagesize) {
+        var startDate = $('#fromDate').val();
+        var endDate = $('#toDate').val();
         $.ajax({
             type: "POST",
             url: "/Tonkho/Tinhxuatnhapton",
-            data: { page: page, pagesize: pagesize },
+            data: { page: page, pagesize: pagesize,Ngaybd:startDate,Ngaykt:endDate },
             success: function (response) {
                 if (response.success) {
                     var reportBody = $('#reportBody');
@@ -267,10 +273,12 @@
         }
     }
     function danhsachnhapck(page, pagesize,ma_hanghoa) {
+     var startDate = $('#fromDate').val();
+        var endDate = $('#toDate').val();
         $.ajax({
             type: "POST",
             url: "/Tonkho/Danhsachnhpck",
-            data: { page: page, pagesize: pagesize,ma_hanghoa:ma_hanghoa },
+            data: { page: page, pagesize: pagesize,ma_hanghoa:ma_hanghoa,Ngaybd:startDate,Ngaykt:endDate },
             success: function (response) {
                 if (response.success) {
                     var reportBody = $('#nhaptrongkyBody');
@@ -336,10 +344,12 @@
    }
    // danh sách xuất trong kỳ
      function Danhsachxtck(page, pagesize,ma_hanghoa) {
+             var startDate = $('#fromDate').val();
+        var endDate = $('#toDate').val();
         $.ajax({
             type: "POST",
             url: "/Tonkho/Danhsachxtck",
-            data: { page: page, pagesize: pagesize,ma_hanghoa:ma_hanghoa },
+            data: { page: page, pagesize: pagesize,ma_hanghoa:ma_hanghoa,Ngaybd:startDate,Ngaykt:endDate },
             success: function (response) {
                 if (response.success) {
                     var reportBody = $('#xuattrongkyBody');
