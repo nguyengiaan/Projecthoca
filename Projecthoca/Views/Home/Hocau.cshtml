@@ -161,6 +161,8 @@
                     @* <button type="button" class="btn btn-primary m-2" id="Themdichvubtn" data-toggle="modal"
                         data-target="#Themdichvu">Thêm dịch vụ</button> *@
                     @* <button type="button" class="btn btn-success m-2" id="Inhoadon">In hóa đơn</button> *@
+
+                    
                      <button type="button" class="btn btn-primary m-2" id="Themphieuxuatbtn">In hóa đơn</button>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
                     
@@ -298,7 +300,7 @@
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">Tên loài cá</label>
-                        <select class="form-select" id="Ma_danhmuc">
+                        <select class="form-select" id="Ma_haisan">
                         </select>
                     </div>
                     <div class="form-group">
@@ -1407,16 +1409,18 @@
         }
         function Danhsachhs() {
             $.ajax({
-                type: "GET",
-                url: "/Chitietca/Danhsachhs",
+                type: "POST",
+                url: "/Haisan/Danhsachhaisan",
                 success: function (response) {
 
                     if (response.success) {
-                        $.each(response.data, function (index, value) {
+                        $('#Ma_haisan').empty();
+                        console.log(response.dsdm);
+                        $.each(response.dsdm, function (index, value) {
                             var str = '';
-                            var str = `  <option value="${value.ma_danhmuc}">${value.ten_danhmuc}</option>`
+                            var str = `  <option value="${value.ma_haisan}">${value.ten_haisan}</option>`
 
-                            $('#Ma_danhmuc').append(str);
+                            $('#Ma_haisan').append(str);
 
                         });
                     } else {
@@ -1432,13 +1436,12 @@
         function Themcane() {
             var form = $("#formthemca")[0];
             var Ma_thuehoca = $("#Ma_thuehoca").val();
-            var Ma_danhmuc = $("#Ma_danhmuc").val();
+            var Ma_haisan = $("#Ma_haisan").val();
             var giocau = $("#giocau").val();
             var sokg = $("#sokg").val();
-
             var formData = new FormData();
             formData.append("Ma_thuehoca", Ma_thuehoca);
-            formData.append("Ma_danhmuc", Ma_danhmuc);
+            formData.append("Ma_haisan", Ma_haisan);
             formData.append("giocau", giocau);
             formData.append("sokg", sokg);
             $.ajax({
@@ -1451,7 +1454,7 @@
                     if (response.success) {
                         Swal.fire({
                             title: "Thành công",
-                            text: response.message,
+                            text: response.messege,
                             icon: "success"
                         });
                         form.reset();
@@ -1465,7 +1468,7 @@
                     } else {
                         Swal.fire({
                             title: "Thất bại",
-                            text: response.message,
+                            text: response.messege,
                             icon: "error"
                         });
                     }
@@ -1491,7 +1494,7 @@
 
                             var str = `<tr>
                                                             <td>${value.giocau}</td>
-                                                            <td>${value.tendanhmuc}</td>
+                                                            <td>${value.ten_haisan}</td>
                                                             <td>${value.sokg}</td>
                                                             <td>${formatCurrency(value.thanhtien)}</td>
                                                                 <td><button class="btn btn-danger" data-id="${value.ma_chitietlancau}" onclick="Xoaca('${value.ma_chitietlancau}')" >Xóa</button></td>
@@ -1573,9 +1576,6 @@
             });
         }
 
-
-
-        
         function Danhsachdv() {
             $.ajax({
                 type: "GET",

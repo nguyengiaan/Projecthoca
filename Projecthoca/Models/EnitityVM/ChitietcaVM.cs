@@ -11,8 +11,8 @@ namespace Projecthoca.Models.EnitityVM
 
         public float sokg { get; set; }
         public float ?Thanhtien { get; set; }
-        public string ?Ma_danhmuc { get; set; }
-        public string ?Tendanhmuc { get; set; }  
+        public int ?Ma_haisan { get; set; }
+        public string ?Ten_haisan { get; set; }  
         public string ?Ma_thuehoca { get; set; }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using Projecthoca.Models.Entity;
 
 namespace Projecthoca.Models.Enitity
 {
@@ -35,6 +36,8 @@ namespace Projecthoca.Models.Enitity
         public List<PhieuNhap>PhieuNhaps {get;set;}
 
         public List<PhieuXuat>PhieuXuats {get;set;}
+
+        public List<Haisan> Haisans { get; set; }
         public ApplicationUser()
         {
             Hoccas = new List<Hoca>();
@@ -51,6 +54,7 @@ namespace Projecthoca.Models.Enitity
             Khachhangs= new List<Khachhang>();
             PhieuNhaps=new List<PhieuNhap>();
             PhieuXuats=new List<PhieuXuat>();
+            Haisans = new List<Haisan>();
 
         }
     }

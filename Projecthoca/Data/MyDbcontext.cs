@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Projecthoca.Models.Enitity;
 using Projecthoca.Models.EnitityVM;
+using Projecthoca.Models.Entity;
 
 namespace Projecthoca.Data
 {
@@ -55,6 +56,8 @@ namespace Projecthoca.Data
 
         public DbSet<ChiTietPhieuXuat> ChiTietPhieuXuats { get; set; }
         public DbSet<ChiTietPhieuNhap> ChiTietPhieuNhaps { get; set; }
+
+        public DbSet<Haisan> Haisans { get; set; }
         #endregion
 
 
@@ -196,7 +199,7 @@ namespace Projecthoca.Data
             modelBuilder.Entity<Chitietlancau>().ToTable("Chitietlancau").HasKey(x => x.Ma_chitietlancau);
             modelBuilder.Entity<Chitietlancau>().Property(e => e.giocau).HasMaxLength(100);
             modelBuilder.Entity<Chitietlancau>().Property(e => e.sokg).HasMaxLength(100);
-            modelBuilder.Entity<Chitietlancau>().HasOne(x => x.Danhmuc).WithMany(x => x.Chitietlancaus).HasForeignKey(x => x.Ma_danhmuc);
+            modelBuilder.Entity<Chitietlancau>().HasOne(x => x.Haisan).WithMany(x => x.Chitietlancaus).HasForeignKey(x => x.Ma_haisan);
             modelBuilder.Entity<Chitietlancau>().HasOne(x => x.Thuehoca).WithMany(x => x.Chitietlancaus).HasForeignKey(x => x.Ma_thuehoca);
             // table TongsoKG
             modelBuilder.Entity<Tongsokg>().ToTable("Tongsokg").HasKey(x => x.Ma_tongsokg);
@@ -269,7 +272,14 @@ namespace Projecthoca.Data
             modelBuilder.Entity<Hoadonxuatban>().Property(e => e.Ma_phieuxuatkho).HasMaxLength(100);
             modelBuilder.Entity<Hoadonxuatban>().HasOne(x => x.Danhmuc).WithMany(x => x.Hoadonxuatbans).HasForeignKey(x => x.Ma_danhmuc);
             modelBuilder.Entity<Hoadonxuatban>().HasOne(x => x.Phieuxuatkho).WithMany(x => x.Hoadonxuatbans).HasForeignKey(x => x.Ma_phieuxuatkho);
-            
+            // table Haisan
+            modelBuilder.Entity<Haisan>().ToTable("Haisan").HasKey(x => x.Ma_haisan);
+            modelBuilder.Entity<Haisan>() .Property(e => e.Ma_haisan).ValueGeneratedOnAdd();
+            modelBuilder.Entity<Haisan>().Property(e => e.Ten_haisan).HasMaxLength(450);
+            modelBuilder.Entity<Haisan>().Property(e => e.sokg).HasMaxLength(450);
+            modelBuilder.Entity<Haisan>().Property(e => e.Gia).HasMaxLength(450);
+            modelBuilder.Entity<Haisan>().Property(e => e.Id).HasMaxLength(450);
+            modelBuilder.Entity<Haisan>().HasOne(x => x.ApplicationUser).WithMany(x => x.Haisans).HasForeignKey(x => x.Id);
 
         }
 
