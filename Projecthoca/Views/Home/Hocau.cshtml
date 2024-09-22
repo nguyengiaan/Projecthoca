@@ -95,50 +95,52 @@
 </div>
 <!--Modal Thêm dịch vụ-->
 <div class="modal fade" id="Themdichvu" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog  modal-dialog-centered  ">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Thêm dịch vụ</h5>
+                <h5 class="modal-title fw-bold" id="exampleModalLabel">Thêm dịch vụ</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <form method="post" id="formthemdv" enctype="multipart/form-data">
-                    @* <div class="form-group">
-                        <input type="text" class="form-control" id="Ma_danhmuchoadon" value="">
-                    </div> *@
-                    <div class="form-group">
-
-                        <select id="Ma_danhmucdv" class="mw-100">
+                    <!-- Danh mục dịch vụ -->
+                    <div class="mb-4">
+                        <label for="Ma_danhmucdv" class="form-label fw-semibold">Danh mục dịch vụ</label>
+                        <select id="Ma_danhmucdv" class="form-select form-select-lg">
+                            <option selected disabled>Chọn danh mục...</option>
                         </select>
                     </div>
-                    <div class="form-group position-relative">
-                                @* <label for="Ma_danhmuchoadon">Tên sản phẩm</label> *@
-                                <input type="text" id="Ma_danhmuchoadon" oninput="filterDichvuList()"
-                                    placeholder="Nhập tên dịch vụ..." autocomplete="off">
 
-                                <!-- Danh sách danh mục -->
-                                <div id="dichvuList" class="dropdown-menu" style="display: none; width: 100%;">
-                                    <table class="table table-hover">
-                                        <tbody id="tblbody"></tbody>
-                                    </table>
-                                </div>
-                     </div>
-
-                    <div class="form-group">
-                        <label class="col-form-label">Số lượng</label>
-                        <input type="number" class="form-control" id="soluongdm" value="1">
+                    <!-- Tìm kiếm dịch vụ -->
+                    <div class="mb-4 position-relative">
+                        <label for="Ma_danhmuchoadon" hidden class="form-label fw-semibold">Tìm dịch vụ</label>
+                        <input type="text" hidden id="Ma_danhmuchoadon" oninput="filterDichvuList()" 
+                            class="form-control form-control-lg" placeholder="Nhập tên dịch vụ..." autocomplete="off">
+                        <!-- Dropdown danh sách dịch vụ -->
+                        <div id="dichvuList" class="dropdown-menu shadow w-100 mt-1" style="display: none;">
+                            <table class="table table-hover mb-0">
+                                <tbody id="tblbody"></tbody>
+                            </table>
+                        </div>
                     </div>
 
+                    <!-- Số lượng dịch vụ -->
+                    <div class="mb-4">
+                        <label for="soluongdm" class="form-label fw-semibold">Số lượng</label>
+                        <input type="number" class="form-control form-control-lg" id="soluongdm" value="1" min="1">
+                    </div>
                 </form>
             </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thoát</button>
-                <button type="button" id="submitdv" class="btn btn-primary">Thêm dịch vụ</button>
 
+            <!-- Modal Footer -->
+            <div class="modal-footer d-flex justify-content-between">
+                <button type="button" class="btn btn-outline-secondary btn-lg" data-bs-dismiss="modal">Thoát</button>
+                <button type="button" id="submitdv" class="btn btn-primary btn-lg">Thêm dịch vụ</button>
             </div>
         </div>
     </div>
 </div>
+
 
 
 <!--Xem dịch vụ-->
@@ -774,6 +776,38 @@
             /* Điều chỉnh font-size theo ý muốn */
         }
     </style>
+    <style>
+    /* Ensure the modal has better padding and responsiveness */
+    .modal-content {
+        border-radius: 10px;
+        padding: 1.5rem;
+    }
+    
+    /* Adjust dropdown appearance */
+    #dichvuList {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    
+    /* Improve appearance of form controls */
+    .form-control {
+        border: 1px solid #ced4da;
+        border-radius: 0.5rem;
+        padding: 0.75rem;
+    }
+
+    /* Increase button size for mobile-friendliness */
+    .btn-lg {
+        padding: 0.75rem 1.25rem;
+        font-size: 1.125rem;
+    }
+
+    /* Add subtle hover effects */
+    .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #00408a;
+    }
+</style>
     
 
 }
