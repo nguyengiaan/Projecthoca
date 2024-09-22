@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projecthoca.Data;
 
@@ -11,9 +12,10 @@ using Projecthoca.Data;
 namespace Projecthoca.Migrations
 {
     [DbContext(typeof(MyDbcontext))]
-    partial class MyDbcontextModelSnapshot : ModelSnapshot
+    [Migration("20240920063608_up_chitietlancau")]
+    partial class up_chitietlancau
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,6 +245,9 @@ namespace Projecthoca.Migrations
                     b.Property<string>("Ma_chitietlancau")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("DanhmucMa_danhmuc")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<int>("Ma_haisan")
                         .HasColumnType("int");
 
@@ -262,6 +267,8 @@ namespace Projecthoca.Migrations
                         .HasColumnType("real");
 
                     b.HasKey("Ma_chitietlancau");
+
+                    b.HasIndex("DanhmucMa_danhmuc");
 
                     b.HasIndex("Ma_haisan");
 
@@ -1187,6 +1194,10 @@ namespace Projecthoca.Migrations
 
             modelBuilder.Entity("Projecthoca.Models.Enitity.Chitietlancau", b =>
                 {
+                    b.HasOne("Projecthoca.Models.Enitity.Danhmuc", null)
+                        .WithMany("Chitietlancaus")
+                        .HasForeignKey("DanhmucMa_danhmuc");
+
                     b.HasOne("Projecthoca.Models.Entity.Haisan", "Haisan")
                         .WithMany("Chitietlancaus")
                         .HasForeignKey("Ma_haisan")
@@ -1559,6 +1570,8 @@ namespace Projecthoca.Migrations
                     b.Navigation("ChiTietPhieuNhaps");
 
                     b.Navigation("ChiTietPhieuXuats");
+
+                    b.Navigation("Chitietlancaus");
 
                     b.Navigation("Danhmuchoadons");
 

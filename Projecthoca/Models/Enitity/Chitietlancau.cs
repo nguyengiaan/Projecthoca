@@ -1,4 +1,6 @@
-﻿namespace Projecthoca.Models.Enitity
+﻿using Projecthoca.Models.Entity;
+
+namespace Projecthoca.Models.Enitity
 {
     public class Chitietlancau
     {
@@ -6,10 +8,10 @@
         public string Ma_chitietlancau { get; set; }
         public TimeSpan giocau { get; set; }
         public float sokg { get; set; }
-        public string Ma_danhmuc { get; set; }
+        public int Ma_haisan { get; set; }
         public float Thanhtien { get; set; }
         public string Ma_thuehoca { get; set; }
         public Thuehoca Thuehoca { get; set; }
-        public Danhmuc Danhmuc { get; set; }    
+        public Haisan Haisan { get; set; }    
     }
 }

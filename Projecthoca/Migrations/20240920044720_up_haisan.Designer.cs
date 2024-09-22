@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Projecthoca.Data;
 
@@ -11,9 +12,10 @@ using Projecthoca.Data;
 namespace Projecthoca.Migrations
 {
     [DbContext(typeof(MyDbcontext))]
-    partial class MyDbcontextModelSnapshot : ModelSnapshot
+    [Migration("20240920044720_up_haisan")]
+    partial class up_haisan
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -243,8 +245,9 @@ namespace Projecthoca.Migrations
                     b.Property<string>("Ma_chitietlancau")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int>("Ma_haisan")
-                        .HasColumnType("int");
+                    b.Property<string>("Ma_danhmuc")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Ma_thuehoca")
                         .IsRequired()
@@ -263,7 +266,7 @@ namespace Projecthoca.Migrations
 
                     b.HasKey("Ma_chitietlancau");
 
-                    b.HasIndex("Ma_haisan");
+                    b.HasIndex("Ma_danhmuc");
 
                     b.HasIndex("Ma_thuehoca");
 
@@ -1187,9 +1190,9 @@ namespace Projecthoca.Migrations
 
             modelBuilder.Entity("Projecthoca.Models.Enitity.Chitietlancau", b =>
                 {
-                    b.HasOne("Projecthoca.Models.Entity.Haisan", "Haisan")
+                    b.HasOne("Projecthoca.Models.Enitity.Danhmuc", "Danhmuc")
                         .WithMany("Chitietlancaus")
-                        .HasForeignKey("Ma_haisan")
+                        .HasForeignKey("Ma_danhmuc")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1199,7 +1202,7 @@ namespace Projecthoca.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Haisan");
+                    b.Navigation("Danhmuc");
 
                     b.Navigation("Thuehoca");
                 });
@@ -1560,6 +1563,8 @@ namespace Projecthoca.Migrations
 
                     b.Navigation("ChiTietPhieuXuats");
 
+                    b.Navigation("Chitietlancaus");
+
                     b.Navigation("Danhmuchoadons");
 
                     b.Navigation("Danhsachhhkhos");
@@ -1623,11 +1628,6 @@ namespace Projecthoca.Migrations
                     b.Navigation("Hoadondanhmucs");
 
                     b.Navigation("Tongsokgs");
-                });
-
-            modelBuilder.Entity("Projecthoca.Models.Entity.Haisan", b =>
-                {
-                    b.Navigation("Chitietlancaus");
                 });
 #pragma warning restore 612, 618
         }

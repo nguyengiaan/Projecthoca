@@ -67,11 +67,11 @@ namespace Projecthoca.Service.Responser
                 {
                     Ma_chitietlancau = x.Ma_chitietlancau,
                     giocau = x.giocau,
-                    Ma_danhmuc = x.Ma_danhmuc,
+                    Ma_haisan = x.Ma_haisan,
                     Ma_thuehoca = x.Ma_thuehoca,
                     sokg = x.sokg,
                     Thanhtien = x.Thanhtien,
-                    Tendanhmuc = x.Danhmuc.Ten_danhmuc,
+                    Ten_haisan = x.Haisan.Ten_haisan,
                    
                 }).ToListAsync();
                 return data;
@@ -96,15 +96,16 @@ namespace Projecthoca.Service.Responser
                 {
                     nextNumber = int.Parse(lastMaDV.Substring(2)) + 1;
                 }
-                var gia = await _context.Danhmuc.Where(x => x.Ma_danhmuc == chitietca.Ma_danhmuc).FirstOrDefaultAsync();
+                var gia = await _context.Haisans.Where(x => x.Ma_haisan == chitietca.Ma_haisan).FirstOrDefaultAsync();
                 string macc = "CT" + nextNumber.ToString("D4");
                 var data = new Chitietlancau();
                 data.giocau = chitietca.giocau;
                 data.Ma_chitietlancau = macc;
-                data.Ma_danhmuc = chitietca.Ma_danhmuc;
+                data.Ma_haisan = (int)chitietca.Ma_haisan;
                 data.Ma_thuehoca = chitietca.Ma_thuehoca;
                 data.sokg = chitietca.sokg;
                 data.Thanhtien = gia.Gia * chitietca.sokg;
+                
                 await _context.chitietlancaus.AddAsync(data);
                 await _context.SaveChangesAsync();
                 var data1 = new Tongsokg();

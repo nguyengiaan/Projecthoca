@@ -30,12 +30,12 @@ namespace Projecthoca.Controllers
                 }
                 else
                 {
-                    return Json(new { success = true, messege = "Thêm thất bại" });
+                    return Json(new { success = false, messege = "Thêm thất bại" });
                 }
             }
             catch(Exception ex)
             {
-                return Json(new { success = true, messege = ex.Message });
+                return Json(new { success = false, messege = ex.Message });
             }
         }
 

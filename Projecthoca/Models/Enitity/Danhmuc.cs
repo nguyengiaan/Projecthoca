@@ -18,7 +18,6 @@ namespace Projecthoca.Models.Enitity
         public ApplicationUser Nguoidung { get; set; }
         public Mathang Mathang { get; set; }
         public List<Danhmuchoadon> Danhmuchoadons { get; set; }
-        public List<Chitietlancau> Chitietlancaus { get; set; }
 
         public List<Danhsachhhkho> Danhsachhhkhos { get; set; }
 

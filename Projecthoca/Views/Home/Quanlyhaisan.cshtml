@@ -1,0 +1,317 @@
+@model Projecthoca.Models.EnitityVM.HaisanVM
+<div class="container-fluid">
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 font-weight-bold text-primary">Quản lý hải sản</h6>
+            <div class="btn-group" role="group">
+                <button class="btn btn-primary" data-toggle="modal" data-target="#customerModal" title="Thêm"><i class="fas fa-plus"></i> Thêm</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="customerTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Mã hải sản</th>
+                            <th>Tên hải sản</th>
+                            <th>Ki-lô-gam</th>
+                            <th>Giá</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tblbody">
+                        <!-- Dữ liệu khách hàng sẽ được thêm vào đây bằng JavaScript -->
+                    </tbody>
+                    <tfoot id="pagination">
+
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Thêm/Sửa Khách Hàng -->
+<div class="modal fade" id="customerModal" tabindex="-1" role="dialog" aria-labelledby="customerModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-center" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="customerModalLabel">Thêm hải sản</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="customerForm">
+                    <div class="form-group">
+                        <input type="hidden" class="form-control" id="Ma_haisan" required asp-for="Ma_haisan">
+                    </div>
+                    <div class="form-group">
+                        <label for="customerName">Tên hải sảng</label>
+                        <input type="text" class="form-control" id="Ten_haisan" required asp-for="Ten_haisan">
+                    </div>
+                    <div class="form-group">
+                        <label for="customerAddress">Ki-lô-gam</label>
+                        <input type="text" class="form-control" id="sokg" required asp-for="sokg" value="1">
+                    </div>
+                    <div class="form-group">
+                        <label for="customerPhone">Giá</label>
+                        <input type="tel" class="form-control" id="Gia" required asp-for="Gia">
+                    </div>
+       
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="saveCustomer">Lưu</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://npmcdn.com/flatpickr/dist/l10n/vn.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            Danhsachhs(1,10)
+            $(document).on('click', '#saveCustomer', function (event) {
+                event.preventDefault();
+                Themhaisan();
+            });
+            $('#customerModal').on('hidden.bs.modal', function () {
+                resetForm();
+                $('#updateBtn').attr('id', 'saveCustomer').text('Lưu');
+            });
+            $(document).on('click', '#updateBtn', function (event) {
+                event.preventDefault();
+                Capnhathaisan();
+            });
+        });
+        function Themhaisan() {
+            var form = $("#customerForm")[0];
+            var data = new FormData(form);
+            $.ajax({
+                type: "POST",
+                url: "/Haisan/Themhaisan",
+                data: data,
+                processData: false,
+                contentType: false,
+                beforeSend: function () {
+                    Swal.fire({
+                        title: "Loading...",
+                        text: "Please wait",
+                        imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+                        imageWidth: 100,
+                        imageHeight: 100,
+                        imageAlt: "Loading",
+                    });
+                },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Thành công",
+                            text: response.message,
+                            icon: "success"
+                        });
+                        $("#customerModal").modal("hide");
+                        form.reset();
+                        Danhsachhs(1, 10);
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Thông báo lỗi",
+                        text: "Đã xảy ra lỗi trong quá trình xử lý.",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+        function Danhsachhs(page,pagesize)
+        {
+            $.ajax({
+                type: "POST",
+                url: "/Haisan/Danhsachhaisan",
+                data: { page: page, pagesize: pagesize }, // Thêm dữ liệu này nếu cần
+                success: function (response) {
+                    $('#tblbody').empty();
+                    console.log(response);
+                    if (response.success) {
+                        $.each(response.dsdm, function (index, value) {
+                            var str = `<tr>
+                                                                                                                                        <td>${value.ma_haisan}</td>
+                                                                                                        <td>${value.ten_haisan}</td>
+                                                                                               <td>${value.sokg}</td>
+                                                                                                                        <td>${formatCurrency(value.gia)}</td>
+                                                                                     
+
+                                                                                                                                                                                                <td><button class="btn btn-danger" data-id='${value.ma_haisan}' onclick="Xoahaisan('${value.ma_haisan}')"><i class="fa fa-trash" aria-hidden="true"></i></button>
+                                                                                                                                                                                                        <button class="btn btn-warning" data-id='${value.ma_haisan}' onclick="Layhaisan('${value.ma_haisan}')" ><i class="fa fa-edit" aria-hidden="true"></i></button>
+                        </td>
+                                                                                                                                             
+                                                                            </tr>`;
+                            $('#tblbody').append(str);
+                            updatePagination(response.totalPages, response.pageindex)
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                }
+            });
+        }  
+        function updatePagination(totalPages, currentPage) {
+
+            if (totalPages > 0) {
+                var str = `<nav aria-label="Page navigation example">
+                                                                                <ul class="pagination">`;
+                if (totalPages > 1) {
+                    if (currentPage > 1) {
+                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="Danhsachhs(${currentPage - 1}, 10)">Previous</a></li>`;
+                    }
+                    for (let i = 1; i <= totalPages; i++) {
+                        if (currentPage === i) {
+                            str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
+                        } else {
+                            str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="Danhsachhs(${i}, 10)">${i}</a></li>`;
+                        }
+                    }
+                    if (currentPage < totalPages) {
+                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="Danhsachhs(${currentPage + 1}, 10)">Next</a></li>`;
+                    }
+                }
+                str += `</ul></nav>`;
+                $('#pagination').html(str);
+            }
+        }
+        function Layhaisan(ma_haisan) {
+            $.ajax({
+                type: "POST",
+                url: "/Haisan/Laythongtinhaisan",
+                data: { Ma_haisan: ma_haisan },
+                success: function (response) {
+                    if (response.success) {
+                        $("#customerModal").modal("show");
+                        $("#customerModalLabel").text("Sửa thông tin hải sản");
+                        $("#Ma_haisan").val(response.data.ma_haisan);
+                        $("#Ten_haisan").val(response.data.ten_haisan);
+                        $("#Sokg").val(response.data.sokg);
+                        $("#Gia").val(response.data.gia);
+                        $('#saveCustomer').attr('id', 'updateBtn').text('Cập nhật');
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    Swal.fire({
+                        title: "Lỗi",
+                        text: "Có lỗi xảy ra khi kết nối đến máy chủ.",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+        function resetForm() {
+            var form = $("#customerForm")[0];
+            form.reset();
+
+        }
+        function Capnhathaisan() {
+            var form = $("#customerForm")[0];
+            var data = new FormData(form);
+            $.ajax({
+                type: "POST",
+                url: "/Haisan/Suahaisan",
+                data: data,
+                processData: false,
+                contentType: false,
+                beforeSend: function () {
+                    Swal.fire({
+                        title: "Loading...",
+                        text: "Please wait",
+                        imageUrl: "https://media3.giphy.com/media/3oEjI6SIIHBdRxXI40/giphy.gif",
+                        imageWidth: 100,
+                        imageHeight: 100,
+                        imageAlt: "Loading",
+                    });
+                },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Thành công",
+                                text: response.messege,
+                            icon: "success"
+                        });
+                        $("#customerModal").modal("hide");
+                        form.reset();
+                        Danhsachhs(1, 10);
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo lỗi",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function () {
+                    Swal.fire({
+                        title: "Thông báo lỗi",
+                        text: "Đã xảy ra lỗi trong quá trình xử lý.",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+        function Xoahaisan(Ma_haisan) {
+                            Swal.fire({
+                                title: 'Bạn có chắc chắn muốn xóa?',
+                                text: "Hành động này không thể hoàn tác!",
+                                icon: 'warning',
+                                showCancelButton: true,
+                                confirmButtonColor: '#3085d6',
+                                cancelButtonColor: '#d33',
+                                confirmButtonText: 'Xóa',
+                                cancelButtonText: 'Không muốn xóa'
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    $.ajax({
+                                        type: 'POST',
+                                        url: "/Haisan/Xoahaisan",
+                                         data: { Ma_haisan: Ma_haisan },
+                                        success: function (response) {
+                                            if (response.success) {
+                                                Swal.fire('Đã xóa!', response.messege, 'success').then(() => {
+                                                  Danhsachhs(1, 10);
+                                                });
+                                                      
+                                            } else {
+                                                Swal.fire('Lỗi!', response.messege, 'error');
+                                            }
+                                        },
+                                        error: function () {
+                                            Swal.fire('Lỗi!', 'Đã xảy ra lỗi. Vui lòng thử lại.', 'error');
+                                        }
+                                    });
+                                }
+                            });
+                        }
+        function formatCurrency(value) {
+                return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+   }
+    </script>
+}

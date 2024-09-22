@@ -103,30 +103,26 @@
             </div>
             <div class="modal-body">
                 <form method="post" id="formthemdv" enctype="multipart/form-data">
-                   
-                        <div class="p-1">
-                            <div class="input-group">
-                                <span class="input-group-text">Tìm kiếm</span>
-                                <input class="form-control w-5 h-5" aria-label="With textarea" id="search" />
-                            </div>
-                        </div>
+                    @* <div class="form-group">
+                        <input type="text" class="form-control" id="Ma_danhmuchoadon" value="">
+                    </div> *@
+                    <div class="form-group">
 
-                        <table class="table ">
-                            <thead style="border:1px solid black; background:lightblue;">
-                                <tr>
-                                    <th>Mã danh mục</th>
-                                    <th>Tên danh mục</th>
-                                    <th>Tồn kho</th>
-                                    <th>Giá</th>
-                                    <th>Đơn vị tính</th>
-                                    <th>Chọn</th>
-                                </tr>
-                            </thead>
-                            <tbody id="danhmuc-list">
-                                <!-- Dữ liệu danh mục sẽ được thêm vào đây -->
-                            </tbody>
-                        </table>
-                    
+                        <select id="Ma_danhmucdv" class="mw-100">
+                        </select>
+                    </div>
+                    <div class="form-group position-relative">
+                                @* <label for="Ma_danhmuchoadon">Tên sản phẩm</label> *@
+                                <input type="text" id="Ma_danhmuchoadon" oninput="filterDichvuList()"
+                                    placeholder="Nhập tên dịch vụ..." autocomplete="off">
+
+                                <!-- Danh sách danh mục -->
+                                <div id="dichvuList" class="dropdown-menu" style="display: none; width: 100%;">
+                                    <table class="table table-hover">
+                                        <tbody id="tblbody"></tbody>
+                                    </table>
+                                </div>
+                     </div>
 
                     <div class="form-group">
                         <label class="col-form-label">Số lượng</label>
@@ -158,9 +154,11 @@
                     <button type="button" class="btn btn-info m-2" id="Themthoigianbtn" data-toggle="modal"
                         data-target="#Themthoigian">Thêm ca câu</button>
                     <!-- Di chuyển nút vào trong div -->
-                    @* <button type="button" class="btn btn-primary m-2" id="Themdichvubtn" data-toggle="modal"
-                        data-target="#Themdichvu">Thêm dịch vụ</button> *@
+                    <button type="button" class="btn btn-primary m-2" id="Themdichvubtn" data-toggle="modal"
+                        data-target="#Themdichvu">Thêm dịch vụ</button>
                     @* <button type="button" class="btn btn-success m-2" id="Inhoadon">In hóa đơn</button> *@
+
+                    
                      <button type="button" class="btn btn-primary m-2" id="Themphieuxuatbtn">In hóa đơn</button>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
                     
@@ -298,7 +296,7 @@
                     </div>
                     <div class="form-group">
                         <label class="col-form-label">Tên loài cá</label>
-                        <select class="form-select" id="Ma_danhmuc">
+                        <select class="form-select" id="Ma_haisan">
                         </select>
                     </div>
                     <div class="form-group">
@@ -839,11 +837,11 @@
         });
         //--------------------------------------------------------------------------
         $(document).ready(function () {
-            @* $('#Ma_danhmucdv').select2({
+            $('#Ma_danhmucdv').select2({
                 placeholder: "Chọn danh mục",
                 allowClear: true,
                 dropdownParent: $('#Themdichvu')
-            }); *@
+            });
             selectbancau();
             Danhsachdv();
             Danhsachcahd();
@@ -1407,16 +1405,18 @@
         }
         function Danhsachhs() {
             $.ajax({
-                type: "GET",
-                url: "/Chitietca/Danhsachhs",
+                type: "POST",
+                url: "/Haisan/Danhsachhaisan",
                 success: function (response) {
 
                     if (response.success) {
-                        $.each(response.data, function (index, value) {
+                        $('#Ma_haisan').empty();
+                        console.log(response.dsdm);
+                        $.each(response.dsdm, function (index, value) {
                             var str = '';
-                            var str = `  <option value="${value.ma_danhmuc}">${value.ten_danhmuc}</option>`
+                            var str = `  <option value="${value.ma_haisan}">${value.ten_haisan}</option>`
 
-                            $('#Ma_danhmuc').append(str);
+                            $('#Ma_haisan').append(str);
 
                         });
                     } else {
@@ -1432,13 +1432,12 @@
         function Themcane() {
             var form = $("#formthemca")[0];
             var Ma_thuehoca = $("#Ma_thuehoca").val();
-            var Ma_danhmuc = $("#Ma_danhmuc").val();
+            var Ma_haisan = $("#Ma_haisan").val();
             var giocau = $("#giocau").val();
             var sokg = $("#sokg").val();
-
             var formData = new FormData();
             formData.append("Ma_thuehoca", Ma_thuehoca);
-            formData.append("Ma_danhmuc", Ma_danhmuc);
+            formData.append("Ma_haisan", Ma_haisan);
             formData.append("giocau", giocau);
             formData.append("sokg", sokg);
             $.ajax({
@@ -1451,7 +1450,7 @@
                     if (response.success) {
                         Swal.fire({
                             title: "Thành công",
-                            text: response.message,
+                            text: response.messege,
                             icon: "success"
                         });
                         form.reset();
@@ -1465,7 +1464,7 @@
                     } else {
                         Swal.fire({
                             title: "Thất bại",
-                            text: response.message,
+                            text: response.messege,
                             icon: "error"
                         });
                     }
@@ -1491,7 +1490,7 @@
 
                             var str = `<tr>
                                                             <td>${value.giocau}</td>
-                                                            <td>${value.tendanhmuc}</td>
+                                                            <td>${value.ten_haisan}</td>
                                                             <td>${value.sokg}</td>
                                                             <td>${formatCurrency(value.thanhtien)}</td>
                                                                 <td><button class="btn btn-danger" data-id="${value.ma_chitietlancau}" onclick="Xoaca('${value.ma_chitietlancau}')" >Xóa</button></td>
@@ -1573,9 +1572,6 @@
             });
         }
 
-
-
-        
         function Danhsachdv() {
             $.ajax({
                 type: "GET",
@@ -2645,44 +2641,50 @@ $(document).click(function (event) {
 
 
   // Hàm lọc danh mục dựa trên ô input
-        function filterDichvuList() {
-            var searchText = $('#Ten_danhmuc').val().toLowerCase();
+function filterDichvuList() {
+    var searchText = $('#Ma_danhmuchoadon').val().toLowerCase();
 
-            $.ajax({
-                type: "GET",
-                url: "/Danhmuchoadon/Danhmucdv",
-                success: function (response) {
-                    $('#tblbody').empty();
-                    if (response.success) {
-                        var filteredItems = response.data.filter(function (item) {
-                            return item.ten_danhmuc.toLowerCase().includes(searchText);
-                        });
+    $.ajax({
+        type: "GET",
+        url: "/Danhmuchoadon/Danhmucdv",
+        success: function (response) {
+            $('#tblbody').empty();
+            if (response.success) {
+                var filteredItems = response.data.filter(function (item) {
+                    return item.ten_danhmuc.toLowerCase().includes(searchText);
+                });
 
-                        if (filteredItems.length > 0) {
-                            $.each(filteredItems, function (index, value) {
-                                var str = `
-                                                            <tr onclick="selectItem('${value.ma_danhmuc}', '${value.ten_danhmuc}', '${value.gia}', '${value.donvitinh}')">
-                                                                <td>${value.ma_danhmuc}</td>
-                                                                <td>${value.ten_danhmuc}</td>
-                                                               
-                                                            </tr>`;
-                                $('#tblbody').append(str);
-                            });
-                            $('#danhMucList').show();
-                        } else {
-                            $('#danhMucList').hide();
-                        }
-
-                    } else {
-                        Swal.fire({
-                            title: "Thông báo lỗi",
-                            text: response.message,
-                            icon: "error"
-                        });
-                    }
+                if (filteredItems.length > 0) {
+                    $.each(filteredItems, function (index, value) {
+                        var str = `
+                            <tr onclick="selectItem('${value.ma_danhmuc}', '${value.ten_danhmuc}')">
+                                <td>${value.ma_danhmuc}</td>
+                                <td>${value.ten_danhmuc}</td>
+                            </tr>`;
+                        $('#tblbody').append(str);
+                    });
+                    $('#dichvuList').show();
+                } else {
+                    $('#dichvuList').hide();
                 }
-            });
+            } else {
+                console.error("Lỗi khi lấy danh sách dịch vụ:", response.message);
+            }
+        },
+        error: function (xhr, status, error) {
+            console.error("Lỗi AJAX:", error);
         }
+    });
+}
+// Hàm xử lý khi chọn một item từ danh sách
+function selectItem(maDanhmuc, tenDanhmuc) {
+    $('#Ma_danhmuchoadon').val(tenDanhmuc);
+    $('#Ma_danhmucdv').val(maDanhmuc).trigger('change');
+    $('#dichvuList').hide();
+}
+
+// Thêm sự kiện input cho ô tìm kiếm
+$('#Ma_danhmuchoadon').on('input', filterDichvuList);
 
 
     </script>
