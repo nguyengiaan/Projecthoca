@@ -556,10 +556,11 @@ function enableEditing() {
 function startNewEntry() {
     currentAction = 'new';
     // Xóa dữ liệu cũ và mở khóa các trường
-    $('input, select, textarea').val('').prop('disabled', false);
+    @* $('input, select, textarea').val('').prop('disabled', false);
     $('input[name="ngayPhieu"]').val(new Date().toISOString().split('T')[0]);
     $('input[name="hanThanhToan"]').val(new Date().toISOString().split('T')[0]);
-    $('#tblbody').empty();
+    $('#tblbody').empty(); *@
+    location.reload();
     updateButtonStates();
 }
 
