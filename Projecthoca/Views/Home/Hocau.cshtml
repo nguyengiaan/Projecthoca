@@ -2525,11 +2525,12 @@ function Themphieuxuat() {
                 data: { ma_danhmuchoadon: ma_danhmuchoadon, soluong: soluong },
                 success: function (response) {
                     if (response.success) {
-                        Swal.fire({
+                        @* Swal.fire({
                             title: "Thành công",
                             text: response.message,
                             icon: "success"
-                        });
+                        }); *@
+                        
                         Danhsachhddv(kvc);
                         hienthihanghoa();
                         form.reset();
