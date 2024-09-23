@@ -152,33 +152,23 @@
                 <input type="text" hidden id="nhanvien" name="nhanvien" value="">
                 <input type="text" hidden id="tenkhuvuc" name="tenkhuvuc" value="">
                 <div class="d-flex flex-row">
-                   
-                    <button type="button" class="btn btn-info m-2" id="Themthoigianbtn" data-toggle="modal"
-                        data-target="#Themthoigian">Thêm ca câu</button>
-                    <!-- Di chuyển nút vào trong div  -->
-                    <button type="button" class="btn btn-primary m-2 d-block d-md-none" id="Themdichvubtn" data-toggle="modal"
-                        data-target="#Themdichvu">Thêm dịch vụ</button>
-                    @* <button type="button" class="btn btn-success m-2" id="Inhoadon">In hóa đơn</button> *@
-
-                    
-                     <button type="button" class="btn btn-primary m-2" id="Themphieuxuatbtn">In hóa đơn</button>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"> </button>
-                    
+                    <button type="button" class="btn btn-info m-2" id="Themthoigianbtn" data-toggle="modal" data-target="#Themthoigian">Thêm ca câu</button>
+                    <button type="button" class="btn btn-primary m-2 d-block d-md-none" id="Themdichvubtn" data-toggle="modal" data-target="#Themdichvu">Thêm dịch vụ</button>
+                    <button type="button" class="btn btn-primary m-2" id="Themphieuxuatbtn">In hóa đơn</button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
             </div>
             <div class="modal-body">
                 <div class="row">
                     <!-- Danh sách danh mục và thông tin hóa đơn được đặt bên cạnh nhau -->
                     <div class="col-md-6 d-none d-md-block" id="ds1">
-
                         <div class="p-1">
                             <div class="input-group">
                                 <span class="input-group-text">Tìm kiếm</span>
                                 <input class="form-control w-5 h-5" aria-label="With textarea" id="search" />
                             </div>
                         </div>
-
-                        <table class="table ">
+                        <table class="table">
                             <thead style="border:1px solid black; background:lightblue;">
                                 <tr>
                                     <th>Mã danh mục</th>
@@ -193,10 +183,8 @@
                                 <!-- Dữ liệu danh mục sẽ được thêm vào đây -->
                             </tbody>
                         </table>
-                    
                     </div>
-
-                    <div class="col-md-6" id = "in">
+                    <div class="col-md-6" id="in">
                         <div class="bill-container">
                             <div class="customer-info">
                                 <h2>Thông tin khách hàng</h2>
@@ -205,7 +193,6 @@
                                 <div><span>Thời gian bắt đầu câu:</span><span class="value">23:08:00</span></div>
                                 <div><span>Thời gian câu:</span><span class="value">03:07:55</span></div>
                             </div>
-
                             <div class="bill-details">
                                 <table>
                                     <thead>
@@ -223,42 +210,39 @@
                                         <!-- Thông tin dịch vụ được thêm vào đây -->
                                     </tbody>
                                     <tbody>
-                                              <tr >
-            <td colspan="7" style="text-align:right;">
-                <div class="d-flex align-items-center justify-content-end mb-2">
-                    <span class="fw-bold me-2">Giảm giá:</span>
-                    <input type="number" class="form-control hide-when-print border-secondary" style="max-width: 200px;" id="discount-input">
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="7" style="text-align:right;">
-                <div class="d-flex align-items-center justify-content-end mb-2">
-                    <span class="fw-bold me-2">Tiền mặt:</span>
-                    <input type="number" class="form-control hide-when-print border-secondary" style="max-width: 200px;" id="tienmat">
-                </div>
-            </td>
-        </tr>
-        <tr>
-            <td colspan="7" style="text-align:right;">
-                <div class="d-flex align-items-center justify-content-end mb-2">
-                    <span class="fw-bold me-2">Chuyển khoản:</span>
-                    <input type="number" class="form-control hide-when-print border-secondary" style="max-width: 200px;" id="chuyenkhoan">
-                </div>
-            </td>
-        </tr>
+                                        <tr>
+                                            <td colspan="7" style="text-align:right;">
+                                                <div class="d-flex align-items-center justify-content-end mb-2">
+                                                    <span class="fw-bold me-2">Giảm giá:</span>
+                                                    <input type="number" class="form-control hide-when-print border-secondary" style="max-width: 200px;" id="discount-input">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="7" style="text-align:right;">
+                                                <div class="d-flex align-items-center justify-content-end mb-2">
+                                                    <span class="fw-bold me-2">Tiền mặt:</span>
+                                                    <input type="number" class="form-control hide-when-print border-secondary" style="max-width: 200px;" id="tienmat">
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td colspan="7" style="text-align:right;">
+                                                <div class="d-flex align-items-center justify-content-end mb-2">
+                                                    <span class="fw-bold me-2">Chuyển khoản:</span>
+                                                    <input type="number" class="form-control hide-when-print border-secondary" style="max-width: 200px;" id="chuyenkhoan">
+                                                </div>
+                                            </td>
+                                        </tr>
                                     </tbody>
                                 </table>
                             </div>
-
                             <div class="bill-summary">
                                 <div class="bill-total">
-                                    <h2>Tổng thanh toán: <span id="tongthanhtoan-outside" style="color:orange;">0</span>
-                                    </h2>
+                                    <h2>Tổng thanh toán: <span id="tongthanhtoan-outside" style="color:orange;">0</span></h2>
                                 </div>
                                 <div class="Tienthoichokhach">
-                                    <h2>Tiền thối lại cho khách: <span id="tongthanhtoan-outside"
-                                            style="color:red;">0</span></h2>
+                                    <h2>Tiền thối lại cho khách: <span id="tongthanhtoan-outside" style="color:red;">0</span></h2>
                                 </div>
                             </div>
                         </div>
@@ -269,7 +253,6 @@
         </div>
     </div>
 </div>
-
 
 
 <!--Context menu-->
@@ -905,13 +888,22 @@
             $("#submitkv").click(function () {
                 Themkhuvuc();
                 
-            
             });
+             // Lắng nghe sự kiện keydown trên toàn bộ tài liệu
+    $(document).keydown(function (event) {
+        // Kiểm tra nếu phím Enter được nhấn (keyCode 13) và Modal "Thêm khu vực câu" đang hiển thị
+        if (event.key === "Enter" && $('#Themkhuvuchc').hasClass('show')) {
+            event.preventDefault(); // Ngăn chặn hành động mặc định của phím Enter
+            $("#submitkv").click(); // Kích hoạt sự kiện click của nút submitkv
+        }
+    });
             $(document).on('keydown', function (event) {
                         // Kiểm tra nếu phím Enter được nhấn (keyCode 13)
                         if (event.key === "Enter") {
                             event.preventDefault(); // Ngăn chặn hành động mặc định của phím Enter
-                            Themkhuvuc(); // Gọi hàm Themmathang()
+                           //Themkhuvuc(); // Gọi hàm Themmathang()
+                         
+
                         }
                     });
                     
@@ -930,7 +922,7 @@
                 // Cập nhật giá trị của input ẩn
                 $("#Idkhuvuccau_kv").val(khuVucId_kv);
             });
-            $(document).on("contextmenu touchstart", ".Khuvuc", function (e) {
+            $(document).on("contextmenu long-press", ".Khuvuc", function (e) {
                 e.preventDefault();
 
                 var khuVucId = $(this).data("id");
@@ -1031,9 +1023,27 @@
             
             $(document).on('change', '#Soluong', function () {
                 var soluong = $(this).val();
-                var ma_danhmuchanghoa = $(this).data("id");
-                Capnhatsoluong(ma_danhmuchanghoa, soluong);
+                var ma_danhmuchoadon = $(this).data("id");
+                Capnhatsoluong(ma_danhmuchoadon, soluong);
+                hienthihanghoa()
             });
+  // Lắng nghe sự kiện click của các nút tăng giảm
+$(document).on('click', '.btn-decrement', function () {
+    var input = $(this).siblings('input#Soluong');
+    var currentValue = parseInt(input.val());
+    if (currentValue > 1) {
+        input.val(currentValue - 1).trigger('change');
+    }
+});
+
+$(document).on('click', '.btn-increment', function () {
+    var input = $(this).siblings('input#Soluong');
+    var currentValue = parseInt(input.val());
+    input.val(currentValue + 1).trigger('change');
+});
+          
+
+           
             hienthihanghoa()
             $(document).on('change', '#discount-input', function () {
                 Tinhtienthua();
@@ -1706,7 +1716,14 @@
                                                             <td>${value.ma_danhmuc}</td>
                                                             <td>${value.ten_danhmuc}</td>
                                                             <td>${value.dvt}</td>
-                                                            <td><input class="form-control text-center form-control-sm" id="Soluong" type="number" value="${value.soluong}" data-id="${value.ma_danhmuchoadon}"></td>
+                                                            @* <td><input class="form-control text-center form-control-sm" id="Soluong" type="number" value="${value.soluong}" data-id="${value.ma_danhmuchoadon}"></td> *@
+                                                            <td>
+                                        <div class="input-group input-group-sm">
+                                            <button class="btn btn-outline-secondary btn-decrement" type="button" data-id="${value.ma_danhmuchoadon}">-</button>
+                                            <input class="form-control text-center" id="Soluong" type="number" value="${value.soluong}" data-id="${value.ma_danhmuchoadon}">
+                                            <button class="btn btn-outline-secondary btn-increment" type="button" data-id="${value.ma_danhmuchoadon}">+</button>
+                                        </div>
+                                    </td>
                                                             <td>${formatCurrency(value.gia)}</td>
                                                             <td>${formatCurrency(value.thanhtien)}</td>
                                                             <td><button class="btn btn-danger" data-id="${value.ma_danhmuchoadon}" onclick="Xoadanhmuchoadon('${value.ma_danhmuchoadon}')" >Xóa</button></td>
