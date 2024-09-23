@@ -21,46 +21,55 @@ namespace Projecthoca.Service.Responser
         }
 
         public async Task<bool> Themdanhmuchoadon(DanhmuchoadonVM danhmuchoadon)
+{
+    try
+    {
+        var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+        var roles = await _userManager.GetRolesAsync(user);
+        var danhmuc = await _context.Danhmuc.Where(x => x.Ma_danhmuc == danhmuchoadon.Ma_danhmuc).FirstOrDefaultAsync();
+        var kvc = await _context.Khuvuccau.Where(x => x.Ma_Khuvuccau == danhmuchoadon.Ma_khuvuc).FirstOrDefaultAsync();
+        
+        if (danhmuc == null || kvc == null)
         {
-            try
-            {
-                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var roles = await _userManager.GetRolesAsync(user);
-                var danhmuc = await _context.Danhmuc.Where(x => x.Ma_danhmuc == danhmuchoadon.Ma_danhmuc).FirstOrDefaultAsync();
-                var kvc = await _context.Khuvuccau.Where(x => x.Ma_Khuvuccau == danhmuchoadon.Ma_khuvuc).FirstOrDefaultAsync();
-                
-                if (danhmuc == null)
-                {
-                    return false;
-                }
-                var _dmhd = new Danhmuchoadon();
-                _dmhd.Ma_thuehoca = danhmuchoadon.Ma_thuehoca;
-                _dmhd.Ma_danhmuc = danhmuchoadon.Ma_danhmuc;
-                _dmhd.Soluong = danhmuchoadon.Soluong;
-                _dmhd.thanhtien = danhmuc.Gia * danhmuchoadon.Soluong;
-                await _context.danhmuchoadons.AddAsync(_dmhd);
-                var _thongbao = new Thongbao();
-                _thongbao.NgayDang = DateTime.Now.ToString();
-                _thongbao.NoiDung = user.Hovaten+ " đã thêm dịch vụ " + danhmuc.Ten_danhmuc + " vào hóa đơn" + " tại khu vực " + kvc.Ten_Khuvuccau;
-                if(roles.Contains("Staff"))
-                {
-                    _thongbao.Id = user.IdCustomer;
-                }
-                else
-                {
-                    _thongbao.Id = user.Id;
-                }
-             
-                _thongbao.Trangthai = false;
-                await _context.Thongbaos.AddAsync(_thongbao);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+            return false;
         }
+
+        // Check if there's enough quantity in Danhmuc
+        if (danhmuc.Soluong < danhmuchoadon.Soluong)
+        {
+            return false; 
+        }
+
+        // Update Danhmuc quantity
+        danhmuc.Soluong -= danhmuchoadon.Soluong;
+
+        var _dmhd = new Danhmuchoadon
+        {
+            Ma_thuehoca = danhmuchoadon.Ma_thuehoca,
+            Ma_danhmuc = danhmuchoadon.Ma_danhmuc,
+            Soluong = danhmuchoadon.Soluong,
+            thanhtien = danhmuc.Gia * danhmuchoadon.Soluong
+        };
+        await _context.danhmuchoadons.AddAsync(_dmhd);
+
+        var _thongbao = new Thongbao
+        {
+            NgayDang = DateTime.Now.ToString(),
+            NoiDung = $"{user.Hovaten} đã thêm dịch vụ {danhmuc.Ten_danhmuc} vào hóa đơn tại khu vực {kvc.Ten_Khuvuccau}",
+            Id = roles.Contains("Staff") ? user.IdCustomer : user.Id,
+            Trangthai = false
+        };
+        await _context.Thongbaos.AddAsync(_thongbao);
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
+    catch (Exception ex)
+    {
+        // Consider logging the exception
+        return false;
+    }
+}
 
         public async Task<List<DanhmucVM>> Danhsachdanhmucdv()
         {
@@ -124,26 +133,31 @@ namespace Projecthoca.Service.Responser
         }
 
         public async Task<bool> Xoadichvu(int Ma_danhmuchoadon)
+{
+    try
+    {
+        var data = await _context.danhmuchoadons.FindAsync(Ma_danhmuchoadon);
+        if (data == null)
         {
-            try
-            {
-                var data = await _context.danhmuchoadons.FindAsync(Ma_danhmuchoadon);
-                if (data == null)
-                {
-                    return false;
-                }
-                else
-                {
-                    _context.danhmuchoadons.Remove(data);
-                    await _context.SaveChangesAsync();
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+            return false;
         }
+
+        var dm = await _context.Danhmuc.FindAsync(data.Ma_danhmuc);
+        if (dm != null)
+        {
+            // Trả lại số lượng cho Danhmuc
+            dm.Soluong += data.Soluong;
+        }
+
+        _context.danhmuchoadons.Remove(data);
+        await _context.SaveChangesAsync();
+        return true;
+    }
+    catch (Exception ex)
+    {
+        return false;
+    }
+}
 
         public async Task<bool> Themthoigian(GiachothuehcVM giachothuehc)
         {
@@ -357,70 +371,118 @@ namespace Projecthoca.Service.Responser
         }
         // thêm danh mục hóa đơn theo list danh mục trong hóa đơn
 
-        public async Task<bool> Themdanhmuchoadonlst(DanhmuchdVM danhmuchoadon)
+       public async Task<bool> Themdanhmuchoadonlst(DanhmuchdVM danhmuchoadon)
+{
+    try
+    {
+        var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+        var roles = await _userManager.GetRolesAsync(user);
+        var danhmuc = await _context.Danhmuc.Where(x => x.Ma_danhmuc == danhmuchoadon.Ma_danhmuc).FirstOrDefaultAsync();
+        var kvc = await _context.Khuvuccau.Where(x => x.Ma_Khuvuccau == danhmuchoadon.Ma_khuvuccau).FirstOrDefaultAsync();
+        
+        if (danhmuc == null || kvc == null)
         {
-            try
-            {
-                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var roles = await _userManager.GetRolesAsync(user);
-                var danhmuc = await _context.Danhmuc.Where(x => x.Ma_danhmuc == danhmuchoadon.Ma_danhmuc).FirstOrDefaultAsync();
-                var kvc = await _context.Khuvuccau.Where(x => x.Ma_Khuvuccau == danhmuchoadon.Ma_khuvuccau).FirstOrDefaultAsync();
-                if (danhmuc == null)
-                {
-                    return false;
-                }
-                if (kvc == null)
-                    {
-                    return false;
-                }
-                var _dmhd = new Danhmuchoadon();
-                _dmhd.Ma_thuehoca = danhmuchoadon.Ma_nguoithue;
-                _dmhd.Ma_danhmuc = danhmuchoadon.Ma_danhmuc;
-                _dmhd.Soluong = 1;
-                _dmhd.thanhtien = danhmuc.Gia * _dmhd.Soluong;
-                await _context.danhmuchoadons.AddAsync(_dmhd);
-                var _thongbao = new Thongbao();
-                _thongbao.NgayDang = DateTime.Now.ToString();
-                _thongbao.NoiDung = user.Hovaten+ " thêm dịch vụ " + danhmuc.Ten_danhmuc + " vào hóa đơn" + " tại khu vực " + kvc.Ten_Khuvuccau;
-                if(roles.Contains("Staff"))
-                {
-                    _thongbao.Id = user.IdCustomer;
-                }
-                else
-                {
-                    _thongbao.Id = user.Id;
-                }
-              
-                _thongbao.Trangthai = false;
-                await _context.Thongbaos.AddAsync(_thongbao);
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+            return false;
         }
 
-        public async Task<bool> Capnhatgiatien(int danhmuchanghoa,int Soluong)
+        // Check if the item already exists in the list
+        var existingItem = await _context.danhmuchoadons
+            .FirstOrDefaultAsync(x => x.Ma_thuehoca == danhmuchoadon.Ma_nguoithue && x.Ma_danhmuc == danhmuchoadon.Ma_danhmuc);
+
+        if (existingItem != null)
         {
-            try
-            {
-                var data=await _context.danhmuchoadons.Where(x => x.Ma_danhmuchoadon == danhmuchanghoa).FirstOrDefaultAsync();
-                var dm = await _context.Danhmuc.Where(x => x.Ma_danhmuc == data.Ma_danhmuc).FirstOrDefaultAsync();
-                if (data == null )
-                {
-                    return false;
-                }
-                data.Soluong= Soluong;
-                data.thanhtien = dm.Gia * Soluong;
-                await _context.SaveChangesAsync();
-                return true;
-            }
-            catch (Exception ex)
-            {
-                return false;
-            }
+            // Update existing item
+            existingItem.Soluong += 1;
+            existingItem.thanhtien = danhmuc.Gia * existingItem.Soluong;
         }
+        else
+        {
+            // Add new item
+            var _dmhd = new Danhmuchoadon
+            {
+                Ma_thuehoca = danhmuchoadon.Ma_nguoithue,
+                Ma_danhmuc = danhmuchoadon.Ma_danhmuc,
+                Soluong = 1,
+                thanhtien = danhmuc.Gia
+            };
+            await _context.danhmuchoadons.AddAsync(_dmhd);
+        }
+
+        // Update Danhmuc quantity
+        danhmuc.Soluong -= 1;
+        if (danhmuc.Soluong < 0)
+        {
+            return false; // Not enough stock
+        }
+
+        // Add notification
+        var _thongbao = new Thongbao
+        {
+            NgayDang = DateTime.Now.ToString(),
+            NoiDung = $"{user.Hovaten} {(existingItem != null ? "cập nhật" : "thêm")} dịch vụ {danhmuc.Ten_danhmuc} vào hóa đơn tại khu vực {kvc.Ten_Khuvuccau}",
+            Id = roles.Contains("Staff") ? user.IdCustomer : user.Id,
+            Trangthai = false
+        };
+        await _context.Thongbaos.AddAsync(_thongbao);
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
+    catch (Exception ex)
+    {
+        // Consider logging the exception
+        return false;
+    }
+}
+        
+
+
+
+
+       public async Task<bool> Capnhatgiatien(int danhmuchanghoa, int Soluong)
+{
+    try
+    {
+        var data = await _context.danhmuchoadons.FindAsync(danhmuchanghoa);
+        if (data == null)
+        {
+            return false;
+        }
+
+        var dm = await _context.Danhmuc.FindAsync(data.Ma_danhmuc);
+        if (dm == null)
+        {
+            return false;
+        }
+
+        // Tính toán sự thay đổi số lượng
+        int oldSoluong = data.Soluong;
+        int changeInSoluong = Soluong - oldSoluong;
+
+         // Kiểm tra xem có đủ số lượng trong kho không
+        if (dm.Soluong < changeInSoluong)
+        {
+            // Không đủ số lượng, trả về false
+            return false;
+        }
+
+        // Cập nhật số lượng của danhmuchoadon
+        data.Soluong = Soluong;
+        data.thanhtien = dm.Gia * Soluong;
+
+        // Cập nhật số lượng của Danhmuc
+        dm.Soluong -= changeInSoluong; // Điều chỉnh số lượng trong kho
+
+        await _context.SaveChangesAsync();
+        return true;
+    }
+    catch (Exception ex)
+    {
+        return false;
+    }
+}
+    
+    
+    
     }
 }

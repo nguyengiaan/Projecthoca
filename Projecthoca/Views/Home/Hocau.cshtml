@@ -155,8 +155,8 @@
                    
                     <button type="button" class="btn btn-info m-2" id="Themthoigianbtn" data-toggle="modal"
                         data-target="#Themthoigian">Thêm ca câu</button>
-                    <!-- Di chuyển nút vào trong div -->
-                    <button type="button" class="btn btn-primary m-2" id="Themdichvubtn" data-toggle="modal"
+                    <!-- Di chuyển nút vào trong div d-block d-md-none -->
+                    <button type="button" class="btn btn-primary m-2 " id="Themdichvubtn" data-toggle="modal"
                         data-target="#Themdichvu">Thêm dịch vụ</button>
                     @* <button type="button" class="btn btn-success m-2" id="Inhoadon">In hóa đơn</button> *@
 
@@ -212,8 +212,8 @@
                                         <tr>
                                             <th>Mã hàng</th>
                                             <th>Tên hàng</th>
-                                            <th>ĐVT</th>
-                                            <th>SL</th>
+                                            <th>Đơn vị tính</th>
+                                            <th>Số lượng</th>
                                             <th>Đơn giá</th>
                                             <th>Thành tiền</th>
                                             <th>Xóa</th>
@@ -1026,7 +1026,14 @@
             $(document).on("click", "#btnChondm", function () {
                 var data = $(this).data("id");
                 Themdichvuhd(data);
+                
             })
+            
+            $(document).on('change', '#Soluong', function () {
+                var soluong = $(this).val();
+                var ma_danhmuchanghoa = $(this).data("id");
+                Capnhatsoluong(ma_danhmuchanghoa, soluong);
+            });
             hienthihanghoa()
             $(document).on('change', '#discount-input', function () {
                 Tinhtienthua();
@@ -1038,7 +1045,6 @@
             $(document).on('change', '#chuyenkhoan', function () {
                 Tinhtienthua();
             });
-
             
         function formatCurrency1(value) {
             return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(value);
@@ -1632,6 +1638,18 @@
             var Ma_thuehoca = $("#Ma_thuehoca").val();
             var Ma_danhmuc = $("#Ma_danhmucdv").val();
             var soluong = $("#soluongdm").val();
+
+            // Kiểm tra xem đã chọn danh mục chưa
+            if (!Ma_danhmuc || Ma_danhmuc === "Chọn danh mục...") {
+                Swal.fire({
+                    title: "Thông báo",
+                    text: 'Vui lòng chọn danh mục dịch vụ',
+                    icon: "warning"
+                });
+                return; // Dừng hàm nếu chưa chọn danh mục
+            }
+
+
             var formData = new FormData();
             formData.append("Ma_thuehoca", Ma_thuehoca);
             formData.append("Ma_danhmuc", Ma_danhmuc);
@@ -1651,6 +1669,7 @@
                             icon: "success"
                         });
                         Danhsachhddv(kvc);
+                        hienthihanghoa()
                         $("#Themdichvu").modal("hide");
                         $("#Xemdichvu").modal("show");
 
@@ -1658,9 +1677,9 @@
 
                     } else {
                         Swal.fire({
-                            title: "Thất bại",
-                            text: response.message,
-                            icon: "error"
+                            title: "Thông báo",
+                            text: 'Không đủ hàng hóa trong kho',
+                            icon: "warning"
                         });
                     }
                 },
@@ -1695,10 +1714,11 @@
                             html += str; // Thêm chuỗi vào biến html
                         });
                         $('#dsdv').html(html);
-
+                        
                         Tongsokghd(khuVucId);
                         danhsachcahd(khuVucId);
                         Tongtienhd(khuVucId);
+                        
 
 
 
@@ -1729,6 +1749,7 @@
                             icon: "success"
                         });
                         Danhsachhddv(kvc)
+                        hienthihanghoa()
                     }
                     else {
                         console.log("Thất bại");
@@ -1911,7 +1932,6 @@
 
                         Laytongtt(khuVucId);
                         Giacutt(tongtienthanhtoan);
-                        Cacbutton();
                     } else {
                         console.log("Tổng tiền hợp đồng thất bại");
                     }
@@ -2202,7 +2222,7 @@ function Themphieuxuat() {
     console.log("data",dataToSend); // Kiểm tra dữ liệu trước khi gửi
 
     $.ajax({
-        url: "/api/PhieuXuat/ThemPhieuXuat",
+        url: "/api/PhieuXuat/ThemPhieuXuatHocau",
         type: "POST",
         data: JSON.stringify(dataToSend),
         contentType: "application/json",
@@ -2467,6 +2487,7 @@ function Themphieuxuat() {
                 processData: false,
                 contentType: false,
                 success: function (response) {
+                    console.log(response);
                     if (response.success) {
                         Swal.fire({
                             title: "Thành công",
@@ -2475,6 +2496,7 @@ function Themphieuxuat() {
                         });
 
                         Danhsachhddv(kvc);
+                        hienthihanghoa();
                         $("#Themdichvu").modal("hide");
                         $("#Xemdichvu").modal("show");
                         $('#Timkiem').focus();
@@ -2494,7 +2516,41 @@ function Themphieuxuat() {
                 }
             });
         }
-        
+        // hàm cập nhật số lượng hàng hóa
+        function Capnhatsoluong(ma_danhmuchoadon, soluong) {
+
+            $.ajax({
+                url: "/Danhmuchoadon/Capnhatsoluonghd",
+                type: "POST",
+                data: { ma_danhmuchoadon: ma_danhmuchoadon, soluong: soluong },
+                success: function (response) {
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Thành công",
+                            text: response.message,
+                            icon: "success"
+                        });
+                        Danhsachhddv(kvc);
+                        hienthihanghoa();
+                        form.reset();
+                    } else {
+                        Swal.fire({
+                            title: "Thông báo",
+                            text: 'Số lượng không đủ',
+                            icon: "warning"
+                        });
+                         Danhsachhddv(kvc);
+                        hienthihanghoa();
+                        form.reset();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    console.log(xhr.responseText);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.hehe");
+                }
+            });
+        }
         // hàm tính tiền cho khách 
         function Tinhtienthua() {
 
@@ -2539,23 +2595,31 @@ function Themphieuxuat() {
             });
         }
 
-        $(document).on('click', '#btnChondm', function () {
-         var button = $(this);
-         var row = button.closest('tr'); // Lấy hàng tương ứng với nút bấm
-         var soluongCell = row.find('td:nth-child(3)'); // Lấy ô chứa số lượng (ô thứ 3)
-         var soluong = parseInt(soluongCell.text()); // Lấy giá trị số lượng hiện tại và chuyển thành số nguyên
 
-         if (soluong > 0) {
-         soluong--; // Giảm số lượng
+        // hàm cập nhật số lượng hàng hóa
+        function Capnhatsoluonghh(ma_khuvuccau) {
+            console.log("Mã khu vực cầu:", ma_khuvuccau);
+            $.ajax({
+                url: "/Danhmuc/Capnhatsoluong",
+                type: "POST",
+                data: { ma_khuvuccau: ma_khuvuccau },
 
-        // Ẩn nút "Chọn" nếu số lượng = 0
-            if (soluong === 0) {
-             button.hide();
-            }
-    }
-});
+                success: function (response) {
+                    console.log("Phản hồi từ server:", response);
+                    if (response.success) {
+                        console.log("Thành công");
 
-       
+                    } else {
+                        console.log("Cập nhật số lượng thất bại:", response.message);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    console.error("Chi tiết lỗi:", xhr.responseText);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+        }
         // Thêm sự kiện keyup cho ô tìm kiếm
         document.getElementById("search").addEventListener("keyup", filterTable);
         function filterDichvu() {

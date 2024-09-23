@@ -27,5 +27,7 @@ namespace Projecthoca.Service.Interface
         // Cập nhật số lượng giá tiền danh mục hàng hóa
         public Task<bool> Capnhatgiatien(int danhmuchanghoa,int soluong);
 
+        
+
     }
 }

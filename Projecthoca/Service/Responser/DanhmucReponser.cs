@@ -380,11 +380,11 @@ namespace Projecthoca.Service.Responser
             }
         }
         // cập nhật số lượng hàng hóa
-      public async Task<bool> Capnhatsoluong(string ma_khuvuc)
+      public async Task<bool> Capnhatsoluong(string ma_khuvuccau)
 {
     try
     {
-        if (string.IsNullOrEmpty(ma_khuvuc))
+        if (string.IsNullOrEmpty(ma_khuvuccau))
         {
             Console.WriteLine("Mã khu vực cầu trống hoặc null.");
             return false;
@@ -395,7 +395,7 @@ namespace Projecthoca.Service.Responser
                           join nt in _context.Thuehoca on kvc.Ma_Khuvuccau equals nt.Khuvuccau.Ma_Khuvuccau
                           join dmhd in _context.danhmuchoadons on nt.Ma_thuehoca equals dmhd.Ma_thuehoca
                           join dm in _context.Danhmuc on dmhd.Ma_danhmuc equals dm.Ma_danhmuc
-                          where kvc.Ma_Khuvuccau == ma_khuvuc
+                          where kvc.Ma_Khuvuccau == ma_khuvuccau
                           select new
                           {
                               dm.Ma_danhmuc,

@@ -1026,13 +1026,15 @@
             $(document).on("click", "#btnChondm", function () {
                 var data = $(this).data("id");
                 Themdichvuhd(data);
+                
             })
-            hienthihanghoa()
+            
             $(document).on('change', '#Soluong', function () {
                 var soluong = $(this).val();
                 var ma_danhmuchanghoa = $(this).data("id");
                 Capnhatsoluong(ma_danhmuchanghoa, soluong);
             });
+            hienthihanghoa()
             $(document).on('change', '#discount-input', function () {
                 Tinhtienthua();
                 Giamgia();
@@ -1699,10 +1701,11 @@
                             html += str; // Thêm chuỗi vào biến html
                         });
                         $('#dsdv').html(html);
-
+                        
                         Tongsokghd(khuVucId);
                         danhsachcahd(khuVucId);
                         Tongtienhd(khuVucId);
+                        
 
 
 
@@ -1733,6 +1736,7 @@
                             icon: "success"
                         });
                         Danhsachhddv(kvc)
+                        hienthihanghoa()
                     }
                     else {
                         console.log("Thất bại");
@@ -1915,7 +1919,6 @@
 
                         Laytongtt(khuVucId);
                         Giacutt(tongtienthanhtoan);
-                        Cacbutton();
                     } else {
                         console.log("Tổng tiền hợp đồng thất bại");
                     }
@@ -2206,7 +2209,7 @@ function Themphieuxuat() {
     console.log("data",dataToSend); // Kiểm tra dữ liệu trước khi gửi
 
     $.ajax({
-        url: "/api/PhieuXuat/ThemPhieuXuat",
+        url: "/api/PhieuXuat/ThemPhieuXuatHocau",
         type: "POST",
         data: JSON.stringify(dataToSend),
         contentType: "application/json",
@@ -2472,6 +2475,7 @@ function Themphieuxuat() {
                 processData: false,
                 contentType: false,
                 success: function (response) {
+                    console.log(response);
                     if (response.success) {
                         Swal.fire({
                             title: "Thành công",
@@ -2480,6 +2484,7 @@ function Themphieuxuat() {
                         });
 
                         Danhsachhddv(kvc);
+                        hienthihanghoa();
                         $("#Themdichvu").modal("hide");
                         $("#Xemdichvu").modal("show");
                         $('#Timkiem').focus();
@@ -2514,6 +2519,7 @@ function Themphieuxuat() {
                             icon: "success"
                         });
                         Danhsachhddv(kvc);
+                        hienthihanghoa();
                         form.reset();
                     } else {
                         Swal.fire({
@@ -2525,6 +2531,7 @@ function Themphieuxuat() {
                 },
                 error: function (xhr, status, error) {
                     console.error("Có lỗi xảy ra: ", error);
+                    console.log(xhr.responseText);
                     alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.hehe");
                 }
             });
@@ -2573,25 +2580,6 @@ function Themphieuxuat() {
             });
         }
 
-        $(document).on('click', '#btnChondm', function () {
-         var button = $(this);
-         var row = button.closest('tr'); // Lấy hàng tương ứng với nút bấm
-         var soluongCell = row.find('td:nth-child(3)'); // Lấy ô chứa số lượng (ô thứ 3)
-         var soluong = parseInt(soluongCell.text()); // Lấy giá trị số lượng hiện tại và chuyển thành số nguyên
-
-         if (soluong > 0) {
-         soluong--; // Giảm số lượng
-         //soluongCell.text(soluong); // Cập nhật lại số lượng hiển thị
-
-        // Ẩn nút "Chọn" nếu số lượng = 0
-            if (soluong === 0) {
-             button.hide();
-            }
-
-        // Gọi hàm Capnhatsoluonghh để cập nhật số lượng trong database
-        // Capnhatsoluonghh(kvc); // Truyền mã khu vực cầu (hoặc mã sản phẩm)
-    }
-});
 
         // hàm cập nhật số lượng hàng hóa
         function Capnhatsoluonghh(ma_khuvuccau) {
