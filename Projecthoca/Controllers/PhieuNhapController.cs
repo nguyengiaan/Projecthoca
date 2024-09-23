@@ -133,7 +133,7 @@ public async Task<IActionResult> ThemPhieuNhap([FromBody] PhieuNhapVM model)
 
             // Cập nhật số lượng và giá của sản phẩm
             danhMuc.Soluong += chiTiet.SoLuong; // Cộng thêm số lượng mới
-            danhMuc.Gia = (int)chiTiet.DonGia; // Cập nhật giá mới
+            danhMuc.Gianhap = (int)chiTiet.DonGia; // Cập nhật giá mới
 
             // Thêm chi tiết phiếu nhập
             phieuNhap.ChiTietPhieuNhaps.Add(new ChiTietPhieuNhap

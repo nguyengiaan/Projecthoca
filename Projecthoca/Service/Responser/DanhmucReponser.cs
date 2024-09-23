@@ -64,6 +64,7 @@ namespace Projecthoca.Service.Responser
                     Gia = x.Gia,
                     Donvitinh = x.Donvitinh,
                     Nhacungcap = x.Nhacungcap,
+                    Soluong = x.Soluong,
                     Gianhap = x.Gianhap,
                     Ma_mathang = x.Mathang.Ten_mathang,
                   
