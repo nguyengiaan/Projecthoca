@@ -2301,6 +2301,13 @@ function Themphieuxuat() {
         }
         // in hóa đơn
         function Inhoadon() {
+            // Thay thế các nút tăng giảm bằng giá trị tĩnh
+            $('#dsdv .btn-decrement, #dsdv .btn-increment').each(function() {
+                var input = $(this).siblings('input#Soluong');
+                var value = input.val();
+                $(this).parent().html(value);
+            });
+
             var printContents = document.querySelector("#Xemdichvu #in").innerHTML;
             var originalContents = document.body.innerHTML;
 
@@ -2346,7 +2353,7 @@ function Themphieuxuat() {
                                         font-family: Arial, sans-serif;
                                         color: #000;
                                         padding: 40px; /* Tăng padding */
-                                        width: 150mm; /* Tăng chiều rộng cho hóa đơn */
+                                        width: 200mm; /* Tăng chiều rộng cho hóa đơn */
                                         margin: 0 auto;
                                         border: 1px solid #ddd;
                                         border-radius: 5px;
