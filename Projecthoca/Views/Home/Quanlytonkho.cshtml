@@ -39,8 +39,10 @@
             <thead class="thead-light">
                 <tr>
                     <th>Mã sản phẩm</th>
-                    <th>Tên sản phẩm</th>
-                    <th>Đơn vị tính</th>
+                    <th>Sản phẩm</th>
+                    <th>ĐVT</th>
+                    <th>Giá bán</th>
+                    <th>Giá nhập</th>
                     @* @{
                         
                         var selectedDay = Convert.ToInt32(ViewData["SelectedDay"] ?? "31");
@@ -247,7 +249,7 @@
             var headerRow = table.find('thead tr');
 
             // Remove all current date columns
-            headerRow.find('th:nth-child(n+5)').remove();
+            headerRow.find('th:nth-child(n+7)').remove();
 
             // Add new columns based on selected day
             for (var i = 1; i <= selectedDay; i++) {
@@ -344,7 +346,9 @@
                                 productData[innerValue.ma_danhmuc] = {
                                     ten_danhmuc: innerValue.ten_danhmuc,
                                     tonKho: new Array(totalDays).fill(''),
-                                    donvitinh: innerValue.donvitinh
+                                    donvitinh: innerValue.donvitinh,
+                                    dongiaban:innerValue.dongiaban,
+                                    dongianhap:innerValue.dongianhap,
                                 };
                             }
                             var day = index; // Chỉ số mảng bắt đầu từ 0
@@ -358,7 +362,9 @@
                         var str = `<tr>
                                     <td>${ma_danhmuc}</td>
                                     <td>${data.ten_danhmuc}</td>
-                                    <td>${data.donvitinh}</td>`;
+                                    <td>${data.donvitinh}</td>
+                                    <td>${formatCurrency(data.dongiaban)}</td>
+                                    <td>${formatCurrency(data.dongianhap)}</td>`;
                         const list = data.tonKho.filter(item => item !== null && item !== undefined && item.toString().trim() !== "");
                         list.forEach(function (tonKho) {
                             str += `<td>${tonKho}</td>`;
@@ -411,6 +417,9 @@
             $('#pagination').html(str);
         }
     }
+          function formatCurrency(value) {
+                return value.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' });
+   }
 </script>
 
 

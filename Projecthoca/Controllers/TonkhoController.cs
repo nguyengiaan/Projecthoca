@@ -102,9 +102,9 @@ namespace Projecthoca.Controllers
             try
             {
                 var item=await _tonkho.Baocaodoanhthuct(NgayBd,NgayKt,page,pagesize);
-                if(item!=null)
+                if(item.ds!=null)
                 {
-                    return Json(new { success = true, dsdm = item,page=page,totalpages=item.Count });
+                    return Json(new { success = true, dsdm = item.ds,page=page,totalpages=item.totalPages });
                 }   
                 return Json(new { success = false, messeger = "Không có dữ liệu" });
             }

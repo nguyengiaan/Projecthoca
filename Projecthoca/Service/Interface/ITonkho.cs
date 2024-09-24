@@ -15,7 +15,7 @@ namespace Projecthoca.Service.Interface
         // báo cáo doanh thu
         public Task<(List<long>ds,long dt,long tongvon,long loinhuan)> baocaodt();
 
-        public Task<List<Baocaodoanhthuct>> Baocaodoanhthuct(DateTime NgayBd, DateTime NgayKt,int page,int pagesize);
+        public Task<(List<Baocaodoanhthuct>ds,int totalPages)> Baocaodoanhthuct(DateTime NgayBd, DateTime NgayKt,int page,int pagesize);
 
         public Task<List<Baocao>> Baocaodoanhthuct1(DateTime NgayBd, DateTime NgayKt);
 

@@ -13,5 +13,9 @@ namespace Projecthoca.Models.EnitityVM
         public string Ten_danhmuc { get; set; }
 
         public string Donvitinh {get;set;}
+
+        public int Dongianhap { get; set; }
+
+        public int Dongiaban { get; set; }
     }
 }

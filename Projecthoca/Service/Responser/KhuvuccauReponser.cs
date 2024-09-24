@@ -205,7 +205,6 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var cachekey = "Danhsachbamgiolist";
                 var data = await _context.Thuehoca.Where(x => x.Ma_khuvuccau == Ma_khuvuc).FirstOrDefaultAsync();
                 if (data != null)
                 {
@@ -216,6 +215,7 @@ namespace Projecthoca.Service.Responser
                 }
                 else
                 {
+                    await Danhsachbamgio();
                     return false;
                 }
             }
@@ -255,8 +255,10 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
+
                 var _key = "Danhsachbamgiolist_1";
-                var data = await _context.Thuehoca.Where(x => x.trangthai == "Dabamgio").ToListAsync();
+                _cache.Remove(_key);
+                var data = await _context.Thuehoca.Where(x => x.trangthai == "Dabamgio" ).Select(x=>x.Ma_khuvuccau).ToListAsync();
                 _cache.Set(_key, data);
                 return true;
             }
@@ -509,6 +511,24 @@ namespace Projecthoca.Service.Responser
             {
                 return null;
             }
+        }
+
+        public async Task<bool> Capnhatten(string Ma_khuvuc, string Tenkhuvuc)
+        {
+           try
+           {
+                var data= _context.Khuvuccau.Where(x => x.Ma_Khuvuccau == Ma_khuvuc).FirstOrDefault();
+
+                data.Ten_Khuvuccau=Tenkhuvuc;
+                _context.Khuvuccau.Update(data);
+              await  _context.SaveChangesAsync();
+                return true;
+
+
+           }catch(Exception ex)
+           {
+                return false;
+           }
         }
     }
 }
