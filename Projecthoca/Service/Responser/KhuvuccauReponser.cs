@@ -255,9 +255,10 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
+
                 var _key = "Danhsachbamgiolist_1";
                 _cache.Remove(_key);
-                var data = await _context.Thuehoca.Where(x => x.trangthai == "Dabamgio").ToListAsync();
+                var data = await _context.Thuehoca.Where(x => x.trangthai == "Dabamgio" ).Select(x=>x.Ma_khuvuccau).ToListAsync();
                 _cache.Set(_key, data);
                 return true;
             }

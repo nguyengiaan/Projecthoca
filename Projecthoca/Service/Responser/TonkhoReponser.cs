@@ -71,7 +71,9 @@ namespace Projecthoca.Service.Responser
                                 Ten_danhmuc = item.Ten_danhmuc,
                                 SoLuongTon = tonkho,
                                 Date = compareDate,
-                                Donvitinh=item.Donvitinh
+                                Donvitinh=item.Donvitinh,
+                                Dongianhap=item.Gianhap,
+                                Dongiaban=item.Gia,
                             });
                         }
                         else
@@ -84,7 +86,9 @@ namespace Projecthoca.Service.Responser
                                 Ten_danhmuc = item.Ten_danhmuc,
                                 SoLuongTon = tonkho,
                                 Date = compareDate,
-                                    Donvitinh=item.Donvitinh,
+                                Donvitinh=item.Donvitinh,
+                                Dongianhap=item.Gianhap,
+                                Dongiaban=item.Gia,
                                 }
                             });
                         }

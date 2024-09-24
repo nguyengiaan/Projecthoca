@@ -17,7 +17,7 @@ public class TimerBackgroundService : BackgroundService
     private readonly ILogger<TimerBackgroundService> _logger;
     private CancellationTokenSource _timerCancellationTokenSource;
     private readonly IMemoryCache _cache;
-   
+
     public TimerBackgroundService(IHubContext<Timehub> hubContext, IServiceScopeFactory scopeFactory, ILogger<TimerBackgroundService> logger, IMemoryCache cache)
     {
         _hubContext = hubContext;
@@ -44,11 +44,11 @@ public class TimerBackgroundService : BackgroundService
             {
                 try
                 {
-                    if (_cache.TryGetValue(cacheKey, out  List<Thuehoca> list))
+                    if (_cache.TryGetValue(cacheKey, out List<string> list))
                     {
                         foreach (var item in list)
                         {
-                            await _kvc.Demthoigian(item.Ma_khuvuccau);
+                            await _kvc.Demthoigian(item);
                         }
                     }
                 }
