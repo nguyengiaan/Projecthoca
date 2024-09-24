@@ -17,5 +17,6 @@ namespace Projecthoca.Service.Interface
 
         public Task<Boolean> Capnhatkhachhang(KhachhangVM kh);
 
+
     }
 }

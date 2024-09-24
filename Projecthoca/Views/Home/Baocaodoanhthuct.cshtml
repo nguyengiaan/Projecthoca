@@ -120,7 +120,15 @@ function bcdtct(page,pagesize) {
                      <td>${item.donvitinh}</td> <td>${item.soluong}</td> <td>${formatCurrency(item.donGia)}</td> <td>${formatCurrency(item.tongcong)}</td><td>${item.tenNV}</td>`;
                     reportTableBody.appendChild(row);
                 });
-                updatePagination(data.totalPages, data.page);
+                var totalAmount = data.dsdm.reduce(function (sum, item) {
+                    console.log(item.tongcong);
+                    return sum + item.tongcong;
+                }, 0);
+                
+                var totalRow = document.createElement('tr');
+                totalRow.innerHTML = `<td colspan="8" style="text-align:right"><strong>Tổng cộng:</strong></td><td><strong>${formatCurrency(totalAmount)}</strong></td><td></td>`;
+                reportTableBody.appendChild(totalRow);
+                updatePagination(data.totalpages, data.page);
             } else {
                 reportTableBody.innerHTML = `<tr><td colspan="5">${data.messeger}</td></tr>`;
             }
@@ -133,20 +141,20 @@ function bcdtct(page,pagesize) {
 function updatePagination(totalPages, currentPage) {
         if (totalPages > 0) {
             var str = `<nav aria-label="Page navigation example">
-                                                            <ul class="pagination">`;
+                                                 <ul class="pagination">`;
             if (totalPages > 1) {
                 if (currentPage > 1) {
-                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachnhapck(${currentPage - 1}, 10,${ ma_danhmuc_phu})">Previous</a></li>`;
+                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="bcdtct(${currentPage - 1}, 10)">Previous</a></li>`;
                 }
                 for (let i = 1; i <= totalPages; i++) {
                     if (currentPage === i) {
                         str += `<li class="page-item active"><a class="page-link" href="javascript:void(0)">${i}</a></li>`;
                     } else {
-                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachnhapck(${i}, 10,${ ma_danhmuc_phu})">${i}</a></li>`;
+                        str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="bcdtct(${i}, 10)">${i}</a></li>`;
                     }
                 }
                 if (currentPage < totalPages) {
-                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="danhsachnhapck(${currentPage + 1}, 10,${ ma_danhmuc_phu})">Next</a></li>`;
+                    str += `<li class="page-item"><a class="page-link" href="javascript:void(0)" onclick="bcdtct(${currentPage + 1}, 10)">Next</a></li>`;
                 }
             }
             str += `</ul></nav>`;

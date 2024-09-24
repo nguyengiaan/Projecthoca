@@ -19,6 +19,8 @@ namespace Projecthoca.Service.Interface
         public Task<bool> Xoakhachthue(string Ma_khuvuc);
         public Task<ThuehocaVM> Laykhachthue(string Ma_khuvuc);
         public Task<bool> Chuyenkhachthue(ChuyenbanVM chuyenban);
+
+        public Task<bool> Capnhatten (string  Ma_khuvuc,string Tenkhuvuc);
         // danh mục hiển thị trong hóa đơn
         public Task<List<DanhmucVM>> Danhmuchthd(string? Ma_mathang);
 

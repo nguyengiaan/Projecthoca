@@ -295,7 +295,7 @@ namespace Projecthoca.Service.Responser
     }
 }
 
-        public async Task<List<Baocaodoanhthuct>> Baocaodoanhthuct(DateTime NgayBd, DateTime NgayKt,int page,int pagesize)
+        public async Task<(List<Baocaodoanhthuct>ds,int totalPages)> Baocaodoanhthuct(DateTime NgayBd, DateTime NgayKt,int page,int pagesize)
         {
             try
             {
@@ -317,7 +317,7 @@ namespace Projecthoca.Service.Responser
                     }).ToListAsync();
                     if(data.Count<0)
                     {
-                        return null;
+                        return (null,0);
                     }
                     if(NgayBd!= date && NgayKt!=date)
                     {
@@ -325,13 +325,13 @@ namespace Projecthoca.Service.Responser
                     }
                     var totalItems = data.Count();
                     var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
-                    data=data.Skip((page - 1) * pagesize).Take(pagesize).ToList();
-                    return data;
+                    data=data.Skip((page - 1) * pagesize).OrderByDescending(x=>x.SoPhieu).Take(pagesize).ToList();
+                    return (data,totalpages);
                    
             }
             catch(Exception ex)
             {
-                    return null;
+                       return (null,0);
             }
         }
 
@@ -351,20 +351,19 @@ namespace Projecthoca.Service.Responser
                 for(DateTime a =NgayBd.Date ; a<=NgayKt.Date;a=a.AddDays(1))
                 {
                   var data = await _context.PhieuXuats
-    .Where(x => x.NgayPhieu.Date == a.Date && x.Id == user.Id && x.ChiTietPhieuXuats != null)
-    .Include(x => x.ChiTietPhieuXuats)
-    .SelectMany(x => x.ChiTietPhieuXuats)
-    .Where(ct => ct != null) // Lọc các chi tiết phiếu xuất không null
-    .ToListAsync();
+                  .Where(x => x.NgayPhieu.Date == a.Date && x.Id == user.Id )
+
+                 .Where(ct => ct != null) // Lọc ra các chi tiết phiếu xuất không null
+                    .ToListAsync();
 
                 if (data.Count > 0)
              {
             var Baocao1 = new Baocao
             {
-            Ngayphieu = a.Date,
-    Doanhthu = (int)data.Sum(ct => ct.ThanhTien),
-    Tienmat = (int)data.Sum(ct => ct.ThanhTien), // Giả sử tất cả đều là tiền mặt, bạn có thể thay đổi nếu cần
-    Chuyenkhoan = 0 // Bạn có thể cập 
+             Ngayphieu = a.Date,
+              Doanhthu = (int)data.Sum(ct => ct.TongTien),
+             Tienmat = (int)data.Sum(ct => ct.TongTien), // Giả sử tất cả đều là tiền mặt, bạn có thể thay đổi nếu cần
+              Chuyenkhoan = 0 // Bạn có thể cập 
             };
 
             Baocao.Add(Baocao1);

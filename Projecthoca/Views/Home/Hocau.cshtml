@@ -140,7 +140,30 @@
         </div>
     </div>
 </div>
+<!--modal Sửa tên bàn -->
+<div class="modal fade" id="Capnhattenban" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-dialog-centered  ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Cập nhật tên bàn</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="post" id="formchuyenban" enctype="multipart/form-data">
+                    <div class="form-group">
+                        <label class="col-form-label">Tên bàn</label>
+                        <input type="text" class="form-control" id="Tenban">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Thoát</button>
+                <button type="button" id="submittenban" class="btn btn-primary">Cập nhật</button>
 
+            </div>
+        </div>
+    </div>
+</div>
 
 
 <!--Xem dịch vụ-->
@@ -275,10 +298,11 @@
 <!--Context menu-->
 <div id="contextMenu" class="context-menu">
     <ul>
-        <li><a href="#" id="Themkh" style="text-decoration: none; color: black;">Cho khách thuê</a></li>
+        <li><a href="#" id="edit" style="text-decoration: none; color: black;">Tên bàn</a></li>
+        <li><a href="#" id="Themkh" style="text-decoration: none; color: black;">Khách thuê</a></li>
         <li><a href="#" id="Bamgio" style="text-decoration: none; color: black;">Bấm giờ</a></li>
-        <li><a href="#" id="Themdichvu" style="text-decoration: none; color: black;">Xem dịch vụ</a></li>
-        <li><a href="#" id="Xemchitietca" style="text-decoration: none; color: black;">Xem số cá</a></li>
+        <li><a href="#" id="Themdichvu" style="text-decoration: none; color: black;">Dịch vụ</a></li>
+        <li><a href="#" id="Xemchitietca" style="text-decoration: none; color: black;">Cá câu</a></li>
         <li><a href="#" id="Chuyenban" style="text-decoration: none; color: black;">Chuyển bàn câu</a></li>
     </ul>
 </div>
@@ -830,6 +854,7 @@
         var tongtiencuoicung;
         var tienthua;
         var trangthai="Khách đi câu"
+        var tenKhuvuc1 = '';
         document.addEventListener('DOMContentLoaded', function () {
             const animationPath = '../Admin_Style/img/animation.json';
             lottie.loadAnimation({
@@ -869,6 +894,9 @@
         $('#Xemdichvu .btn-close, #Xemdichvu .btn-secondary').click(function () {
             $('#Xemdichvu').modal('hide');
         });
+        $('#Capnhattenban .btn-close, #Capnhattenban .btn-secondary').click(function () {
+            $('#Capnhattenban').modal('hide');
+        });
         //--------------------------------------------------------------------------
         $(document).ready(function () {
             $('#Ma_danhmucdv').select2({
@@ -893,6 +921,14 @@
 
 
                 $("#Xemdichvu").modal("hide");
+
+            });
+            $(document).on("click", "#submittenban", function () {
+                    var khuvucId=$(this).data("id");
+                    $('#Capnhattenban').modal('hide');
+                    var tenban=$('#Tenban').val();
+                    Capnhattenban(khuvucId,tenban);
+              
 
             });
             setInterval(function () {
@@ -932,7 +968,8 @@
             });
             $(document).on("contextmenu touchstart", ".Khuvuc", function (e) {
                 e.preventDefault();
-
+                tenKhuvuc1=$(this).attr("data-ten");
+                console.log(tenKhuvuc1);
                 var khuVucId = $(this).data("id");
                 Kiemtrakv(khuVucId);
                 Kiemtrabamgio(khuVucId);
@@ -957,10 +994,15 @@
 
                 var action = $(this).attr("id");
                 var khuVucId = $("#contextMenu").data("id");
+              
 
                 if (action === "edit") {
                     // Handle edit action
-                    alert("Edit " + khuVucId);
+                        $('#submittenban').data("id", khuVucId);
+                        $('#Tenban').val(tenKhuvuc1);
+                        
+                      $("#Capnhattenban").modal("show");
+                 
                 } else if (action === "delete") {
                     alert("Delete " + khuVucId);
                 } else if (action === "Themkh") {
@@ -1120,6 +1162,7 @@
                             if (value.idkhuvuccau >= 1 && value.idkhuvuccau <= 21) {
                                 const element = $(`#${value.idkhuvuccau}`);
                                 element.attr('data-id', value.ma_Khuvuccau);
+                                element.attr('data-ten', value.ten_Khuvuccau);  
                                 $('.Khuvuc').removeClass('chongoi');
                                 if (value.trangthai === "Cokhach") {
                                     element.html(`<span class="status-text">${value.ten_Khuvuccau}</span><span class="status-text">Có khách</span><span class="status-text" id="timeout">${value.timeout}</span>`);
@@ -2173,17 +2216,29 @@ function Themphieuxuat() {
         var soLuong = parseFloat(row.find('td:eq(3) input').val()) || 0;
         var donGia = parseInt(row.find('td:eq(4)').text().replace(/[^\d]/g, '')) || 0;
         var thanhTien = parseInt(row.find('td:eq(5)').text().replace(/[^\d]/g, '')) || 0;
-
-        chiTietPhieuXuats.push({
-            SoPhieu: soPhieu,
-            Ma_sanpham: maSanPham,
-            TenSanPham: tenSanPham,
-            SoLuong: soLuong,
-            DonGia: donGia,
-            DonViTinh: donViTinh,
-            ThanhTien: thanhTien
-        });
+    if (donViTinh == "Kí") {
+            chiTietPhieuXuats.push({
+                SoPhieu: soPhieu,
+                Ma_sanpham: maSanPham,
+                TenSanPham: tenSanPham,
+                SoLuong: soLuong,
+                DonGia: donGia,
+                DonViTinh: donViTinh,
+                ThanhTien: -Math.abs(thanhTien), // Sử dụng dấu phẩy thay vì dấu chấm phẩy
+            });
+        } else {
+            chiTietPhieuXuats.push({
+                SoPhieu: soPhieu,
+                Ma_sanpham: maSanPham,
+                TenSanPham: tenSanPham,
+                SoLuong: soLuong,
+                DonGia: donGia,
+                DonViTinh: donViTinh,
+                ThanhTien: thanhTien // Sử dụng dấu phẩy thay vì dấu chấm phẩy
+            });
+        }
     });
+
 
     var dataToSend = {
         SoPhieu: soPhieu,
@@ -2719,7 +2774,38 @@ function selectItem(maDanhmuc, tenDanhmuc) {
 
 // Thêm sự kiện input cho ô tìm kiếm
 $('#Ma_danhmuchoadon').on('input', filterDichvuList);
+// Cập nhật tên khu vực
+function Capnhattenban(Ma_khuvuc,Tenkhuvuc)
+{
+         $.ajax({
+                url: "/Khuvuchoca/Capnhatten",
+                type: "POST",
+                data: { Ma_khuvuc: Ma_khuvuc,Tenkhuvuc:Tenkhuvuc },
 
+                success: function (response) {
+     
+                    if (response.success) {
+                        Swal.fire({
+                            title: "Thành công",
+                            text: response.message,
+                            icon: "success"
+                        });
+
+                    } else {
+                        Swal.fire({
+                            title: "Thất bại",
+                            text: response.message,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error("Có lỗi xảy ra: ", error);
+                    console.error("Chi tiết lỗi:", xhr.responseText);
+                    alert("Đã xảy ra lỗi trong quá trình gửi yêu cầu.");
+                }
+            });
+}
 
     </script>
 

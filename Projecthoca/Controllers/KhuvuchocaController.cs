@@ -277,6 +277,26 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+        [HttpPost]
+        public async Task<IActionResult>Capnhatten(string Ma_khuvuc, string Tenkhuvuc)
+        {
+            try
+            {
+                var data = await _kvc.Capnhatten(Ma_khuvuc, Tenkhuvuc);
+                if (data)
+                {
+                    return Json(new { success = true, messeger = "Cập nhật thành công" });
+                }
+                else
+                {
+                    return Json(new { success = false, messeger = "Hãy thêm khách hàng" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
 
         // danh mục hiển thị trong hóa đơn
         [HttpPost]
@@ -340,5 +360,6 @@ namespace Projecthoca.Controllers
                 return Json(new { success = false, message = ex.Message });
             }
         }
+   
     }
 }
