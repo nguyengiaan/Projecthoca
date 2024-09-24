@@ -202,6 +202,124 @@ public async Task<IActionResult> ThemPhieuXuat([FromBody] PhieuXuatVM model)
 }
 
 
+ [HttpPost("ThemPhieuXuatHocau")]
+public async Task<IActionResult> ThemPhieuXuatHocau([FromBody] PhieuXuatVM model)
+{
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                      var user = await _userManager.GetUserAsync(User);
+                    // Sinh số phiếu tự động
+                    model.SoPhieu = GenerateSoPhieu();
+
+                    // Gán giá trị mặc định nếu các thuộc tính null
+                    model.TenNVKD = model.TenNVKD ?? "Chưa có NVKD";
+                    model.ChiTietPhieuXuats = model.ChiTietPhieuXuats ?? new List<ChiTietPhieuXuatVM>();
+                    //model.ConLai = model.TongTien - model.ThanhToan;
+
+                    // Map từ ViewModel sang Entity
+                    var phieuXuat = new PhieuXuat
+                    {
+                        SoPhieu = model.SoPhieu,
+                        NgayPhieu = model.NgayPhieu,
+                        Khachhang = model.TenKhachhang,
+                        NhanVien = model.TenNVKD,
+                        TongTien = model.TongTien,
+                        NoCu = model.NoCu,
+                        ThanhToan = model.ThanhToan,
+                        ConLai = model.ConLai,
+                        HanThanhToan = model.HanThanhToan,
+                        GhiChu = model.GhiChu,
+                        GiamGia = model.GiamGia,
+                        TienMat = model.TienMat,
+                        ChuyenKhoan = model.ChuyenKhoan,
+                        TenKhuvuc = model.TenKhuvuc,
+                        Id=user.Id,
+
+                        ChiTietPhieuXuats = new List<ChiTietPhieuXuat>()
+                    };
+
+                    foreach (var chiTiet in model.ChiTietPhieuXuats)
+                    {
+                        // Tìm Danhmuc trong cơ sở dữ liệu
+                        var danhMuc = await _context.Danhmuc
+                            .FirstOrDefaultAsync(d => d.Ma_danhmuc == chiTiet.Ma_sanpham);
+
+                        if (danhMuc == null)
+                        {
+                            // Xử lý khi không tìm thấy Danhmuc
+                            return BadRequest(new { success = false, message = $"Danh mục với mã {chiTiet.Ma_sanpham} không tồn tại" });
+                        }
+
+                        // Cập nhật số lượng và giá của sản phẩm
+                       // danhMuc.Soluong -= chiTiet.SoLuong; // Cộng thêm số lượng mới
+                                                            // danhMuc.Gia = (int)chiTiet.DonGia; // Cập nhật giá mới
+
+                        // Thêm chi tiết phiếu nhập
+                        phieuXuat.ChiTietPhieuXuats.Add(new ChiTietPhieuXuat
+                        {
+                            SoPhieu = chiTiet.SoPhieu,
+                            Ma_sanpham = chiTiet.Ma_sanpham,
+                            Danhmuc = danhMuc, // Gán đối tượng Danhmuc
+                            SoLuong = chiTiet.SoLuong,
+                            DonGia = chiTiet.DonGia,
+                            ThanhTien = chiTiet.ThanhTien,
+                            DonViTinh = chiTiet.DonViTinh,
+                            Ngayxuat=DateTime.Now,
+                        });
+
+                        // Cập nhật Danhmuc trong cơ sở dữ liệu
+                        _context.Danhmuc.Update(danhMuc);
+                    }
+
+                    _context.PhieuXuats.Add(phieuXuat);
+                    await _context.SaveChangesAsync();
+
+                    return Ok(new
+                    {
+                        success = true,
+                        soPhieu = phieuXuat.SoPhieu,
+                        ngayPhieu = phieuXuat.NgayPhieu.ToString("dd/MM/yyyy"),
+                        tenKhachHang = phieuXuat.Khachhang,
+                        tenNVKD = phieuXuat.NhanVien,
+                        tongTien = phieuXuat.TongTien,
+                        noCu = phieuXuat.NoCu,
+                        thanhToan = phieuXuat.ThanhToan,
+                        conLai = phieuXuat.ConLai,
+                        hanThanhToan = phieuXuat.HanThanhToan?.ToString("dd/MM/yyyy"),
+                        ghiChu = phieuXuat.GhiChu,
+                        giamGia = phieuXuat.GiamGia,
+                        tienMat = phieuXuat.TienMat,
+                        chuyenKhoan = phieuXuat.ChuyenKhoan,
+                        tenKhuvuc = phieuXuat.TenKhuvuc,
+                        chiTietPhieuXuats = phieuXuat.ChiTietPhieuXuats.Select(c => new
+                        {
+                            id = c.Id,
+                            soPhieu = c.SoPhieu,
+                            maSanPham = c.Ma_sanpham,
+                            tenSanPham = c.Danhmuc.Ten_danhmuc, // Ánh xạ tên danh mục từ đối tượng Danhmuc
+                            soLuong = c.SoLuong,
+                            donGia = c.DonGia,
+                            donViTinh = c.DonViTinh,
+                            thanhTien = c.ThanhTien
+                        })
+                    });
+                }
+            } catch (Exception ex)
+            {
+                return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ" });
+            }
+            
+            return BadRequest(new { success = false, message = "Dữ liệu không hợp lệ" });
+            
+ 
+}
+
+
+
+
+
         // GET: /api/PhieuNhap/XemPhieuNhap?soPhieu={soPhieu}
         [HttpGet("XemPhieuXuat")]
         public async Task<IActionResult> XemPhieuXuat([FromQuery] string soPhieu)

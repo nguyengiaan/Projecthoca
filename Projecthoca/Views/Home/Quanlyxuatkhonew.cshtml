@@ -872,6 +872,7 @@ function danhsachdanhmucModels(page, pagesize) {
             
             if (response.success) {
                 $.each(response.dsdm, function(index, value) {
+                    console.log(value);
                     var row = `<tr data-id="${value.ma_danhmuc}">
                         <td>${value.ma_danhmuc}</td>
                         <td>${value.ten_danhmuc}</td>
