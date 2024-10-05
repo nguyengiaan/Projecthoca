@@ -31,6 +31,10 @@ namespace Projecthoca.Service.Responser
             {
                 List<ChiTietPhieuNhap> chiTietPhieuNhaps;
                 List<ChiTietPhieuXuat> chiTietPhieuXuats;
+                List<ChiTietPhieuNhap> chiTietPhieuNhapdk;
+                List<ChiTietPhieuXuat> chiTietPhieuxuadk;
+                DateTime firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                DateTime firstDayOfLastMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(-1);
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
                 var totalItems = _context.Danhmuc.Where(x=>x.Id==user.Id && x.Ma_danhmuc != "DM0000").Count();
                 var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
@@ -46,8 +50,23 @@ namespace Projecthoca.Service.Responser
                     var compareDate1 = new DateTime(currentDate.Year, currentDate.Month, i);
                     var compareDate = new DateTime(currentDate.Year, currentDate.Month, 1);
                     var compareDate2 = new DateTime(currentDate.Year, currentDate.Month, endDate);
+     
                     foreach (var item in danhMucs)
                     {
+                               
+
+                        chiTietPhieuNhapdk = await _context.ChiTietPhieuNhaps
+                        .Where(x => x.Ma_sanpham == item.Ma_danhmuc
+                            && x.Ngaynhap.Date <= firstDayOfMonth.Date && x.Ngaynhap.Date >= firstDayOfLastMonth.Date)
+                        .ToListAsync();
+                        chiTietPhieuxuadk=await _context.ChiTietPhieuXuats
+                        .Where(x => x.Ma_sanpham == item.Ma_danhmuc
+                            && x.Ngayxuat.Date <= firstDayOfMonth.Date && x.Ngayxuat.Date >= firstDayOfLastMonth.Date)
+                        .ToListAsync();   
+                        var tongphieunhapdk = chiTietPhieuNhapdk.Sum(x => x.SoLuong);
+                         var tongphieuxuatdk = chiTietPhieuxuadk.Sum(x => x.SoLuong);
+                        var tonkhodk = tongphieunhapdk - tongphieuxuatdk;
+
                         // Lọc chi tiết phiếu nhập theo ngày
                         chiTietPhieuNhaps = await _context.ChiTietPhieuNhaps
                              .Where(x => x.Ma_sanpham == item.Ma_danhmuc
@@ -62,7 +81,7 @@ namespace Projecthoca.Service.Responser
                             .ToListAsync();
                         var tongphieunhap=chiTietPhieuNhaps.Sum(x=>x.SoLuong);
                         var tongphieuxuat=chiTietPhieuXuats.Sum(x=>x.SoLuong);
-                        var tonkho=tongphieunhap-tongphieuxuat;
+                        var tonkho=tonkhodk+tongphieunhap-tongphieuxuat;
                         if (dailyInventories.ContainsKey(i.ToString()))
                         {
                             dailyInventories[i.ToString()].Add(new DailyInventory
@@ -149,17 +168,18 @@ namespace Projecthoca.Service.Responser
 
                     var tongphieunhapdk = chiTietPhieuNhapdk.Sum(x => x.SoLuong);
                     var tongphieuxuatdk = chiTietPhieuxuadk.Sum(x => x.SoLuong);
-                    var tonkhodk = tongphieunhapdk - tongphieunhapdk;
+                    var tonkhodk = tongphieunhapdk - tongphieuxuatdk;
                     var tongphieunhapck = chiTietPhieuNhapck.Sum(x => x.SoLuong);
                     var tongphieuxuatck = chiTietPhieuXuatsck.Sum(x => x.SoLuong);
-                    var tonkhock = tongphieunhapck - tongphieuxuatck;
+                    var tongphieuxuatck_1=tongphieunhapck+tonkhodk;
+                    var tonkhock = tongphieuxuatck_1 - tongphieuxuatck;
                     xuatnhaptonVMs.Add(new XuatnhaptonVM
                     {
                         ma_hanghoa = item.Ma_danhmuc,
                         ten_hanghoa = item.Ten_danhmuc,
                         donvitinh = item.Donvitinh,
                         Tondauky = tonkhodk,
-                        Nhaptrongky = tongphieunhapck,
+                        Nhaptrongky = tongphieuxuatck_1,
                         Xuattrongky = tongphieuxuatck,
                         Toncuoiky = tonkhock
                     });
