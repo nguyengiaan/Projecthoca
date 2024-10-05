@@ -83,6 +83,65 @@ public async Task<IActionResult> LayTatCaPhieuXuat()
 }
 
 
+[HttpGet("LayPhieuXuatTheoNgay")]
+public async Task<IActionResult> LayPhieuXuatTheoNgay([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+{
+    var user = await _userManager.GetUserAsync(User);
+    if (user == null)
+    {
+        return Unauthorized(new { success = false, message = "Người dùng chưa đăng nhập" });
+    }
+
+    // Đảm bảo endDate bao gồm cả ngày cuối cùng
+    endDate = endDate.AddDays(1).AddTicks(-1);
+
+    var phieuXuats = await _context.PhieuXuats
+        .Where(p => p.Id == user.Id && p.NgayPhieu >= startDate && p.NgayPhieu <= endDate)
+        .Include(p => p.ChiTietPhieuXuats)
+            .ThenInclude(c => c.Danhmuc)
+        .ToListAsync();
+
+    // Sắp xếp theo số phiếu giảm dần
+    var sortedPhieuXuats = phieuXuats
+        .OrderByDescending(p => 
+        {
+            var parts = p.SoPhieu.Split('-');
+            return int.TryParse(parts.Last(), out int number) ? number : 0;
+        })
+        .ToList();
+
+    var result = sortedPhieuXuats.Select(phieuXuat => new
+    {
+        soPhieu = phieuXuat.SoPhieu,
+        ngayPhieu = phieuXuat.NgayPhieu.ToString("dd/MM/yyyy"),
+        tenKhachHang = phieuXuat.Khachhang,
+        tenNVKD = phieuXuat.NhanVien,
+        tongTien = phieuXuat.TongTien,
+        noCu = phieuXuat.NoCu,
+        thanhToan = phieuXuat.ThanhToan,
+        conLai = phieuXuat.ConLai,
+        hanThanhToan = phieuXuat.HanThanhToan?.ToString("dd/MM/yyyy"),
+        ghiChu = phieuXuat.GhiChu,
+        chiTietPhieuXuats = phieuXuat.ChiTietPhieuXuats.Select(c => new
+        {
+            id = c.Id,
+            soPhieu = c.SoPhieu,
+            maSanPham = c.Ma_sanpham,
+            tenSanPham = c.Danhmuc?.Ten_danhmuc,
+            soLuong = c.SoLuong,
+            donGia = c.DonGia,
+            thanhTien = c.ThanhTien
+        })
+    });
+
+    return Ok(new
+    {
+        success = true,
+        data = result
+    });
+}
+
+
 
 
 

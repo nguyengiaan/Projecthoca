@@ -13,7 +13,7 @@
             <span class="mr-2 d-none d-lg-inline text-gray-600 small">Trang chủ</span>
         </a>
     </div>
-    @* <h6 class="m-0 font-weight-bold text-primary">Thông tin phiếu nhập</h6> *@
+    <h6 class="m-0 font-weight-bold text-primary">Quản lý phiếu nhập</h6>
     
     <!-- Lưu phiếu -->
    <div class="text-right">
@@ -44,24 +44,40 @@
 </div>
 
 </div>
-        <div class="card-body">
+         <div class="card-body">
             <div class="row">
                 <div class="col-md-8">
-                  <div class="form-group">
-                        <div class="input-group">
-                            <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm...">
-                            <div class="input-group-append">
-                                <button class="btn btn-primary" type="button" id="searchBtn">
-                                    <i class="fas fa-search"></i> Tìm kiếm
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+  <div class="form-group">
+    <div class="input-group mb-3">
+      <input type="text" id="searchInput" class="form-control" placeholder="Tìm kiếm...">
+      <div class="input-group-append">
+        <button class="btn btn-primary" type="button" id="searchBtn">
+          <i class="fas fa-search"></i> Tìm kiếm
+        </button>
+      </div>
+    </div>
+  </div>
+  <div class="form-row mb-3">
+    <div class="col">
+      <label for="startDate">Từ ngày:</label>
+      <input type="date" id="startDate" class="form-control">
+    </div>
+    <div class="col">
+      <label for="endDate">Đến ngày:</label>
+      <input type="date" id="endDate" class="form-control">
+    </div>
+    <div class="col-auto d-flex align-items-end">
+      <button id="filterBtn" class="btn btn-secondary">
+        <i class="fas fa-filter"></i> Lọc
+      </button>
+    </div>
+  </div>
                     <div class="table-responsive">
                         <table class="table table-bordered table-hover" id="dataTable_s" width="100%" cellspacing="0">
                             <thead class="thead-light">
                                 <tr>
                                     <th>Số phiếu</th>
+                                    <th>Ngày phiếu</th>
                                     <th>Tên nhà cung cấp</th>
                                     <th>Tên nhân viên</th>
                                     <th>Số tiền</th>
@@ -295,11 +311,28 @@
 
     <script>
         $(document).ready(function() {
-             loadPhieuNhaps();
+             loadAllPhieuNhaps();
+             function getCurrentDate() {
+                var now = new Date();
+                var year = now.getFullYear();
+                var month = (now.getMonth() + 1).toString().padStart(2, '0');
+                var day = now.getDate().toString().padStart(2, '0');
+                return `${year}-${month}-${day}`;
+                }
+                var today = getCurrentDate();
+                $('#startDate').val(today);
+                $('#endDate').val(today);
+                loadPhieuNhaps(today, today);
              //danhsachdanhmuc(1, 10, '');
              Danhsachkh(1, 10);
             var currentUserID = ''; 
             danhsachNVKD(1, 10, currentUserID);
+
+            $('#filterBtn').on('click', function() {
+            var startDate = $('#startDate').val();
+            var endDate = $('#endDate').val();
+            loadPhieuNhaps(startDate, endDate);
+        });
 
             $('#lammoi').on('click', function() {
                 startNewEntry();
@@ -344,15 +377,10 @@
                 });
             });
 
-            $('#searchInput').on('keyup', function() {
-             var searchValue = normalizeString($(this).val());
+           $('#searchInput').on('input', function() {
+                     searchPhieuNhaps($(this).val());
+                 });
 
-            // Lọc các dòng trong bảng danh mục
-            $('#dataTable_s tbody tr').filter(function() {
-                     var rowText = normalizeString($(this).text()); // Chuẩn hóa chuỗi trong bảng
-                    $(this).toggle(rowText.indexOf(searchValue) > -1); // Hiển thị những hàng có chuỗi khớp với giá trị tìm kiếm
-                });
-            });
         @* $('#printPhieuNhapBtn').on('click', function() {
                 preparePhieuNhapForPrinting();
 
@@ -507,6 +535,8 @@
                 }
             });  
 });
+
+ 
 
  function collectUpdatedPhieuData() {
             // Thu thập dữ liệu phiếu đã được chỉnh sửa từ giao diện
@@ -740,7 +770,19 @@ $(document).on('change', '.item-checkbox', function() {
         }
     });
 
-   
+   function searchPhieuNhaps(keyword) {
+    const lowercasedKeyword = keyword.toLowerCase();
+    const filteredPhieuNhaps = allPhieuNhaps.filter(phieu => 
+        phieu.soPhieu.toLowerCase().includes(lowercasedKeyword) ||
+        phieu.tenKhachHang.toLowerCase().includes(lowercasedKeyword) ||
+        phieu.tenNVKD.toLowerCase().includes(lowercasedKeyword)
+    );
+    currentPage = 1; // Reset to first page when searching
+    phieuNhaps = filteredPhieuNhaps; // Update phieuNhaps with filtered results
+    updateTable(filteredPhieuNhaps);
+    updatePagination();
+}
+
 
 
 
@@ -906,8 +948,29 @@ function danhsachdanhmucModels(page, pagesize) {
 var phieuNhaps = [];
 var currentPage = 1;
 var itemsPerPage = 6;
+var allPhieuNhaps = [];
 
-function loadPhieuNhaps() {
+function loadAllPhieuNhaps() {
+    $.ajax({
+        url: '/api/PhieuNhap/LayTatCaPhieuNhap',
+        type: 'GET',
+        success: function (response) {
+            if (response.success) {
+                allPhieuNhaps = response.data;
+                console.log(allPhieuNhaps);
+                updateTable(allPhieuNhaps);
+                updatePagination();
+            } else {
+                console.error("Lỗi khi tải dữ liệu:", response.message);
+            }
+        },
+        error: function (error) {
+            console.error("Lỗi khi tải dữ liệu:", error);
+        }
+    });
+}
+
+@* function loadPhieuNhaps() {
     $.ajax({
         url: '/api/PhieuNhap/LayTatCaPhieuNhap',
         type: 'GET',
@@ -922,6 +985,30 @@ function loadPhieuNhaps() {
             console.error("Lỗi khi tải dữ liệu:", error);
         }
     });
+} *@
+function loadPhieuNhaps(startDate, endDate) {
+  $.ajax({
+    url: '/api/PhieuNhap/LayPhieuNhapTheoNgay',
+    type: 'GET',
+    data: {
+      startDate: startDate,
+      endDate: endDate
+    },
+    success: function (response) {
+      if (response.success) {
+        phieuNhaps = response.data;
+        allPhieuNhaps = response.data;
+        currentPage = 1;
+        updateTable(phieuNhaps);
+        updatePagination();
+      } else {
+        console.error("Lỗi khi tải dữ liệu:", response.message);
+      }
+    },
+    error: function (error) {
+      console.error("Lỗi khi tải dữ liệu:", error);
+    }
+  });
 }
 
 
@@ -936,6 +1023,7 @@ function updateTable() {
     pageData.forEach(function (phieuNhap) {
         var row = `<tr>
             <td>${phieuNhap.soPhieu}</td>
+            <td>${phieuNhap.ngayPhieu}</td>
             <td>${phieuNhap.tenKhachHang}</td>
             <td>${phieuNhap.tenNVKD}</td>
             <td>${formatCurrency(phieuNhap.tongTien)}</td>

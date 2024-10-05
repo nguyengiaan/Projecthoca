@@ -24,6 +24,69 @@ namespace Projecthoca.Controllers
 
 
 
+[HttpGet("LayPhieuNhapTheoNgay")]
+public async Task<IActionResult> LayPhieuNhapTheoNgay([FromQuery] DateTime startDate, [FromQuery] DateTime endDate)
+{
+    var user = await _userManager.GetUserAsync(User);
+    if (user == null)
+    {
+        return Unauthorized(new { success = false, message = "Người dùng chưa đăng nhập" });
+    }
+
+    // Đảm bảo endDate bao gồm cả ngày cuối cùng
+    endDate = endDate.AddDays(1).AddTicks(-1);
+
+    var phieuNhaps = await _context.PhieuNhaps
+        .Where(p => p.Id == user.Id && p.NgayPhieu >= startDate && p.NgayPhieu <= endDate)
+        .Include(p => p.ChiTietPhieuNhaps)
+            .ThenInclude(c => c.Danhmuc)
+        .ToListAsync();
+
+    // Sắp xếp theo số phiếu giảm dần
+    var sortedPhieuNhaps = phieuNhaps
+        .OrderByDescending(p => 
+        {
+            var parts = p.SoPhieu.Split('-');
+            return int.TryParse(parts.Last(), out int number) ? number : 0;
+        })
+        .ToList();
+
+    var result = sortedPhieuNhaps.Select(phieuNhap => new
+    {
+        soPhieu = phieuNhap.SoPhieu,
+        ngayPhieu = phieuNhap.NgayPhieu.ToString("dd/MM/yyyy"),
+        tenKhachHang = phieuNhap.Khachhang,
+        tenNVKD = phieuNhap.NhanVien,
+        tongTien = phieuNhap.TongTien,
+        noCu = phieuNhap.NoCu,
+        thanhToan = phieuNhap.ThanhToan,
+        conLai = phieuNhap.ConLai,
+        hanThanhToan = phieuNhap.HanThanhToan?.ToString("dd/MM/yyyy"),
+        ghiChu = phieuNhap.GhiChu,
+        chiTietPhieuNhaps = phieuNhap.ChiTietPhieuNhaps.Select(c => new
+        {
+            id = c.Id,
+            soPhieu = c.SoPhieu,
+            maSanPham = c.Ma_sanpham,
+            tenSanPham = c.Danhmuc?.Ten_danhmuc,
+            soLuong = c.SoLuong,
+            donGia = c.DonGia,
+            thanhTien = c.ThanhTien
+        })
+    });
+
+    return Ok(new
+    {
+        success = true,
+        data = result
+    });
+}
+
+
+
+
+
+
         
         // GET: /api/PhieuNhap/LayTatCaPhieuNhap
 [HttpGet("LayTatCaPhieuNhap")]
