@@ -343,10 +343,11 @@ function getCurrentMonthDates() {
                 var day = now.getDate().toString().padStart(2, '0');
                 return `${year}-${month}-${day}`;
                 } *@
-                var currentMonthDates = getCurrentMonthDates();
-                $('#startDate').val(currentMonthDates.firstDay);
-                $('#endDate').val(currentMonthDates.lastDay);
-                loadPhieuNhaps(currentMonthDates.firstDay, currentMonthDates.lastDay);
+                
+              var currentMonthDates = getCurrentMonthDates();
+             $('#startDate').val(currentMonthDates.firstDay);
+             $('#endDate').val(currentMonthDates.lastDay);
+             loadPhieuNhaps(currentMonthDates.firstDay, currentMonthDates.lastDay);
              //danhsachdanhmuc(1, 10, '');
              Danhsachkh(1, 10);
              danhsachNVKD(1, 10);

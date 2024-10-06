@@ -958,7 +958,61 @@
                 // Cập nhật giá trị của input ẩn
                 $("#Idkhuvuccau_kv").val(khuVucId_kv);
             });
-            $(document).on("contextmenu long-press", ".Khuvuc", function (e) {
+
+             var longPressTimer;
+             var longPressThreshold = 10; // Thời gian nhấn giữ (ms)
+             var contextMenuVisible = false;
+             $(document).on("touchstart", ".Khuvuc", function(e) {
+        var element = this;
+        longPressTimer = setTimeout(function() {
+            handleContextMenu(e, element);
+        }, longPressThreshold);
+            }).on("touchend", ".Khuvuc", function(e) {
+                clearTimeout(longPressTimer);
+                // Ngăn chặn sự kiện click mặc định nếu context menu đang hiển thị
+                if (contextMenuVisible) {
+                    e.preventDefault();
+                }
+            }).on("touchmove", ".Khuvuc", function() {
+                clearTimeout(longPressTimer);
+            });
+            // Giữ nguyên sự kiện contextmenu cho máy tính
+            $(document).on("contextmenu", ".Khuvuc", function (e) {
+                handleContextMenu(e, this);
+            });
+
+            function handleContextMenu(e, element) {
+        e.preventDefault();
+        tenKhuvuc1 = $(element).attr("data-ten");
+        console.log(tenKhuvuc1);
+        var khuVucId = $(element).data("id");
+        Kiemtrakv(khuVucId);
+        Kiemtrabamgio(khuVucId);
+        kvc = khuVucId;
+
+        // Tính toán tọa độ chính xác
+        var x = e.pageX || e.originalEvent.touches[0].pageX;
+        var y = e.pageY || e.originalEvent.touches[0].pageY;
+
+        // Hiển thị menu ngữ cảnh
+        $("#contextMenu").css({
+            display: "block",
+            left: x,
+            top: y
+        }).data("id", khuVucId);
+
+        contextMenuVisible = true;
+    }
+
+     // Đóng context menu khi click bên ngoài
+    $(document).on('click touchstart', function(e) {
+        if (!$(e.target).closest('#contextMenu').length && !$(e.target).hasClass('Khuvuc')) {
+            $("#contextMenu").hide();
+            contextMenuVisible = false;
+        }
+    });
+
+            @* $(document).on("contextmenu", ".Khuvuc", function (e) {
                 e.preventDefault();
                 tenKhuvuc1=$(this).attr("data-ten");
                 console.log(tenKhuvuc1);
@@ -978,6 +1032,8 @@
                     top: y
                 }).data("id", khuVucId);
             });
+ *@
+
             $(document).click(function () {
                 $("#contextMenu").hide();
             });
