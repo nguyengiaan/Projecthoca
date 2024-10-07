@@ -179,7 +179,7 @@ namespace Projecthoca.Service.Responser
                         ten_hanghoa = item.Ten_danhmuc,
                         donvitinh = item.Donvitinh,
                         Tondauky = tonkhodk,
-                        Nhaptrongky = tongphieuxuatck_1,
+                        Nhaptrongky = tongphieunhapck,
                         Xuattrongky = tongphieuxuatck,
                         Toncuoiky = tonkhock
                     });
