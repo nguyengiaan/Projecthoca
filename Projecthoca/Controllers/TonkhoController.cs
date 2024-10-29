@@ -83,12 +83,12 @@ namespace Projecthoca.Controllers
             }
         }
         // báo cáo doanh thu
-        [HttpGet]
-        public async Task<IActionResult> Baocaodoanhthu()
+        [HttpPost]
+        public async Task<IActionResult> Baocaodoanhthu(int month)
         {
             try
             {
-                var item=await _tonkho.baocaodt();
+                var item=await _tonkho.baocaodt(month);
                 return Json(new {doanhso=item.ds,doanhthu=item.dt,tongvon=item.tongvon,loinhuan=item.loinhuan});
             }
             catch(Exception ex)

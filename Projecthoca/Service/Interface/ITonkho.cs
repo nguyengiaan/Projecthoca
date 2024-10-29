@@ -13,7 +13,7 @@ namespace Projecthoca.Service.Interface
         
         public Task<(List<ChiTietPhieuXuatVM>ds, int totalpages)>dspxck(int page, int pagesize,string ma_hanghoa,DateTime Ngaybd,DateTime Ngaykt);
         // báo cáo doanh thu
-        public Task<(List<long>ds,long dt,long tongvon,long loinhuan)> baocaodt();
+        public Task<(List<long>ds,long dt,long tongvon,long loinhuan)> baocaodt(int month);
 
         public Task<(List<Baocaodoanhthuct>ds,int totalPages)> Baocaodoanhthuct(DateTime NgayBd, DateTime NgayKt,int page,int pagesize);
 

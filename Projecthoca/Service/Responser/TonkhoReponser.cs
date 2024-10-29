@@ -264,13 +264,13 @@ namespace Projecthoca.Service.Responser
            }
 
          }
-        public async Task<(List<long> ds, long dt, long tongvon, long loinhuan)> baocaodt()
+        public async Task<(List<long> ds, long dt, long tongvon, long loinhuan)> baocaodt(int month)
         {
           try
     {
         var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
         DateTime firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-        DateTime lastDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
+        DateTime lastDayOfMonth = new DateTime(DateTime.Now.Year, month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
 
         List<long> dsdt = new List<long>();
         long doanhthu = 0;

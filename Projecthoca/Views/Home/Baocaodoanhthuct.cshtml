@@ -120,14 +120,8 @@ function bcdtct(page,pagesize) {
                      <td>${item.donvitinh}</td> <td>${item.soluong}</td> <td>${formatCurrency(item.donGia)}</td> <td>${formatCurrency(item.tongcong)}</td><td>${item.tenNV}</td>`;
                     reportTableBody.appendChild(row);
                 });
-                var totalAmount = data.dsdm.reduce(function (sum, item) {
-                    console.log(item.tongcong);
-                    return sum + item.tongcong;
-                }, 0);
-                
-                var totalRow = document.createElement('tr');
-                totalRow.innerHTML = `<td colspan="8" style="text-align:right"><strong>Tổng cộng:</strong></td><td><strong>${formatCurrency(totalAmount)}</strong></td><td></td>`;
-                reportTableBody.appendChild(totalRow);
+       
+                  totalAmount()
                 updatePagination(data.totalpages, data.page);
             } else {
                 reportTableBody.innerHTML = `<tr><td colspan="5">${data.messeger}</td></tr>`;
@@ -264,6 +258,43 @@ function fetchReportData(reportContent) {
 
                 // In báo cáo
                 printWindow.print();
+            } else {
+                alert(data.messeger);
+            }
+        },
+        error: function(xhr, status, error) {
+            console.error(xhr.responseText);
+        }
+    });
+}
+function totalAmount()
+{
+    var startDate = $('#startDate').val();
+    var endDate = $('#endDate').val();
+    $.ajax({
+        type: 'POST',
+        url: '/Tonkho/Baocaodoanhthuct1',
+        data: { NgayBd: startDate, NgayKt: endDate },
+        success: function(data) {
+            if (data.success) {
+                var totalRevenue = 0; // Tổng doanh thu
+                var totalCash = 0; // Tổng tiền mặt
+                var totalTransfer = 0; // Tổng chuyển khoản
+                var totalDiscount = 0; // Tổng phiếu giảm giá
+
+                var rows = ''; // Biến để lưu trữ các hàng dữ liệu
+                console.log(data);
+                data.dsdm.forEach(function(item) {
+                  
+                    totalRevenue += item.doanhthu;
+                    totalCash += item.tienmat;
+                    totalTransfer += item.chuyenkhoan;
+                    totalDiscount += 0;
+                });
+            var totalRow = document.createElement('tr');
+                totalRow.innerHTML = `<td colspan="8" style="text-align:right"><strong>Tổng cộng:</strong></td><td><strong>${formatCurrency(totalRevenue)}</strong></td><td></td>`;
+                reportTableBody.appendChild(totalRow);
+           
             } else {
                 alert(data.messeger);
             }

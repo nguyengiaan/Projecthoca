@@ -10,25 +10,25 @@
             <div class="row mb-4">
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label for="startDate" class="form-label">Ngày bắt đầu:</label>
-                        <input type="date" id="startDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-01")" disabled>
+                        <label for="startDate" class="form-label">Tháng</label>
+                      <select class="form-control" id="month">
+                     @for (int i = 1; i <= 12; i++)
+                      {
+                          <option value="@i">@i</option>
+                         }
+                    </select>
+
+
                     </div>
                 </div>
                 <div class="col-md-3">
                     <div class="form-group">
-                        <label for="endDate" class="form-label">Ngày kết thúc:</label>
-                        <input type="date" id="endDate" class="form-control" value="@DateTime.Now.AddDays(-(DateTime.Now.Day)).AddMonths(1).ToString("yyyy-MM-dd")" disabled>
+                        <label for="endDate" class="form-label">Năm hiện tại</label>
+                      <input type="text" id="currentYear" class="form-control" value="@DateTime.Now.Year" disabled>
+          
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="form-group">
-                        <label for="startDate" class="form-label">Doanh thu</label>
-                        <select class="form-control" disabled>
-                            <option>Doanh thu theo ngày</option>
-                            <option>Tổng doanh thu theo tháng</option>
-                        </select>
-                    </div>
-                </div>
+               
             </div>
         </div>
     </div>
@@ -66,7 +66,7 @@
 
             <div class="row">
                 <div class="col-12">
-                    <canvas id="revenueChart" style="height: 400px;"></canvas>
+                    <canvas id="revenueChart" style="height: 150px; "></canvas>
                 </div>
             
             </div>
@@ -77,56 +77,78 @@
 @section Scripts {
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
         <script>   
+              var myChart;
         $(document).ready(function () {
+             $("#month").val(new Date().getMonth() + 1); 
             danhsachdoanhthu();
+            $("#month").change(function () {
+                danhsachdoanhthu();
+            });
+     
         });
-        function danhsachdoanhthu() {
+   function danhsachdoanhthu() {
         const today = new Date();
         const year = today.getFullYear();
         const month = today.getMonth() + 1;
-         const daysInMonth = new Date(year, month, 0).getDate();
-           const labels = Array.from({ length: daysInMonth }, (_, i) => `Ngày ${i + 1}`);
+        const daysInMonth = new Date(year, month, 0).getDate();
+        const labels = Array.from({ length: daysInMonth }, (_, i) => `Ngày ${i + 1}`);
+        var id = $("#month").val();
+
         $.ajax({
-            type: "GET",
+            type: "POST",
             url: "/Tonkho/Baocaodoanhthu",
+            data: { month: id },
             success: function (response) {
-          
-                        $('#totalRevenue').text(response.doanhthu.toLocaleString('vi-VN') + " VNĐ");
-                            $('#totalCost').text(response.tongvon.toLocaleString('vi-VN') + " VNĐ");
-                            $('#profit').text(response.loinhuan.toLocaleString('vi-VN') + " VNĐ");
-                console.log(response);
-                        var ctx = document.getElementById('revenueChart').getContext('2d');
-                        var myChart = new Chart(ctx, {
-                            type: 'bar',
-                            data: {
-                                labels: labels,
-                                datasets: [{
-                                    label: 'Doanh thu (VNĐ)',
-                                    data: response.doanhso,
-                                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                                    borderColor: 'rgba(75, 192, 192, 1)',
-                                    borderWidth: 1
-                                }]
+                $('#totalRevenue').text(response.doanhthu.toLocaleString('vi-VN') + " VNĐ");
+                $('#totalCost').text(response.tongvon.toLocaleString('vi-VN') + " VNĐ");
+                $('#profit').text(response.loinhuan.toLocaleString('vi-VN') + " VNĐ");
+
+                var ctx = document.getElementById('revenueChart').getContext('2d');
+
+                if (myChart) {
+                    myChart.destroy(); // Xóa biểu đồ cũ nếu đã tồn tại
+                }
+
+                // Kiểm tra dữ liệu doanh số
+                let doanhsoData = response.doanhso && response.doanhso.length ? response.doanhso : Array(daysInMonth).fill(0);
+
+                // Đảm bảo dữ liệu có độ dài bằng với số ngày trong tháng
+                if (doanhsoData.length !== daysInMonth) {
+                    doanhsoData = Array(daysInMonth).fill(0);
+                }
+
+                // Khởi tạo biểu đồ
+                myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Doanh thu (VNĐ)',
+                            data: doanhsoData,
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Doanh thu (VNĐ)'
+                                }
                             },
-                            options: {
-                                responsive: true,
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        title: {
-                                            display: true,
-                                            text: 'Doanh thu (VNĐ)'
-                                        }
-                                    },
-                                    x: {
-                                        title: {
-                                            display: true,
-                                            text: 'Tháng'
-                                        }
-                                    }
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Ngày trong tháng'
                                 }
                             }
-                        });
+                        }
+                    }
+                });
             },
             error: function (xhr, status, error) {
                 console.error("Lỗi khi tải dữ liệu:", error);
@@ -138,6 +160,7 @@
             }
         });
     }
+
     </script>
 
   
