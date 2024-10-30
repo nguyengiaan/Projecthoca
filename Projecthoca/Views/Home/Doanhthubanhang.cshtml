@@ -86,80 +86,79 @@
             });
      
         });
-   function danhsachdoanhthu() {
-        const today = new Date();
-        const year = today.getFullYear();
-        const month = today.getMonth() + 1;
-        const daysInMonth = new Date(year, month, 0).getDate();
-        const labels = Array.from({ length: daysInMonth }, (_, i) => `Ngày ${i + 1}`);
-        var id = $("#month").val();
+function danhsachdoanhthu() {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = today.getMonth() + 1;
+    const daysInMonth = new Date(year, month, 0).getDate();
+    const labels = Array.from({ length: daysInMonth }, (_, i) => `Ngày ${i + 1}`);
+    const id = $("#month").val();
 
-        $.ajax({
-            type: "POST",
-            url: "/Tonkho/Baocaodoanhthu",
-            data: { month: id },
-            success: function (response) {
-                $('#totalRevenue').text(response.doanhthu.toLocaleString('vi-VN') + " VNĐ");
-                $('#totalCost').text(response.tongvon.toLocaleString('vi-VN') + " VNĐ");
-                $('#profit').text(response.loinhuan.toLocaleString('vi-VN') + " VNĐ");
+    $.ajax({
+        type: "POST",
+        url: "/Tonkho/Baocaodoanhthu",
+        data: { month: id },
+        success: function (response) {
+            $('#totalRevenue').text(response.doanhthu.toLocaleString('vi-VN') + " VNĐ");
+            $('#totalCost').text(response.tongvon.toLocaleString('vi-VN') + " VNĐ");
+            $('#profit').text(response.loinhuan.toLocaleString('vi-VN') + " VNĐ");
+            console.log(response);  
+            const ctx = document.getElementById('revenueChart').getContext('2d');
 
-                var ctx = document.getElementById('revenueChart').getContext('2d');
+            if (myChart) {
+                myChart.destroy(); // Xóa biểu đồ cũ nếu đã tồn tại
+            }
 
-                if (myChart) {
-                    myChart.destroy(); // Xóa biểu đồ cũ nếu đã tồn tại
-                }
+            // Kiểm tra dữ liệu doanh số và đảm bảo dữ liệu có đúng số ngày
+            let doanhsoData = Array.from({ length: daysInMonth }, (_, i) => response.doanhso[i] || 0);
 
-                // Kiểm tra dữ liệu doanh số
-                let doanhsoData = response.doanhso && response.doanhso.length ? response.doanhso : Array(daysInMonth).fill(0);
+            // Chuyển đổi dữ liệu doanh số thành số nguyên
+            doanhsoData = doanhsoData.map(value => parseInt(value, 10) || 0);
 
-                // Đảm bảo dữ liệu có độ dài bằng với số ngày trong tháng
-                if (doanhsoData.length !== daysInMonth) {
-                    doanhsoData = Array(daysInMonth).fill(0);
-                }
-
-                // Khởi tạo biểu đồ
-                myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            label: 'Doanh thu (VNĐ)',
-                            data: doanhsoData,
-                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                            borderColor: 'rgba(75, 192, 192, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Doanh thu (VNĐ)'
-                                }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Ngày trong tháng'
-                                }
+            // Khởi tạo biểu đồ
+            myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Doanh thu (VNĐ)',
+                        data: doanhsoData,
+                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            suggestedMax: Math.max(...doanhsoData) * 1.1,
+                            title: {
+                                display: true,
+                                text: 'Doanh thu (VNĐ)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Ngày trong tháng'
                             }
                         }
                     }
-                });
-            },
-            error: function (xhr, status, error) {
-                console.error("Lỗi khi tải dữ liệu:", error);
-                Swal.fire({
-                    title: "Lỗi",
-                    text: "Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại sau.",
-                    icon: "error"
-                });
-            }
-        });
-    }
+                }
+            });
+        },
+        error: function (xhr, status, error) {
+            console.error("Lỗi khi tải dữ liệu:", error);
+            Swal.fire({
+                title: "Lỗi",
+                text: "Đã xảy ra lỗi khi tải dữ liệu. Vui lòng thử lại sau.",
+                icon: "error"
+            });
+        }
+    });
+}
 
     </script>
 

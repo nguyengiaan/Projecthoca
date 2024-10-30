@@ -81,19 +81,9 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var kvc = await _context.Khuvuccau.FindAsync(thc.Ma_khuvuccau);
-                int nextNumber1 = 1;
-                var lastMaDV = await _context.Thuehoca
-                              .OrderByDescending(x => x.Ma_thuehoca)
-                              .Select(x => x.Ma_thuehoca)
-                              .FirstOrDefaultAsync();
-                int nextNumber = 1;
-                if (lastMaDV != null)
-                {
-                    nextNumber = int.Parse(lastMaDV.Substring(2)) + 1;
-                }
-                var mact = "CT" + nextNumber.ToString("D4");
+            
                 Thuehoca ct = new Thuehoca();
-                ct.Ma_thuehoca = mact;
+                ct.Ma_thuehoca = Guid.NewGuid().ToString(); 
                 ct.Ma_khuvuccau = thc.Ma_khuvuccau;
                 ct.Ten_khachhang = thc.Ten_khachhang;
                 ct.Ngaycau = thc.Ngaycau;

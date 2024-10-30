@@ -228,7 +228,6 @@ namespace Projecthoca.Service.Responser
                throw e;
            }
         }
-
         public async Task<(List<ChiTietPhieuXuatVM> ds, int totalpages)> dspxck(int page, int pagesize, string ma_hanghoa,DateTime Ngaybd,DateTime Ngaykt)
         {
           try
@@ -265,12 +264,12 @@ namespace Projecthoca.Service.Responser
 
          }
         public async Task<(List<long> ds, long dt, long tongvon, long loinhuan)> baocaodt(int month)
-        {
-          try
+{
+    try
     {
         var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-        DateTime firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-        DateTime lastDayOfMonth = new DateTime(DateTime.Now.Year, month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
+        DateTime firstDayOfMonth = new DateTime(DateTime.Now.Year, month, 1);
+        DateTime lastDayOfMonth = new DateTime(DateTime.Now.Year, month, DateTime.DaysInMonth(DateTime.Now.Year, month));
 
         List<long> dsdt = new List<long>();
         long doanhthu = 0;
@@ -315,10 +314,11 @@ namespace Projecthoca.Service.Responser
     }
     catch (Exception ex)
     {
-        return (null, 0, 0, 0);
+        // Ghi lại lỗi chi tiết
+ 
+        return (new List<long>(), 0, 0, 0);
     }
 }
-
         public async Task<(List<Baocaodoanhthuct>ds,int totalPages)> Baocaodoanhthuct(DateTime NgayBd, DateTime NgayKt,int page,int pagesize)
         {
             try
@@ -358,7 +358,6 @@ namespace Projecthoca.Service.Responser
                        return (null,0);
             }
         }
-
         public async Task<List<Baocao>> Baocaodoanhthuct1(DateTime NgayBd, DateTime NgayKt)
         {
            try
