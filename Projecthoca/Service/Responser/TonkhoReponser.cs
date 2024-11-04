@@ -57,11 +57,11 @@ namespace Projecthoca.Service.Responser
 
                         chiTietPhieuNhapdk = await _context.ChiTietPhieuNhaps
                         .Where(x => x.Ma_sanpham == item.Ma_danhmuc
-                            && x.Ngaynhap.Date <= firstDayOfMonth.Date && x.Ngaynhap.Date >= firstDayOfLastMonth.Date)
+                            && x.Ngaynhap.Date < firstDayOfMonth.Date)
                         .ToListAsync();
                         chiTietPhieuxuadk=await _context.ChiTietPhieuXuats
                         .Where(x => x.Ma_sanpham == item.Ma_danhmuc
-                            && x.Ngayxuat.Date <= firstDayOfMonth.Date && x.Ngayxuat.Date >= firstDayOfLastMonth.Date)
+                            && x.Ngayxuat.Date <firstDayOfMonth.Date)
                         .ToListAsync();   
                         var tongphieunhapdk = chiTietPhieuNhapdk.Sum(x => x.SoLuong);
                          var tongphieuxuatdk = chiTietPhieuxuadk.Sum(x => x.SoLuong);
@@ -130,6 +130,7 @@ namespace Projecthoca.Service.Responser
                 List<ChiTietPhieuNhap> chiTietPhieuNhapck;
                 List<ChiTietPhieuXuat> chiTietPhieuXuatsck;
                 List<XuatnhaptonVM> xuatnhaptonVMs = new List<XuatnhaptonVM>();
+               
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
                 var totalItems = _context.Danhmuc.Where(x => x.Id == user.Id && x.Ma_danhmuc != "DM0000").Count();
                 var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
@@ -149,13 +150,15 @@ namespace Projecthoca.Service.Responser
 
                 foreach (var item in danhMucs)
                 {
+                    
+                    
                     chiTietPhieuNhapdk = await _context.ChiTietPhieuNhaps
                         .Where(x => x.Ma_sanpham == item.Ma_danhmuc
-                            && x.Ngaynhap.Date <= firstDayOfMonth.Date && x.Ngaynhap.Date >= firstDayOfLastMonth.Date)
+                            &&   x.Ngaynhap.Date < Ngaybd.Date)
                         .ToListAsync();
-                    chiTietPhieuxuadk=await _context.ChiTietPhieuXuats
+                    chiTietPhieuxuadk = await _context.ChiTietPhieuXuats
                         .Where(x => x.Ma_sanpham == item.Ma_danhmuc
-                            && x.Ngayxuat.Date <= firstDayOfMonth.Date && x.Ngayxuat.Date >= firstDayOfLastMonth.Date)
+                            &&  x.Ngayxuat.Date < Ngaybd.Date)
                         .ToListAsync();
                     chiTietPhieuNhapck = await _context.ChiTietPhieuNhaps
                         .Where(x => x.Ma_sanpham == item.Ma_danhmuc
@@ -197,8 +200,8 @@ namespace Projecthoca.Service.Responser
         {
            try
            {
-                DateTime firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-                DateTime Trongky = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
+                DateTime firstDayOfMonth = new DateTime(DateTime.Now.Year, Ngaybd.Month, 1);
+                DateTime Trongky = new DateTime(DateTime.Now.Year, Ngaykt.Month, DateTime.DaysInMonth(DateTime.Now.Year, Ngaykt.Month));
                 var hanghoa=await _context.Danhmuc.FindAsync(ma_hanghoa);
                 if(hanghoa==null)
                 {
@@ -232,8 +235,8 @@ namespace Projecthoca.Service.Responser
         {
           try
            {
-                DateTime firstDayOfMonth = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
-                DateTime Trongky = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
+                DateTime firstDayOfMonth = new DateTime(DateTime.Now.Year, Ngaybd.Month, 1);
+                DateTime Trongky = new DateTime(DateTime.Now.Year, Ngaykt.Month, DateTime.DaysInMonth(DateTime.Now.Year,Ngaykt.Month));
                 var hanghoa=await _context.Danhmuc.FindAsync(ma_hanghoa);
                 if(hanghoa==null)
                 {
@@ -358,47 +361,55 @@ namespace Projecthoca.Service.Responser
                        return (null,0);
             }
         }
-        public async Task<List<Baocao>> Baocaodoanhthuct1(DateTime NgayBd, DateTime NgayKt)
+     public async Task<List<Baocao>> Baocaodoanhthuct1(DateTime NgayBd, DateTime NgayKt)
+{
+    try
+    {
+        var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+        var defaultDate = new DateTime(0001, 01, 01);
+        var baocaoList = new List<Baocao>();
+
+        // Kiểm tra và thiết lập ngày bắt đầu và ngày kết thúc nếu chúng là giá trị mặc định
+        if (NgayBd == defaultDate && NgayKt == defaultDate)
         {
-           try
-           {
-                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var date=new DateTime(0001,01,01);
-                var Baocao =new List<Baocao>(); 
-         
-                if(NgayBd==date && NgayKt==date)
-                {
-                    NgayBd=new DateTime(DateTime.Now.Year,DateTime.Now.Month,1);
-                    NgayKt=new DateTime(DateTime.Now.Year,DateTime.Now.Month,DateTime.DaysInMonth(DateTime.Now.Year,DateTime.Now.Month));
-                }
-                for(DateTime a =NgayBd.Date ; a<=NgayKt.Date;a=a.AddDays(1))
-                {
-                  var data = await _context.PhieuXuats
-                  .Where(x => x.NgayPhieu.Date == a.Date && x.Id == user.Id )
-
-                 .Where(ct => ct != null) // Lọc ra các chi tiết phiếu xuất không null
-                    .ToListAsync();
-
-                if (data.Count > 0)
-             {
-            var Baocao1 = new Baocao
-            {
-             Ngayphieu = a.Date,
-              Doanhthu = (int)data.Sum(ct => ct.TongTien),
-             Tienmat = (int)data.Sum(ct => ct.TongTien), // Giả sử tất cả đều là tiền mặt, bạn có thể thay đổi nếu cần
-              Chuyenkhoan = 0 // Bạn có thể cập 
-            };
-
-            Baocao.Add(Baocao1);
+            NgayBd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            NgayKt = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
         }
-                   
-                }
-                 return Baocao;
-           }
-           catch(Exception e)
-           {
-               return null;
+
+        // Lặp qua từng ngày trong khoảng thời gian từ NgayBd đến NgayKt
+        for (DateTime date = NgayBd.Date; date <= NgayKt.Date; date = date.AddDays(1))
+        {
+            var data = await _context.PhieuXuats
+                .Where(x => x.NgayPhieu.Date == date.Date && x.Id == user.Id)
+                .Include(x => x.ChiTietPhieuXuats) // Bao gồm chi tiết phiếu xuất
+                .ToListAsync();
+
+            if (data.Count > 0)
+            {
+                var doanhthu =+ data.Sum(ct => ct.TongTien);
+                var tienmat = +data.Sum(ct => ct.TienMat); // Giả sử có thuộc tính TienMat
+                var chuyenkhoan =+ data.Sum(ct => ct.ChuyenKhoan); // Giả sử có thuộc tính ChuyenKhoan
+
+                var baocao = new Baocao
+                {
+                    Ngayphieu = date.Date,
+                    Doanhthu = doanhthu,
+                    Tienmat =tienmat,
+                    Chuyenkhoan = chuyenkhoan,
+                };
+
+                baocaoList.Add(baocao);
             }
+        }
+
+        return baocaoList;
     }
+    catch (Exception ex)
+    {
+        // Ghi lại lỗi chi tiết
+   
+        return null;
+    }
+}
 }
 }

@@ -213,6 +213,7 @@
             data: { page: page, pagesize: pagesize,Ngaybd:startDate,Ngaykt:endDate },
             success: function (response) {
                 if (response.success) {
+                    console.log(response.dsdm)
                     var reportBody = $('#reportBody');
                     reportBody.empty();
                     $.each(response.dsdm, function(index, item) {
@@ -354,6 +355,7 @@
                 if (response.success) {
                     var reportBody = $('#xuattrongkyBody');
                     reportBody.empty();
+                    console.log(response.dsdm)  
                     $.each(response.dsdm, function(index, item) {
                         var row = $('<tr>');
                         row.append($('<td>').text(item.ma_sanpham));
