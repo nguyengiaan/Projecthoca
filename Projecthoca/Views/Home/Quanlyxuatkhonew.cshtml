@@ -170,33 +170,36 @@
  <!-- Thông tin thanh toán -->
 <div class="mt-2">
     <div class="form-group row mb-1">
-        @* <label class="col-sm-4 col-form-label col-form-label-sm">Tiền hàng</label> *@
         <div class="col-sm-8">
             <input type="number" hidden class="form-control form-control-sm text-right" name="tongTienHang" readonly value="0">
+            <span class="money-display"></span>
         </div>
     </div>
     <div class="form-group row mb-1">
         <label class="col-sm-4 col-form-label col-form-label-sm">Tổng phiếu</label>
         <div class="col-sm-8">
-            <input type="number" class="form-control form-control-sm text-right font-weight-bold" name="tongPhieu" readonly value="0" >
+            <input type="number" class="form-control form-control-sm text-right font-weight-bold" name="tongPhieu" readonly value="0">
+            <span class="money-display"></span>
         </div>
     </div>
     <div class="form-group row mb-1">
-        @* <label class="col-sm-4 col-form-label col-form-label-sm">Nợ cũ</label> *@
         <div class="col-sm-8">
-            <input type="number" hidden class="form-control form-control-sm text-right" name="noCu" readonly value="0" >
+            <input type="number" hidden class="form-control form-control-sm text-right" name="noCu" readonly value="0">
+            <span class="money-display"></span>
         </div>
     </div>
     <div class="form-group row mb-1">
         <label class="col-sm-4 col-form-label col-form-label-sm">Thanh toán</label>
         <div class="col-sm-8">
-            <input type="number" class="form-control form-control-sm text-right" name="thanhToan"  value="0">
+            <input type="number" class="form-control form-control-sm text-right" name="thanhToan" value="0">
+            <span class="money-display"></span>
         </div>
     </div>
     <div class="form-group row mb-1">
         <label class="col-sm-4 col-form-label col-form-label-sm">Còn lại</label>
         <div class="col-sm-8">
             <input type="number" class="form-control form-control-sm text-right font-weight-bold text-danger" name="conLai" readonly value="0">
+            <span class="money-display text-danger"></span>
         </div>
     </div>
 </div>
@@ -460,7 +463,7 @@ function getCurrentMonthDates() {
     }
 });
             
-            // Xử lý sự kiện click nút "Xóa phiếu"
+            // Xử l�� sự kiện click nút "Xóa phiếu"
             $('#xoaPhieuBtn').on('click', function() {
                 var selectedPhieu = $(this).data('selected-phieu');
                 if (selectedPhieu && $(this).css('opacity') == '1') {
@@ -1208,20 +1211,18 @@ function updatePagination() {
     $.ajax({
         type: "POST",
         url: "/api/PhieuXuat/ThemPhieuXuat",
-        contentType: "application/json", // Thêm contentType
-        data: JSON.stringify(dataToSend), 
+        contentType: "application/json",
+        data: JSON.stringify(dataToSend),
         success: function(response) {
-            console.log(response);
             if (response.success) {
                 Swal.fire({
                     title: "Thành công",
                     text: "Phiếu Xuất đã được thêm thành công!",
                     icon: "success"
                 }).then(() => {
-                    location.reload(); // Tải lại trang hoặc cập nhật giao diện theo yêu cầu
+                    location.reload();
                 });
             } else {
-                console.log(response);
                 Swal.fire({
                     title: "Thông báo lỗi",
                     text: response.message,
@@ -1229,10 +1230,15 @@ function updatePagination() {
                 });
             }
         },
-        error: function(xhr, status, error) {
+        error: function(xhr) {
+            // Xử lý phản hồi lỗi từ server
+            let errorMessage = "Đã xảy ra lỗi khi gửi dữ liệu.";
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                errorMessage = xhr.responseJSON.message;
+            }
             Swal.fire({
                 title: "Lỗi",
-                text: "Đã xảy ra lỗi khi gửi dữ liệu.",
+                text: errorMessage,
                 icon: "error"
             });
         }
