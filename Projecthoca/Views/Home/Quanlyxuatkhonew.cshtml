@@ -782,7 +782,16 @@ $(document).on('click', '.select-category', function() {
         <td>${tenDanhMuc}</td>
         <td>${donViTinh}</td>
         <td><input type="number" class="form-control quantity" value="1" min="1" max="${soluong}" /></td>
-        <td><input type="number" class="form-control unit-price" value="${giaban}" /></td>
+        <td>
+        <div class="input-group">
+                <input type="number" class="form-control unit-price" value="0" />
+                <div class="input-group-append">
+                    <span class="input-group-text bg-light text-muted small" style="font-size: 0.8rem;">
+                        <i class="fas fa-history mr-1"></i> ${giaban}
+                    </span>
+                </div>
+            </div>
+        </td>
         <td class="item-total">${giaban}</td>
         <td><input type="checkbox" class="item-checkbox" data-id="${maDanhMuc}" /></td>
     </tr>`;
@@ -945,7 +954,7 @@ function danhsachdanhmucModels(page, pagesize) {
                         <td>${value.ten_danhmuc}</td>
                         <td>${value.donvitinh}</td>
                         <td>${value.soluong}</td>
-                        <td>${value.gia}</td>
+                        <td>${formatCurrency(value.gia)}</td>
                         <td><span class="select-category text-primary" data-id="${value.ma_danhmuc}" style="cursor: pointer;">Chọn</span></td>
                     </tr>`;
                     $('#categoryList').append(row);
@@ -1377,7 +1386,8 @@ function danhsachdanhmuc(page, pagesize) {
                         <td>${value.ten_danhmuc}</td>
                         <td>${value.donvitinh}</td>
                         <td><input type="number" class="form-control quantity" value="${quantity}" /></td>
-                        <td><input type="number" class="form-control unit-price" value="${unitPrice}" /></td>
+                        <td>
+                        <input type="number" class="form-control unit-price" value="${unitPrice}" /></td>
                         <td class="item-total">${formatCurrency(itemTotal)}</td>
                          <td><input type="checkbox" class="item-checkbox" data-id="${value.ma_danhmuc}" /></td>
                     </tr>`;
