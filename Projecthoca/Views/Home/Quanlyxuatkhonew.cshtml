@@ -168,38 +168,46 @@
 
 
  <!-- Thông tin thanh toán -->
-<div class="mt-2">
-    <div class="form-group row mb-1">
-        <div class="col-sm-8">
-            <input type="number" hidden class="form-control form-control-sm text-right" name="tongTienHang" readonly value="0">
-            <span class="money-display"></span>
-        </div>
-    </div>
-    <div class="form-group row mb-1">
-        <label class="col-sm-4 col-form-label col-form-label-sm">Tổng phiếu</label>
-        <div class="col-sm-8">
-            <input type="number" class="form-control form-control-sm text-right font-weight-bold" name="tongPhieu" readonly value="0">
-            <span class="money-display"></span>
-        </div>
-    </div>
-    <div class="form-group row mb-1">
-        <div class="col-sm-8">
-            <input type="number" hidden class="form-control form-control-sm text-right" name="noCu" readonly value="0">
-            <span class="money-display"></span>
-        </div>
-    </div>
-    <div class="form-group row mb-1">
-        <label class="col-sm-4 col-form-label col-form-label-sm">Thanh toán</label>
-        <div class="col-sm-8">
-            <input type="number" class="form-control form-control-sm text-right" name="thanhToan" value="0">
-            <span class="money-display"></span>
-        </div>
-    </div>
-    <div class="form-group row mb-1">
-        <label class="col-sm-4 col-form-label col-form-label-sm">Còn lại</label>
-        <div class="col-sm-8">
-            <input type="number" class="form-control form-control-sm text-right font-weight-bold text-danger" name="conLai" readonly value="0">
-            <span class="money-display text-danger"></span>
+<div class="mt-4 payment-summary">
+    <div class="card">
+        <div class="card-body">
+            <h6 class="card-title mb-3 text-primary">
+                <i class="fas fa-money-bill-wave mr-2"></i>
+                Thông tin thanh toán
+            </h6>
+            
+            <!-- Hidden inputs for form submission -->
+            <input type="number" hidden name="tongTienHang" value="0">
+            <input type="number" hidden name="tongPhieu" value="0">
+            <input type="number" hidden name="noCu" value="0">
+            <input type="number" hidden name="conLai" value="0">
+
+            <!-- Visible payment information -->
+            <div class="payment-info">
+                <div class="payment-row">
+                    <span class="payment-label">Tổng phiếu:</span>
+                    <span class="payment-value" id="tongPhieu">0đ</span>
+                </div>
+
+                <div class="payment-row">
+                    <span class="payment-label">Thanh toán:</span>
+                    <div class="input-group input-group-sm">
+                        <input type="number" 
+                               class="form-control text-right" 
+                               name="thanhToan" 
+                               value="0"
+                               min="0">
+                        <div class="input-group-append">
+                            <span class="input-group-text">đ</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="payment-row">
+                    <span class="payment-label">Còn lại:</span>
+                    <span class="payment-value text-danger" id="conLai">0đ</span>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -463,7 +471,7 @@ function getCurrentMonthDates() {
     }
 });
             
-            // Xử l�� sự kiện click nút "Xóa phiếu"
+            // Xử lý sự kiện click nút "Xóa phiếu"
             $('#xoaPhieuBtn').on('click', function() {
                 var selectedPhieu = $(this).data('selected-phieu');
                 if (selectedPhieu && $(this).css('opacity') == '1') {
@@ -674,15 +682,18 @@ function normalizeString(str) {
 
     // Cập nhật giá trị vào các trường thanh toán
     $('input[name="tongTienHang"]').val(tongTienHang);
-    console.log(tongTienHang);
+    $('#tongTienHang').text(formatCurrency(tongTienHang));
+    //console.log(tongTienHang);
     $('input[name="tongPhieu"]').val(tongPhieu);
-    console.log(tongPhieu);
+    $('#tongPhieu').text(formatCurrency(tongPhieu));
+    //console.log(tongPhieu);
 
 
     // Tính toán lại số tiền còn lại sau khi thanh toán
     var thanhToan = parseFloat($('input[name="thanhToan"]').val()) || 0;
     var conLai = tongPhieu - thanhToan;
     $('input[name="conLai"]').val(conLai);
+    $('#conLai').text(formatCurrency(conLai));
 
     // Lắng nghe sự thay đổi trong ô nhập liệu thanh toán
     $(document).on('input', 'input[name="thanhToan"]', function() {
@@ -690,8 +701,9 @@ function normalizeString(str) {
         var tongPhieu = parseFloat($('input[name="tongPhieu"]').val()) || 0;
         var conLai = tongPhieu - thanhToan;
         $('input[name="conLai"]').val(conLai);
-        console.log(thanhToan);
-        console.log(conLai);
+        $('#conLai').text(formatCurrency(conLai));
+        //console.log(thanhToan);
+        //console.log(conLai);
     });
 
 
@@ -753,7 +765,8 @@ $(document).on('click', '.select-category', function() {
     var tenDanhMuc = row.find('td:eq(1)').text();
     var donViTinh = row.find('td:eq(2)').text();
     var soluong = parseFloat(row.find('td:eq(3)').text());
-    var giaban = row.find('td:eq(4)').text(); 
+    var giabanText = row.find('td:eq(4)').text();
+    var giaban = parseFloat(giabanText.replace(/\./g, '').replace('đ', '').trim());
 
     // Kiểm tra số lượng
     if (soluong <= 0) {
@@ -784,15 +797,15 @@ $(document).on('click', '.select-category', function() {
         <td><input type="number" class="form-control quantity" value="1" min="1" max="${soluong}" /></td>
         <td>
         <div class="input-group">
-                <input type="number" class="form-control unit-price" value="0" />
+                <input type="number" class="form-control unit-price" value="${giaban}"  hidden/>
                 <div class="input-group-append">
                     <span class="input-group-text bg-light text-muted small" style="font-size: 0.8rem;">
-                        <i class="fas fa-history mr-1"></i> ${giaban}
+                        <i class="fas fa-history mr-1"></i> ${formatCurrency(giaban)}
                     </span>
                 </div>
             </div>
         </td>
-        <td class="item-total">${giaban}</td>
+        <td class="item-total">${formatCurrency(giaban)}</td>
         <td><input type="checkbox" class="item-checkbox" data-id="${maDanhMuc}" /></td>
     </tr>`;
     $('#tblbody').append(newRow);
@@ -986,9 +999,11 @@ function danhsachdanhmucModels(page, pagesize) {
         // Cập nhật thông tin thanh toán
         $('input[name="tongTienHang"]').val(chiTietPhieuXuat.tongTienHang);
         $('input[name="tongPhieu"]').val(chiTietPhieuXuat.tongTien);
+        $('#tongPhieu').text(formatCurrency(chiTietPhieuXuat.tongTien));
         $('input[name="noCu"]').val(chiTietPhieuXuat.noCu);
         $('input[name="thanhToan"]').val(chiTietPhieuXuat.thanhToan);
         $('input[name="conLai"]').val(chiTietPhieuXuat.conLai);
+        $('#conLai').text(formatCurrency(chiTietPhieuXuat.conLai));
 
         // Cập nhật bảng chi tiết sản phẩm
         var chiTietTableBody = $('#tblbody');
@@ -1001,6 +1016,8 @@ function danhsachdanhmucModels(page, pagesize) {
             var soLuong = item.soLuong;
             var giaban = item.donGia;
             var thanhTien = item.thanhTien;
+
+           
             
             var row = `<tr>
             <td>${maDanhMuc}</td>
@@ -1008,7 +1025,7 @@ function danhsachdanhmucModels(page, pagesize) {
             <td>${donViTinh}</td>
             <td><input type="number" class="form-control quantity" disabled value="${soLuong}" /></td>
             <td><input type="number" class="form-control unit-price" disabled value="${giaban}" /></td>
-            <td class="item-total">${thanhTien}</td>
+            <td class="item-total">${formatCurrency(thanhTien)}</td>
             <td><input type="checkbox" class="item-checkbox" checked disabled data-id="${maDanhMuc}" /></td>
             </tr>`;
             chiTietTableBody.append(row);
@@ -1140,7 +1157,8 @@ function updatePagination() {
     var ngayPhieu = $('input[name="ngayPhieu"]').val();
     var tenKhachHang = $('#customerDropdown option:selected').data('name');
     var tenNVKD = $('#nhanvienDropdown option:selected').data('name');
-    var tongTien = parseFloat($('input[name="tongPhieu"]').val()) || 0;
+    var tongTienText = $('input[name="tongPhieu"]').val() || 0;
+    var tongTien = parseFloat(tongTienText.replace(/\./g, '').replace('đ', '').trim());
     var noCu = parseFloat($('input[name="noCu"]').val()) || 0;
     var thanhToan = parseFloat($('input[name="thanhToan"]').val()) || 0;
     var conLai = parseFloat($('input[name="conLai"]').val()) || 0;
@@ -1361,6 +1379,8 @@ function updatePagination() {
     // Cập nhật tổng tiền
     $('input[name="tongPhieu"]').val(totalAmount);
     $('input[name="conLai"]').val(totalAmount - (parseFloat($('input[name="thanhToan"]').val()) || 0));
+    $('#tongPhieu').text(formatCurrency(totalAmount));
+     $('#conLai').text(formatCurrency(totalAmount));
 }
 
 function danhsachdanhmuc(page, pagesize) {
