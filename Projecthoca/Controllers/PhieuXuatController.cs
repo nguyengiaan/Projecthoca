@@ -624,6 +624,18 @@ public async Task<IActionResult> XoaPhieuXuat([FromQuery] string soPhieu)
         return NotFound(new { success = false, message = "Phiếu xuất không tìm thấy" });
     }
 
+    foreach (var chiTiet in phieuXuat.ChiTietPhieuXuats)
+    {
+        var danhMuc = await _context.Danhmuc
+            .FirstOrDefaultAsync(d => d.Ma_danhmuc == chiTiet.Ma_sanpham);
+
+        if (danhMuc != null)
+        {
+            danhMuc.Soluong += chiTiet.SoLuong; // Trả số lượng
+            _context.Danhmuc.Update(danhMuc);
+        }
+    }
+
     // Xóa các chi tiết phiếu xuất liên quan
     _context.ChiTietPhieuXuats.RemoveRange(phieuXuat.ChiTietPhieuXuats);
 

@@ -441,17 +441,17 @@ public async Task<IActionResult> XoaPhieuNhap([FromQuery] string soPhieu)
     }
 
     // Cập nhật lại số lượng trong Danhmuc
-    // foreach (var chiTiet in phieuNhap.ChiTietPhieuNhaps)
-    // {
-    //     var danhMuc = await _context.Danhmuc
-    //         .FirstOrDefaultAsync(d => d.Ma_danhmuc == chiTiet.Ma_sanpham);
+    foreach (var chiTiet in phieuNhap.ChiTietPhieuNhaps)
+    {
+        var danhMuc = await _context.Danhmuc
+            .FirstOrDefaultAsync(d => d.Ma_danhmuc == chiTiet.Ma_sanpham);
 
-    //     if (danhMuc != null)
-    //     {
-    //         danhMuc.Soluong -= chiTiet.SoLuong; // Giảm số lượng
-    //         _context.Danhmuc.Update(danhMuc);
-    //     }
-    // }
+        if (danhMuc != null)
+        {
+            danhMuc.Soluong -= chiTiet.SoLuong; // Giảm số lượng
+            _context.Danhmuc.Update(danhMuc);
+        }
+    }
 
     // Xóa các chi tiết phiếu nhập liên quan
     _context.ChiTietPhieuNhaps.RemoveRange(phieuNhap.ChiTietPhieuNhaps);
