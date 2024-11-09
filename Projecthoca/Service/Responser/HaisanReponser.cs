@@ -26,39 +26,73 @@ namespace Projecthoca.Service.Responser
 
         public async Task<(List<HaisanVM> ds, int totalPages)> Danhsachhaisan(int page, int pagesize)
         {
-           try
-           {
-                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-            if(page < 1 && pagesize < 1)
+            try
             {
-                 var haisan1 =await _context.Haisans.Where(x => x.Id == user.Id).Select(x=>new HaisanVM{
-                    Ma_haisan = x.Ma_haisan,
-                    Ten_haisan = x.Ten_haisan,
-                    sokg = x.sokg,
-                    Gia = x.Gia
-                }).OrderByDescending(x=>x.Ma_haisan)
-                         .ToListAsync();
-                return (haisan1,0);
-            }
-                
-                var totalItems = _context.Haisans.Count();
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                if (user == null)
+                {
+                    return (null, 0);
+                }
+
+                var roles = await _userManager.GetRolesAsync(user);
+                IQueryable<Haisan> query = _context.Haisans;
+
+                // Nếu là Staff, lấy theo IdCustomer
+                if (roles.Contains("Staff"))
+                {
+                    query = query.Where(x => x.Id == user.IdCustomer);
+                }
+                // Nếu là Customer, lấy theo Id của user
+                else if (roles.Contains("Customer"))
+                {
+                    query = query.Where(x => x.Id == user.Id);
+                }
+                // Nếu là Admin, lấy tất cả
+                // else if (!roles.Contains("Admin"))
+                // {
+                //     return (null, 0); // Nếu không thuộc role nào ở trên
+                // }
+
+                // Nếu page và pagesize không hợp lệ, trả về tất cả
+                if (page < 1 || pagesize < 1)
+                {
+                    var allData = await query
+                        .Select(x => new HaisanVM
+                        {
+                            Ma_haisan = x.Ma_haisan,
+                            Ten_haisan = x.Ten_haisan,
+                            sokg = x.sokg,
+                            Gia = x.Gia
+                        })
+                        .OrderByDescending(x => x.Ma_haisan)
+                        .ToListAsync();
+                    return (allData, 0);
+                }
+
+                // Tính toán phân trang
+                var totalItems = await query.CountAsync();
                 var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
 
-                var haisan =await _context.Haisans.Where(x => x.Id == user.Id).Select(x=>new HaisanVM{
-                    Ma_haisan = x.Ma_haisan,
-                    Ten_haisan = x.Ten_haisan,
-                    sokg = x.sokg,
-                    Gia = x.Gia
-                }).OrderByDescending(x=>x.Ma_haisan)
-                         .Skip((page - 1) * pagesize)
-                         .Take(pagesize)
-                         .ToListAsync();
-                return (haisan,totalpages);
-           }
-           catch(Exception ex)
-           {
-               return (null,0  );
-           }    
+                // Lấy dữ liệu theo trang
+                var haisan = await query
+                    .Select(x => new HaisanVM
+                    {
+                        Ma_haisan = x.Ma_haisan,
+                        Ten_haisan = x.Ten_haisan,
+                        sokg = x.sokg,
+                        Gia = x.Gia
+                    })
+                    .OrderByDescending(x => x.Ma_haisan)
+                    .Skip((page - 1) * pagesize)
+                    .Take(pagesize)
+                    .ToListAsync();
+
+                return (haisan, totalpages);
+            }
+            catch (Exception ex)
+            {
+                return (null, 0);
+            }
         }
 
         public async Task<HaisanVM> Laythongtinhaisan(int Ma_haisan)

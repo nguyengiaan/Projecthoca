@@ -48,21 +48,48 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var totalItems = _context.Khachhangs.Count();
-                var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var dm = await _context.Khachhangs.Where(x => x.Id == user.Id)
-                         .Select(x => new KhachhangVM
-                         {
-                            Ma_khachhang=x.Ma_khachhang,
-                            Ten_khachhang=x.Ten_khachhang,
-                            Diachi=x.Diachi,
-                            Sodienthoai=x.Sodienthoai,
-                            Ngaysinh=x.Ngaysinh,
-                         }).OrderByDescending(x=>x.Ma_khachhang)
-                         .Skip((page - 1) * pagesize)
-                         .Take(pagesize)
-                         .ToListAsync();
+                if (user == null)
+                {
+                    return (null, 0);
+                }
+
+                var roles = await _userManager.GetRolesAsync(user);
+                IQueryable<Khachhang> query = _context.Khachhangs;
+
+                // Nếu là Staff, lấy theo IdCustomer
+                if (roles.Contains("Staff"))
+                {
+                    query = query.Where(x => x.Id == user.IdCustomer);
+                }
+                // Nếu là Customer, lấy theo Id của user
+                else if (roles.Contains("Customer"))
+                {
+                    query = query.Where(x => x.Id == user.Id);
+                }
+                // Nếu là Admin, lấy tất cả
+                // else if (!roles.Contains("Admin"))
+                // {
+                //     return (null, 0);
+                // }
+
+                var totalItems = await query.CountAsync();
+                var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
+
+                var dm = await query
+                    .Select(x => new KhachhangVM
+                    {
+                        Ma_khachhang = x.Ma_khachhang,
+                        Ten_khachhang = x.Ten_khachhang,
+                        Diachi = x.Diachi,
+                        Sodienthoai = x.Sodienthoai,
+                        Ngaysinh = x.Ngaysinh,
+                    })
+                    .OrderByDescending(x => x.Ma_khachhang)
+                    .Skip((page - 1) * pagesize)
+                    .Take(pagesize)
+                    .ToListAsync();
+
                 return (dm, totalpages);
             }
             catch (Exception ex)
@@ -75,17 +102,43 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                var data = await _context.Khachhangs
-              .Where(x => x.Ma_khachhang == ma_khachhang)
-               .Select(x => new KhachhangVM
-                 {
-                  Ma_khachhang = x.Ma_khachhang,
-                  Ten_khachhang=x.Ten_khachhang,
-                  Diachi=x.Diachi,
-                  Ngaysinh=x.Ngaysinh,
-                  Sodienthoai=x.Sodienthoai,
-              })
-               .FirstOrDefaultAsync();
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                if (user == null)
+                {
+                    return null;
+                }
+
+                var roles = await _userManager.GetRolesAsync(user);
+                IQueryable<Khachhang> query = _context.Khachhangs;
+
+                // Nếu là Staff, lấy theo IdCustomer
+                if (roles.Contains("Staff"))
+                {
+                    query = query.Where(x => x.Id == user.IdCustomer);
+                }
+                // Nếu là Customer, lấy theo Id của user
+                else if (roles.Contains("Customer"))
+                {
+                    query = query.Where(x => x.Id == user.Id);
+                }
+                // Nếu là Admin, không cần thêm điều kiện
+                // else if (!roles.Contains("Admin"))
+                // {
+                //     return null;
+                // }
+
+                var data = await query
+                    .Where(x => x.Ma_khachhang == ma_khachhang)
+                    .Select(x => new KhachhangVM
+                    {
+                        Ma_khachhang = x.Ma_khachhang,
+                        Ten_khachhang = x.Ten_khachhang,
+                        Diachi = x.Diachi,
+                        Ngaysinh = x.Ngaysinh,
+                        Sodienthoai = x.Sodienthoai,
+                    })
+                    .FirstOrDefaultAsync();
+
                 return data;
             }
             catch (Exception ex)

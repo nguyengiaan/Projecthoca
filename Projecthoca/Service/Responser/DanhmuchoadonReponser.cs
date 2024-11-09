@@ -76,33 +76,45 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                if (user == null)
+                {
+                    return null;
+                }
+
                 var roles = await _userManager.GetRolesAsync(user);
+                IQueryable<Danhmuc> query = _context.Danhmuc;
+
+                // Nếu là Staff, lấy theo IdCustomer
                 if (roles.Contains("Staff"))
                 {
-                    var data = await _context.Danhmuc.Where(x => x.Id == user.IdCustomer).Select(x => new DanhmucVM
-                    {
-                        Ma_danhmuc = x.Ma_danhmuc,
-                        Ten_danhmuc = x.Ten_danhmuc,
-                        Nhacungcap = x.Nhacungcap,
-
-                    }).ToListAsync();
-                    return data;
+                    query = query.Where(x => x.Id == user.IdCustomer);
                 }
-                else
+                // Nếu là Customer, lấy theo Id của user
+                else if (roles.Contains("Customer"))
                 {
-                    var data = await _context.Danhmuc.Where(x => x.Id == user.Id).Select(x => new DanhmucVM
+                    query = query.Where(x => x.Id == user.Id);
+                }
+                // Nếu là Admin, lấy tất cả
+                // else if (!roles.Contains("Admin"))
+                // {
+                //     return null; // Nếu không thuộc role nào ở trên
+                // }
+
+                var data = await query
+                    .Select(x => new DanhmucVM
                     {
                         Ma_danhmuc = x.Ma_danhmuc,
                         Ten_danhmuc = x.Ten_danhmuc,
                         Nhacungcap = x.Nhacungcap,
+                        // Thêm các trường khác nếu cần
+                    })
+                    .ToListAsync();
 
-                    }).ToListAsync();
-                    return data;
-                }
-         
+                return data;
             }
             catch (Exception ex)
             {
+                // Consider logging the exception
                 return null;
             }
         }

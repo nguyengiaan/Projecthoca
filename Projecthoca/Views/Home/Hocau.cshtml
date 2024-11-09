@@ -2734,14 +2734,12 @@ function Themphieuxuat() {
 
         // hàm cập nhật số lượng hàng hóa
         function Capnhatsoluonghh(ma_khuvuccau) {
-            console.log("Mã khu vực cầu:", ma_khuvuccau);
             $.ajax({
                 url: "/Danhmuc/Capnhatsoluong",
                 type: "POST",
                 data: { ma_khuvuccau: ma_khuvuccau },
 
                 success: function (response) {
-                    console.log("Phản hồi từ server:", response);
                     if (response.success) {
                         console.log("Thành công");
 
@@ -2766,7 +2764,7 @@ function Themphieuxuat() {
         url: "/Danhmuchoadon/Danhmucdv", // URL của bạn để lấy danh sách dịch vụ
         success: function (response) {
             $('#tblbodyDichvu').empty(); // Xóa các mục trước đó
-
+            console.log("response Danhmucdv",response);
             if (response.success) {
                 var filteredItems = response.data.filter(function (item) {
                     return item.ten_dichvu.toLowerCase().includes(searchText); // Lọc dựa trên giá trị tìm kiếm

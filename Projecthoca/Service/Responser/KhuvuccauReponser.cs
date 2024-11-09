@@ -389,58 +389,52 @@ namespace Projecthoca.Service.Responser
 
         public async Task<List<DanhmucVM>> Danhmuchthd(string? Timkiem)
         {
-
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var Roles =await _userManager.GetRolesAsync(user);
-                if (Timkiem == null)
+                if (user == null)
                 {
-                    if(Roles.Contains("Staff"))
-                    {
-                        var data = await _context.Danhmuc.Where(x => x.Id == user.IdCustomer && x.Ma_danhmuc != "DM0000")
-                        .Select(x => new DanhmucVM
-                        {
-                            Ma_danhmuc = x.Ma_danhmuc,
-                            Ten_danhmuc = x.Ten_danhmuc,
-                            Gia = x.Gia,
-                            Soluong = x.Soluong,
-                            Donvitinh = x.Donvitinh,
-                            Nhacungcap = x.Nhacungcap
-
-                        }).ToListAsync();
-                        return data;
-                    }
-                    else
-                    {
-                        var data = await _context.Danhmuc.Where(x => x.Id == user.Id && x.Ma_danhmuc != "DM0000")
-                        .Select(x => new DanhmucVM
-                        {
-                            Ma_danhmuc = x.Ma_danhmuc,
-                            Ten_danhmuc = x.Ten_danhmuc,
-                            Gia = x.Gia,
-                            Soluong = x.Soluong,
-                            Donvitinh = x.Donvitinh,
-                            Nhacungcap = x.Nhacungcap
-
-                        }).ToListAsync();
-                        return data;
-                    }
-                   
+                    return null;
                 }
-                else
+
+                var roles = await _userManager.GetRolesAsync(user);
+                IQueryable<Danhmuc> query = _context.Danhmuc.Where(x => x.Ma_danhmuc != "DM0000");
+
+                // Nếu là Staff, lấy theo IdCustomer
+                if (roles.Contains("Staff"))
                 {
-                    var data = await _context.Danhmuc.Where(x => x.Ten_danhmuc.Contains(Timkiem) && x.Id == user.Id && x.Ma_danhmuc != "DM0000")
+                    query = query.Where(x => x.Id == user.IdCustomer);
+                }
+                // Nếu là Customer, lấy theo Id của user
+                else if (roles.Contains("Customer"))
+                {
+                    query = query.Where(x => x.Id == user.Id);
+                }
+                // Nếu là Admin, lấy tất cả (không cần thêm điều kiện)
+                // else if (!roles.Contains("Admin"))
+                // {
+                //     return null; // Nếu không thuộc role nào ở trên
+                // }
+
+                // Thêm điều kiện tìm kiếm nếu có
+                if (!string.IsNullOrEmpty(Timkiem))
+                {
+                    query = query.Where(x => x.Ten_danhmuc.Contains(Timkiem));
+                }
+
+                var data = await query
                     .Select(x => new DanhmucVM
                     {
                         Ma_danhmuc = x.Ma_danhmuc,
                         Ten_danhmuc = x.Ten_danhmuc,
                         Gia = x.Gia,
+                        Soluong = x.Soluong,
                         Donvitinh = x.Donvitinh,
                         Nhacungcap = x.Nhacungcap
-                    }).ToListAsync();
-                    return data;
-                }
+                    })
+                    .ToListAsync();
+
+                return data;
             }
             catch (Exception ex)
             {

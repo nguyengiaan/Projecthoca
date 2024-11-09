@@ -25,28 +25,43 @@ namespace Projecthoca.Service.Responser
             try
             {
                 var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                if (user == null)
+                {
+                    return null;
+                }
+
                 var roles = await _userManager.GetRolesAsync(user);
-                if(roles.Contains("Staff"))
+                IQueryable<Danhmuc> query = _context.Danhmuc;
+
+                // Lọc cơ bản cho tất cả các role
+                query = query.Where(x => x.Mathang.Ten_mathang == "Hải sản");
+
+                // Nếu là Staff, lấy theo IdCustomer
+                if (roles.Contains("Staff"))
                 {
-                    var data = await _context.Danhmuc.Where(x => x.Mathang.Ten_mathang == "Hải sản" && x.Id == user.IdCustomer).Select(x => new DanhmucVM
+                    query = query.Where(x => x.Id == user.IdCustomer);
+                }
+                // Nếu là Customer, lấy theo Id của user
+                else if (roles.Contains("Customer"))
+                {
+                    query = query.Where(x => x.Id == user.Id);
+                }
+                // Nếu là Admin, lấy tất cả (không cần thêm điều kiện)
+                // else if (!roles.Contains("Admin"))
+                // {
+                //     return null; // Nếu không thuộc role nào ở trên
+                // }
+
+                var data = await query
+                    .Select(x => new DanhmucVM
                     {
                         Ma_danhmuc = x.Ma_danhmuc,
                         Ten_danhmuc = x.Ten_danhmuc,
                         Nhacungcap = x.Nhacungcap,
-                    }).ToListAsync();
-                    return data;
-                }
-                else
-                {
-                    var data = await _context.Danhmuc.Where(x => x.Mathang.Ten_mathang == "Hải sản" && x.Id == user.Id).Select(x => new DanhmucVM
-                    {
-                        Ma_danhmuc = x.Ma_danhmuc,
-                        Ten_danhmuc = x.Ten_danhmuc,
-                        Nhacungcap = x.Nhacungcap,
-                    }).ToListAsync();
-                    return data;
-                }
-       
+                    })
+                    .ToListAsync();
+
+                return data;
             }
             catch (Exception ex)
             {
