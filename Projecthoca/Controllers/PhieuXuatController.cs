@@ -154,7 +154,14 @@ public async Task<IActionResult> ThemPhieuXuat([FromBody] PhieuXuatVM model)
         if (ModelState.IsValid)
         {
             var user = await _userManager.GetUserAsync(User);
-            
+            if (user == null)
+            {
+                return Unauthorized(new { success = false, message = "Người dùng chưa đăng nhập" });
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            var userId = roles.Contains("Staff") ? user.IdCustomer : user.Id;
+
             // Kiểm tra số lượng tồn kho trước khi xử lý
             foreach (var chiTiet in model.ChiTietPhieuXuats)
             {
@@ -203,7 +210,7 @@ public async Task<IActionResult> ThemPhieuXuat([FromBody] PhieuXuatVM model)
                 TienMat = model.TienMat,
                 ChuyenKhoan = model.ChuyenKhoan,
                 TenKhuvuc = model.TenKhuvuc,
-                Id=user.Id,
+                Id = userId,
 
                 ChiTietPhieuXuats = new List<ChiTietPhieuXuat>()
             };
@@ -291,6 +298,14 @@ public async Task<IActionResult> ThemPhieuXuatHocau([FromBody] PhieuXuatVM model
                 if (ModelState.IsValid)
                 {
                       var user = await _userManager.GetUserAsync(User);
+                    if (user == null)
+                    {
+                        return Unauthorized(new { success = false, message = "Người dùng chưa đăng nhập" });
+                    }
+
+                    var roles = await _userManager.GetRolesAsync(user);
+                    var userId = roles.Contains("Staff") ? user.IdCustomer : user.Id;
+
                     // Sinh số phiếu tự động
                     model.SoPhieu = GenerateSoPhieu();
 
@@ -316,7 +331,7 @@ public async Task<IActionResult> ThemPhieuXuatHocau([FromBody] PhieuXuatVM model
                         TienMat = model.TienMat,
                         ChuyenKhoan = model.ChuyenKhoan,
                         TenKhuvuc = model.TenKhuvuc,
-                        Id=user.Id,
+                        Id = userId,
 
                         ChiTietPhieuXuats = new List<ChiTietPhieuXuat>()
                     };

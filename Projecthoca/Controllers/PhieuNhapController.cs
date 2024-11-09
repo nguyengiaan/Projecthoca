@@ -157,6 +157,14 @@ public async Task<IActionResult> ThemPhieuNhap([FromBody] PhieuNhapVM model)
     if (ModelState.IsValid)
     {
         var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return Unauthorized(new { success = false, message = "Người dùng chưa đăng nhập" });
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var userId = roles.Contains("Staff") ? user.IdCustomer : user.Id;
+
         // Sinh số phiếu tự động
         model.SoPhieu = GenerateSoPhieu();
 
@@ -178,7 +186,7 @@ public async Task<IActionResult> ThemPhieuNhap([FromBody] PhieuNhapVM model)
             ConLai = model.ConLai,
             HanThanhToan = model.HanThanhToan,
             GhiChu = model.GhiChu,
-            Id=user.Id,
+            Id = userId,
             ChiTietPhieuNhaps = new List<ChiTietPhieuNhap>()
         };
 

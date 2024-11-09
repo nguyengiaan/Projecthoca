@@ -39,8 +39,7 @@
     <!-- Page Wrapper -->
     <div id="wrapper">              
         <!-- Sidebar -->
-        @if (User.IsInRole("Admin")|| User.IsInRole("Customer") )
-                {
+       
         <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar">
 
             <!-- Sidebar - Brand -->
@@ -183,7 +182,6 @@
                             <div class="bg-white py-2 collapse-inner rounded">
                                 <a class="collapse-item" href="/Home/Quanlymathang">Nhóm hàng</a>
                                 <a class="collapse-item" href="/Home/Quanlydanhmuc">Hàng hóa</a>
-                                 <a class="collapse-item" href="/Home/Quanlytaikhoan">Người dùng</a>
                                  <a class="collapse-item" href="/Home/Quanlynhanvien">Nhân viên</a>
                                  <a class="collapse-item" href="/Home/Quanlynhanvien">Khách hàng</a>
                                  <a class="collapse-item" href="/Home/Quanlydonvitinh">Đơn vị tính</a>
@@ -202,9 +200,8 @@
                         </a>
                         <div id="collapsephieu" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                             <div class="bg-white py-2 collapse-inner rounded">
-                                <a class="collapse-item" href="/Home/Quanlyphieuxuatkho">Xuất bán</a>
-                                <a class="collapse-item" href="/Home/Quanlynhapkho">Nhập hàng</a>
-                    
+                                <a class="collapse-item" href="/Home/Quanlyxuatkhonew">Xuất bán</a>
+                                <a class="collapse-item" href="/Home/Quanlynhapkhonew">Nhập hàng</a>
                             </div>
                         </div>
                 </li>
@@ -216,8 +213,8 @@
                         </a>
                         <div id="collapsekho" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                             <div class="bg-white py-2 collapse-inner rounded">
-                                <a class="collapse-item" href="/Home/Quanlykho">Nhập xuất tồn</a>
-                                <a class="collapse-item" href="#">Nhập hàng</a>
+                                <a class="collapse-item" href="/Home/Nhapxuatton">Nhập xuất tồn</a>
+                                <a class="collapse-item" href="/Home/Quanlytonkho">Tồn kho</a>
                     
                             </div>
                         </div>
@@ -230,7 +227,7 @@
                         </a>
                         <div id="collapsebc" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
                             <div class="bg-white py-2 collapse-inner rounded">
-                              <a class="collapse-item" href="/Home/Doanhthubanhang">Báo cáo doanh thu</a>
+                               <a class="collapse-item" href="/Home/Doanhthubanhang">Báo cáo doanh thu</a>
                                 <a class="collapse-item" href="/Home/Baocaodoanhthuct" title="Báo cáo doanh thu mặt hàng">Báo cáo doanh thu chi tiết</a>
                     
                             </div>
@@ -244,7 +241,7 @@
 
 
         </ul>
-        }
+        
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
