@@ -27,18 +27,38 @@ namespace Projecthoca.Controllers
 [HttpGet("LayTatCaPhieuXuat")]
 public async Task<IActionResult> LayTatCaPhieuXuat()
 {
-
     var user = await _userManager.GetUserAsync(User);
     if (user == null)
     {
         return Unauthorized(new { success = false, message = "Người dùng chưa đăng nhập" });
     }
 
+    var roles = await _userManager.GetRolesAsync(user);
+    IQueryable<PhieuXuat> query = _context.PhieuXuats;
 
-    var phieuXuats = await _context.PhieuXuats
-        .Where(p => p.Id == user.Id)
-        .Include(p => p.ChiTietPhieuXuats) // Bao gồm chi tiết phiếu nhập
-            .ThenInclude(c => c.Danhmuc) // Bao gồm Danhmuc trong chi tiết phiếu nhập
+    // Nếu là Staff, lấy theo IdCustomer
+    if (roles.Contains("Staff"))
+    {
+        query = query.Where(p => p.Id == user.IdCustomer);
+    }
+    // Nếu là Customer, lấy theo Id của user
+    else if (roles.Contains("Customer"))
+    {
+        query = query.Where(p => p.Id == user.Id);
+    }
+    // Nếu là Admin, lấy tất cả
+    // else if (roles.Contains("Admin"))
+    // {
+    //     // Không cần filter
+    // }
+    else
+    {
+        return Unauthorized(new { success = false, message = "Không có quyền truy cập" });
+    }
+
+    var phieuXuats = await query
+        .Include(p => p.ChiTietPhieuXuats)
+            .ThenInclude(c => c.Danhmuc)
         .ToListAsync();
 
     // Sắp xếp theo số phiếu giảm dần
@@ -92,11 +112,34 @@ public async Task<IActionResult> LayPhieuXuatTheoNgay([FromQuery] DateTime start
         return Unauthorized(new { success = false, message = "Người dùng chưa đăng nhập" });
     }
 
+    var roles = await _userManager.GetRolesAsync(user);
+    IQueryable<PhieuXuat> query = _context.PhieuXuats;
+
+    // Nếu là Staff, lấy theo IdCustomer
+    if (roles.Contains("Staff"))
+    {
+        query = query.Where(p => p.Id == user.IdCustomer);
+    }
+    // Nếu là Customer, lấy theo Id của user
+    else if (roles.Contains("Customer"))
+    {
+        query = query.Where(p => p.Id == user.Id);
+    }
+    // Nếu là Admin, lấy tất cả
+    // else if (roles.Contains("Admin"))
+    // {
+    //     // Không cần filter
+    // }
+    else
+    {
+        return Unauthorized(new { success = false, message = "Không có quyền truy cập" });
+    }
+
     // Đảm bảo endDate bao gồm cả ngày cuối cùng
     endDate = endDate.AddDays(1).AddTicks(-1);
 
-    var phieuXuats = await _context.PhieuXuats
-        .Where(p => p.Id == user.Id && p.NgayPhieu >= startDate && p.NgayPhieu <= endDate)
+    var phieuXuats = await query
+        .Where(p => p.NgayPhieu >= startDate && p.NgayPhieu <= endDate)
         .Include(p => p.ChiTietPhieuXuats)
             .ThenInclude(c => c.Danhmuc)
         .ToListAsync();
@@ -480,7 +523,7 @@ public async Task<IActionResult> ThemPhieuXuatHocau([FromBody] PhieuXuatVM model
         if (int.TryParse(lastNumberPart, out int lastNumber))
         {
             // Tăng số lên 1 và định dạng lại thành 4 chữ số
-            var newNumber = (lastNumber + 1) % 10000; // Đảm bảo không vượt quá 9999
+            var newNumber = (lastNumber + 1) % 10000; // Đ���m bảo không vượt quá 9999
             return $"PX-{yearMonthPrefix}{newNumber:D4}";
         }
     }

@@ -33,11 +33,34 @@ public async Task<IActionResult> LayPhieuNhapTheoNgay([FromQuery] DateTime start
         return Unauthorized(new { success = false, message = "Người dùng chưa đăng nhập" });
     }
 
+    var roles = await _userManager.GetRolesAsync(user);
+    IQueryable<PhieuNhap> query = _context.PhieuNhaps;
+
+    // Nếu là Staff, lấy theo IdCustomer
+    if (roles.Contains("Staff"))
+    {
+        query = query.Where(p => p.Id == user.IdCustomer);
+    }
+    // Nếu là Customer, lấy theo Id của user
+    else if (roles.Contains("Customer"))
+    {
+        query = query.Where(p => p.Id == user.Id);
+    }
+    // Nếu là Admin, lấy tất cả
+    // else if (roles.Contains("Admin"))
+    // {
+    //     // Không cần filter
+    // }
+    else
+    {
+        return Unauthorized(new { success = false, message = "Không có quyền truy cập" });
+    }
+
     // Đảm bảo endDate bao gồm cả ngày cuối cùng
     endDate = endDate.AddDays(1).AddTicks(-1);
 
-    var phieuNhaps = await _context.PhieuNhaps
-        .Where(p => p.Id == user.Id && p.NgayPhieu >= startDate && p.NgayPhieu <= endDate)
+    var phieuNhaps = await query
+        .Where(p => p.NgayPhieu >= startDate && p.NgayPhieu <= endDate)
         .Include(p => p.ChiTietPhieuNhaps)
             .ThenInclude(c => c.Danhmuc)
         .ToListAsync();
@@ -92,17 +115,38 @@ public async Task<IActionResult> LayPhieuNhapTheoNgay([FromQuery] DateTime start
 [HttpGet("LayTatCaPhieuNhap")]
 public async Task<IActionResult> LayTatCaPhieuNhap()
 {
-
     var user = await _userManager.GetUserAsync(User);
     if (user == null)
     {
         return Unauthorized(new { success = false, message = "Người dùng chưa đăng nhập" });
     }
 
-    var phieuNhaps = await _context.PhieuNhaps
-        .Where(p => p.Id == user.Id)
-        .Include(p => p.ChiTietPhieuNhaps) // Bao gồm chi tiết phiếu nhập
-            .ThenInclude(c => c.Danhmuc) // Bao gồm Danhmuc trong chi tiết phiếu nhập
+    var roles = await _userManager.GetRolesAsync(user);
+    IQueryable<PhieuNhap> query = _context.PhieuNhaps;
+
+    // Nếu là Staff, lấy theo IdCustomer
+    if (roles.Contains("Staff"))
+    {
+        query = query.Where(p => p.Id == user.IdCustomer);
+    }
+    // Nếu là Customer, lấy theo Id của user
+    else if (roles.Contains("Customer"))
+    {
+        query = query.Where(p => p.Id == user.Id);
+    }
+    // Nếu là Admin, lấy tất cả
+    // else if (roles.Contains("Admin"))
+    // {
+    //     // Không cần filter
+    // }
+    else
+    {
+        return Unauthorized(new { success = false, message = "Không có quyền truy cập" });
+    }
+
+    var phieuNhaps = await query
+        .Include(p => p.ChiTietPhieuNhaps)
+            .ThenInclude(c => c.Danhmuc)
         .ToListAsync();
 
     // Sắp xếp theo số phiếu giảm dần

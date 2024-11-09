@@ -24,27 +24,55 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
-                  var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-                var totalItems = _context.Danhmuc.Where(x=>x.Id==user.Id).Count();
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                if (user == null)
+                {
+                    return (null, 0);
+                }
+
+                var roles = await _userManager.GetRolesAsync(user);
+                IQueryable<Danhmuc> query = _context.Danhmuc;
+
+                // Nếu là Staff, lấy theo IdCustomer
+                if (roles.Contains("Staff"))
+                {
+                    query = query.Where(x => x.Id == user.IdCustomer && x.Ma_danhmuc != "DM0000");
+                }
+                // Nếu là Customer, lấy theo Id của user
+                else if (roles.Contains("Customer"))
+                {
+                    query = query.Where(x => x.Id == user.Id && x.Ma_danhmuc != "DM0000");
+                }
+                // Nếu là Admin, lấy tất cả
+                // else if (roles.Contains("Admin"))
+                // {
+                //     query = query.Where(x => x.Ma_danhmuc != "DM0000");
+                // }
+                else
+                {
+                    return (null, 0);
+                }
+
+                var totalItems = await query.CountAsync();
                 var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
-              
-                var dm = await _context.Danhmuc
-                        .Where(x => x.Id == user.Id && x.Ma_danhmuc != "DM0000")
-                         .Select(x => new DanhmucVM
-                         {
-                             Ma_danhmuc = x.Ma_danhmuc,
-                             Ten_danhmuc = x.Ten_danhmuc,
-                             Gia = x.Gia,
-                             Donvitinh = x.Donvitinh,
-                             Id = x.Id,
-                             Ma_mathang = x.Mathang.Ten_mathang,
-                             Soluong = x.Soluong,
-                             Nhacungcap = x.Nhacungcap,
-                             Gianhap=x.Gianhap,
-                         }).Where(x => x.Id == user.Id)
-                         .Skip((page - 1) * pagesize)
-                         .Take(pagesize)
-                         .ToListAsync();
+
+                var dm = await query
+                    .Skip((page - 1) * pagesize)
+                    .Take(pagesize)
+                    .Select(x => new DanhmucVM
+                    {
+                        Ma_danhmuc = x.Ma_danhmuc,
+                        Ten_danhmuc = x.Ten_danhmuc,
+                        Gia = x.Gia,
+                        Donvitinh = x.Donvitinh,
+                        Id = x.Id,
+                        Ma_mathang = x.Mathang.Ten_mathang,
+                        Soluong = x.Soluong,
+                        Nhacungcap = x.Nhacungcap,
+                        Gianhap = x.Gianhap,
+                    })
+                    .ToListAsync();
+
                 return (dm, totalpages);
             }
             catch (Exception ex)
