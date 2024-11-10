@@ -44,10 +44,11 @@ namespace Projecthoca.Service.Responser
                     query = query.Where(x => x.Id == user.Id && x.Ma_danhmuc != "DM0000");
                 }
                 // Nếu là Admin, lấy tất cả
-                // else if (roles.Contains("Admin"))
-                // {
-                //     query = query.Where(x => x.Ma_danhmuc != "DM0000");
-                // }
+                else if (roles.Contains("Admin"))
+                {
+                    //query = query.Where(x => x.Ma_danhmuc != "DM0000");
+                     query = query.Where(x => x.Id == user.Id && x.Ma_danhmuc != "DM0000");
+                }
                 else
                 {
                     return (null, 0);

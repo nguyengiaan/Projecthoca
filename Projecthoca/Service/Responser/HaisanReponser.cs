@@ -48,10 +48,11 @@ namespace Projecthoca.Service.Responser
                     query = query.Where(x => x.Id == user.Id);
                 }
                 // Nếu là Admin, lấy tất cả
-                // else if (!roles.Contains("Admin"))
-                // {
-                //     return (null, 0); // Nếu không thuộc role nào ở trên
-                // }
+                else if (!roles.Contains("Admin"))
+                {
+                   // return (null, 0); // Nếu không thuộc role nào ở trên
+                   query = query.Where(x => x.Id == user.Id);
+                }
 
                 // Nếu page và pagesize không hợp lệ, trả về tất cả
                 if (page < 1 || pagesize < 1)

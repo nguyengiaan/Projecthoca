@@ -68,10 +68,11 @@ namespace Projecthoca.Service.Responser
                     query = query.Where(x => x.Id == user.Id);
                 }
                 // Nếu là Admin, lấy tất cả
-                // else if (!roles.Contains("Admin"))
-                // {
-                //     return (null, 0);
-                // }
+                else if (!roles.Contains("Admin"))
+                {
+                   // return (null, 0);
+                   query = query.Where(x => x.Id == user.Id);
+                }
 
                 var totalItems = await query.CountAsync();
                 var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
@@ -122,10 +123,11 @@ namespace Projecthoca.Service.Responser
                     query = query.Where(x => x.Id == user.Id);
                 }
                 // Nếu là Admin, không cần thêm điều kiện
-                // else if (!roles.Contains("Admin"))
-                // {
-                //     return null;
-                // }
+                else if (!roles.Contains("Admin"))
+                {
+                    //return null;
+                    query = query.Where(x => x.Id == user.Id);
+                }
 
                 var data = await query
                     .Where(x => x.Ma_khachhang == ma_khachhang)
