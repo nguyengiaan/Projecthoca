@@ -35,9 +35,12 @@
     <span class="text-danger ml-3" id="huyPhieuBtn" title="Hủy phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
     <i class="fas fa-times"></i> Hủy thêm mới/sửa
     </span>
+    @if (User.IsInRole("Admin") || User.IsInRole("Customer"))
+    {
     <span class="text-danger ml-3" id="xoaPhieuBtn" title="Xóa phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
     <i class="fas fa-trash"></i> Xóa phiếu
     </span>
+    }
     <span class="text-primary ml-3" id="luuPhieuBtn" title="Lưu phiếu" style="cursor: not-allowed; opacity: 0.5;" data-toggle="tooltip">
     <i class="fas fa-save"></i> Lưu phiếu sửa
 </span>
