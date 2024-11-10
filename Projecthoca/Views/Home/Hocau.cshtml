@@ -1990,8 +1990,8 @@ $(document).on('click', '.btn-increment', function () {
                                                                             <td>Dịch vụ câu</td>
                                                                             <td>${value.ca} Giờ</td>
                                                                             <td><input type="number" readonly class="form-control text-center" value="${value.soluong}"</td>
-                                                                            <td>${value.giaca}</td>
-                                                                            <td>${value.thanhtien}</td>
+                                                                            <td>${formatCurrency(value.giaca)}</td>
+                                                                            <td>${formatCurrency(value.thanhtien)}</td>
                                                                             <td><button class="btn btn-danger" data-id="${value.ma_giachothuehc}" onclick="Xoathoigian('${value.ma_giachothuehc}')" >Xóa</button></td>
                                                                     </tr>`;
                             html += str; // Thêm chuỗi vào biến html

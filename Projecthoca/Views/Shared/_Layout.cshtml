@@ -38,93 +38,95 @@
     <!-- Page Wrapper -->
     <div id="wrapper">              
         <!-- Sidebar -->
-       
-        <ul class="navbar-nav bg-gray-100 sidebar accordion" id="accordionSidebar">
+        @if (!User.IsInRole("Staff"))
+        {
+            <ul class="navbar-nav bg-gray-100 sidebar accordion" id="accordionSidebar">
 
-            <!-- Sidebar - Brand -->
-            <a class="sidebar-brand d-flex bg-white align-items-center justify-content-center">
-                <div class="sidebar-brand-icon">
-                    <i class="fas fa-anchor text-primary"></i>
-                </div>
-                <div class="sidebar-brand-text text-primary mx-2">THIÊN HÀ NGA</div>
-            </a>
-            <!-- Divider -->
-            <hr class="sidebar-divider my-0">
-
-            <!-- Nav Item - Dashboard -->
-            <li class="nav-item active">
-                <a class="nav-link text-dark" href="/Home/Hocau">
-                    <i class="fas fa-anchor text-primary"></i>
-                    <span class="text-primary">Trang chủ</span>
+                <!-- Sidebar - Brand -->
+                <a class="sidebar-brand d-flex bg-white align-items-center justify-content-center">
+                    <div class="sidebar-brand-icon">
+                        <i class="fas fa-anchor text-primary"></i>
+                    </div>
+                    <div class="sidebar-brand-text text-primary mx-2">THIÊN HÀ NGA</div>
                 </a>
-            </li>
+                <!-- Divider -->
+                <hr class="sidebar-divider my-0">
 
-            @* <li class="nav-item active">
-                <a class="nav-link" href="/Home/Hoadonbanle">
-                    <i class="fa fa-book" aria-hidden="true"></i>
-                    <span>Hóa đơn bán lẻ</span>
-                </a>
-            </li> *@
-
-            <!-- Divider -->
-           
-            <!-- Heading -->
-            @* <div class="sidebar-heading text-primary">
-               Danh sách chức năng
-            </div> *@
-
-            <!-- Nav Item - Pages Collapse Menu -->
-            @* Kiểm tra nếu người dùng có vai trò Admin *@
-                @if (User.IsInRole("Admin") )
-                {
-                 <li class="nav-item">
-                        <a class="nav-link text-dark" href="#" data-toggle="collapse" data-target="#collapseNguoidung"
-                        aria-expanded="true" aria-controls="collapseNguoidung">
-                            <i class="fas fa-user text-primary"></i>
-                            <span>Hệ thống</span>
-                        </a>
-                        <div id="collapseNguoidung" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                            <div class="bg-white py-2 collapse-inner rounded">
-                                <a class="collapse-item text-dark" href="/Home/Quanlyphanquyen">Phân quyền</a>
-                                <a class="collapse-item text-dark" href="#">Đổi mật khẩu</a>
-                            </div>
-                        </div>
+                <!-- Nav Item - Dashboard -->
+                <li class="nav-item active">
+                    <a class="nav-link text-dark" href="/Home/Hocau">
+                        <i class="fas fa-anchor text-primary"></i>
+                        <span class="text-primary">Trang chủ</span>
+                    </a>
                 </li>
+
+                @* <li class="nav-item active">
+                    <a class="nav-link" href="/Home/Hoadonbanle">
+                        <i class="fa fa-book" aria-hidden="true"></i>
+                        <span>Hóa đơn bán lẻ</span>
+                    </a>
+                </li> *@
+
+                <!-- Divider -->
+               
+                <!-- Heading -->
+                @* <div class="sidebar-heading text-primary">
+                   Danh sách chức năng
+                </div> *@
+
+                <!-- Nav Item - Pages Collapse Menu -->
+                @* Kiểm tra nếu người dùng có vai trò Admin *@
+                
+                    @if (User.IsInRole("Admin") )
+                    {
+                     <li class="nav-item">
+                            <a class="nav-link text-dark" href="#" data-toggle="collapse" data-target="#collapseNguoidung"
+                            aria-expanded="true" aria-controls="collapseNguoidung">
+                                <i class="fas fa-user text-primary"></i>
+                                <span>Hệ thống</span>
+                            </a>
+                            <div id="collapseNguoidung" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                                <div class="bg-white py-2 collapse-inner rounded">
+                                    <a class="collapse-item text-dark" href="/Home/Quanlyphanquyen">Phân quyền</a>
+                                    <a class="collapse-item text-dark" href="#">Đổi mật khẩu</a>
+                                </div>
+                            </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-dark" href="#" data-toggle="collapse" data-target="#collapsedanhmuc"
+                        aria-expanded="true" aria-controls="collapsedanhmuc">
+                                <i class="fas fa-list text-primary"></i>
+                                <span>Quản lý danh mục</span>
+                            </a>
+                            <div id="collapsedanhmuc" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                                <div class="bg-white py-2 collapse-inner rounded">
+                                    <a class="collapse-item text-dark" href="/Home/Quanlymathang">Nhóm hàng</a>
+                                    <a class="collapse-item text-dark" href="/Home/Quanlydanhmuc">Hàng hóa</a>
+                                     <a class="collapse-item text-dark" href="/Home/Quanlytaikhoan">Người dùng</a>
+                                     <a class="collapse-item text-dark" href="/Home/Quanlynhanvien">Nhân viên</a>
+                                     <a class="collapse-item text-dark" href="/Home/Quanlykhachhang">Khách hàng</a>
+                                     <a class="collapse-item text-dark" href="/Home/Quanlydonvitinh">Đơn vị tính</a>
+                                     <a class="collapse-item text-dark" href="/Home/Quanlynhacungcap">Nhà cung cấp</a>
+                                     <a class="collapse-item text-dark" href="/Home/Quanlygia">Ca giờ câu</a>
+                                    <a class="collapse-item text-dark" href="/Home/Quanlyhaisan">Hải sản </a>
+                            
+                                </div>
+                            </div>
+                    </li>
                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="#" data-toggle="collapse" data-target="#collapsedanhmuc"
-                    aria-expanded="true" aria-controls="collapsedanhmuc">
-                            <i class="fas fa-list text-primary"></i>
-                            <span>Quản lý danh mục</span>
-                        </a>
-                        <div id="collapsedanhmuc" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                            <div class="bg-white py-2 collapse-inner rounded">
-                                <a class="collapse-item text-dark" href="/Home/Quanlymathang">Nhóm hàng</a>
-                                <a class="collapse-item text-dark" href="/Home/Quanlydanhmuc">Hàng hóa</a>
-                                 <a class="collapse-item text-dark" href="/Home/Quanlytaikhoan">Người dùng</a>
-                                 <a class="collapse-item text-dark" href="/Home/Quanlynhanvien">Nhân viên</a>
-                                 <a class="collapse-item text-dark" href="/Home/Quanlykhachhang">Khách hàng</a>
-                                 <a class="collapse-item text-dark" href="/Home/Quanlydonvitinh">Đơn vị tính</a>
-                                 <a class="collapse-item text-dark" href="/Home/Quanlynhacungcap">Nhà cung cấp</a>
-                                 <a class="collapse-item text-dark" href="/Home/Quanlygia">Ca giờ câu</a>
-                                <a class="collapse-item text-dark" href="/Home/Quanlyhaisan">Hải sản </a>
+                        <a class="nav-link text-dark" href="#" data-toggle="collapse" data-target="#collapsephieu"
+                        aria-expanded="true" aria-controls="collapsephieu">
+                                <i class="fas fa-file-alt text-primary"></i>
+                                <span>Quản lý phiếu</span>
+                            </a>
+                            <div id="collapsephieu" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
+                                <div class="bg-white py-2 collapse-inner rounded">
+                                    <a class="collapse-item text-dark" href="/Home/Quanlyxuatkhonew">Xuất bán</a>
+                                    <a class="collapse-item text-dark" href="/Home/Quanlynhapkhonew">Nhập hàng</a>
                         
+                                </div>
                             </div>
-                        </div>
-                </li>
-            <li class="nav-item">
-                    <a class="nav-link text-dark" href="#" data-toggle="collapse" data-target="#collapsephieu"
-                    aria-expanded="true" aria-controls="collapsephieu">
-                            <i class="fas fa-file-alt text-primary"></i>
-                            <span>Quản lý phiếu</span>
-                        </a>
-                        <div id="collapsephieu" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                            <div class="bg-white py-2 collapse-inner rounded">
-                                <a class="collapse-item text-dark" href="/Home/Quanlyxuatkhonew">Xuất bán</a>
-                                <a class="collapse-item text-dark" href="/Home/Quanlynhapkhonew">Nhập hàng</a>
-                    
-                            </div>
-                        </div>
-                </li>
+                    </li>
                 <li class="nav-item">
                     <a class="nav-link text-dark" href="#" data-toggle="collapse" data-target="#collapsekho"
                     aria-expanded="true" aria-controls="collapsekho">
@@ -233,83 +235,7 @@
                         </div>
                 </li>
             }
-            else if (User.IsInRole("Staff"))
-            {
-                                   <li class="nav-item">
-                        <a class="nav-link text-dark" href="#" data-toggle="collapse" data-target="#collapseNguoidung"
-                        aria-expanded="true" aria-controls="collapseNguoidung">
-                            <i class="fas fa-user text-primary"></i>
-                            <span>Hệ thống</span>
-                        </a>
-                        <div id="collapseNguoidung" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                            <div class="bg-white py-2 collapse-inner rounded">
-                                <a class="collapse-item text-dark" href="/Home/Quanlyphanquyen">Phân quyền</a>
-                                <a class="collapse-item text-dark" href="#">Đổi mật khẩu</a>
-                            </div>
-                        </div>
-                </li>
-                 <li class="nav-item">
-                    <a class="nav-link text-dark" href="#" data-toggle="collapse" data-target="#collapsedanhmuc"
-                    aria-expanded="true" aria-controls="collapsedanhmuc">
-                            <i class="fas fa-list text-primary"></i>
-                            <span>Quản lý danh mục</span>
-                        </a>
-                        <div id="collapsedanhmuc" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                            <div class="bg-white py-2 collapse-inner rounded">
-                                <a class="collapse-item text-dark" href="/Home/Quanlymathang">Nhóm hàng</a>
-                                <a class="collapse-item text-dark" href="/Home/Quanlydanhmuc">Hàng hóa</a>
-                                 <a class="collapse-item text-dark" href="/Home/Quanlynhanvien">Nhân viên</a>
-                                 <a class="collapse-item text-dark" href="/Home/Quanlykhachhang">Khách hàng</a>
-                                 <a class="collapse-item text-dark" href="/Home/Quanlydonvitinh">Đơn vị tính</a>
-                                 <a class="collapse-item text-dark" href="/Home/Quanlynhacungcap">Nhà cung cấp</a>
-                                 <a class="collapse-item text-dark" href="/Home/Quanlygia">Ca giờ câu</a>
-                                  <a class="collapse-item text-dark" href="/Home/Quanlyhaisan">Hải sản</a>
-                        
-                            </div>
-                        </div>
-                </li>
-                   <li class="nav-item">
-                    <a class="nav-link text-dark" href="#" data-toggle="collapse" data-target="#collapsephieu"
-                    aria-expanded="true" aria-controls="collapsephieu">
-                            <i class="fas fa-file-alt text-primary"></i>
-                            <span>Quản lý phiếu</span>
-                        </a>
-                        <div id="collapsephieu" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                            <div class="bg-white py-2 collapse-inner rounded">
-                                <a class="collapse-item text-dark" href="/Home/Quanlyxuatkhonew">Xuất bán</a>
-                                <a class="collapse-item text-dark" href="/Home/Quanlynhapkhonew">Nhập hàng</a>
-                            </div>
-                        </div>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" href="#" data-toggle="collapse" data-target="#collapsekho"
-                    aria-expanded="true" aria-controls="collapsekho">
-                            <i class="fas fa-warehouse text-primary"></i>
-                            <span>Quản lý kho</span>
-                        </a>
-                        <div id="collapsekho" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                            <div class="bg-white py-2 collapse-inner rounded">
-                                <a class="collapse-item text-dark" href="/Home/Nhapxuatton">Nhập xuất tồn</a>
-                                <a class="collapse-item text-dark" href="/Home/Quanlytonkho">Tồn kho</a>
-                    
-                            </div>
-                        </div>
-                </li>
-             <li class="nav-item">
-                    <a class="nav-link text-dark" href="#" data-toggle="collapse" data-target="#collapsebc"
-                    aria-expanded="true" aria-controls="collapsebc">
-                            <i class="fas fa-file-alt text-primary"></i>
-                            <span>Quản lý báo cáo</span>
-                        </a>
-                        <div id="collapsebc" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                            <div class="bg-white py-2 collapse-inner rounded">
-                               <a class="collapse-item text-dark" href="/Home/Doanhthubanhang">Báo cáo doanh thu</a>
-                                <a class="collapse-item text-dark" href="/Home/Baocaodoanhthuct" title="Báo cáo doanh thu mặt hàng">Báo cáo doanh thu chi tiết</a>
-                    
-                            </div>
-                        </div>
-                </li>
-            }
+            
             <!-- Sidebar Toggler (Sidebar) -->
             <div class="text-center d-none d-md-inline">
                 <button class="rounded-circle border-0" id="sidebarToggle"></button>
@@ -317,7 +243,7 @@
 
 
         </ul>
-        
+        }
         <!-- End of Sidebar -->
 
         <!-- Content Wrapper -->
