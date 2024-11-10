@@ -1556,7 +1556,7 @@ $(document).on('click', '.btn-increment', function () {
 
                     if (response.success) {
                         $('#Ma_haisan').empty();
-                        console.log(response.dsdm);
+                        console.log( 'Danh sách Hải sản',response.dsdm);
                         $.each(response.dsdm, function (index, value) {
                             var str = '';
                             var str = `  <option value="${value.ma_haisan}">${value.ten_haisan}</option>`
@@ -1724,7 +1724,7 @@ $(document).on('click', '.btn-increment', function () {
                 success: function (response) {
 
                     if (response.success) {
-                        console.log(response.data);
+                        console.log( 'Danh sách dịch vụ Danhmucdv',response.data);
                         $.each(response.data, function (index, value) {
                             var str = '';
                             var str = `  <option value="${value.ma_danhmuc}" >${value.ten_danhmuc}</option>`
@@ -1805,7 +1805,7 @@ $(document).on('click', '.btn-increment', function () {
                 url: "/Danhmuchoadon/Dsdmhd",
                 data: { Ma_khuvuc: khuVucId },
                 success: function (response) {
-
+                    console.log( 'Danh sách hóa đơn dịch vụ Danhsachhddv',response);
                     if (response.success) {
 
                         var html = '';
@@ -1980,7 +1980,7 @@ $(document).on('click', '.btn-increment', function () {
                 url: "/Danhmuchoadon/Danhsachthoigian",
                 data: { khuvucId: KhuvucId },
                 success: function (response) {
-                    console.log(response.data);
+                    console.log( 'Danh sách thời gian Danhsachthoigian',response.data);
                     if (response.success) {
                         var html = '';
 
@@ -2541,6 +2541,7 @@ function Themphieuxuat() {
         data: { Ma_mathang: Ma_mathang },
         success: function (reponser) {
             if (reponser.success) {
+                console.log( 'Danh sách hàng hóa Danhmuchthd',reponser.data);
                 var html = '';
                 $('#danhmuc-list , #danhmuc-list2 ').empty();
                 $.each(reponser.data, function (index, value) {
@@ -2622,7 +2623,7 @@ function Themphieuxuat() {
                 processData: false,
                 contentType: false,
                 success: function (response) {
-                    console.log(response);
+                    console.log( 'Thêm danh mục hóa đơn Themdanhmuchdlst',response);
                     if (response.success) {
                         Swal.fire({
                             title: "Thành công",

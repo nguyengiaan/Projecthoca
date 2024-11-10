@@ -95,7 +95,7 @@ namespace Projecthoca.Service.Responser
                     query = query.Where(x => x.Id == user.Id);
                 }
                 // Nếu là Admin, lấy tất cả
-                else if (!roles.Contains("Admin"))
+                else if (roles.Contains("Admin"))
                 {
                     //return null; // Nếu không thuộc role nào ở trên
                     query = query.Where(x => x.Id == user.Id);
@@ -494,8 +494,5 @@ namespace Projecthoca.Service.Responser
         return false;
     }
 }
-    
-    
-    
     }
 }

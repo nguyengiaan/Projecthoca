@@ -47,7 +47,7 @@ namespace Projecthoca.Service.Responser
                 else if (roles.Contains("Admin"))
                 {
                     //query = query.Where(x => x.Ma_danhmuc != "DM0000");
-                     query = query.Where(x => x.Id == user.Id && x.Ma_danhmuc != "DM0000");
+                   query = query.Where(x => x.Id == user.Id && x.Ma_danhmuc != "DM0000");
                 }
                 else
                 {

@@ -47,10 +47,11 @@ public async Task<IActionResult> LayTatCaPhieuXuat()
         query = query.Where(p => p.Id == user.Id);
     }
     // Nếu là Admin, lấy tất cả
-    // else if (roles.Contains("Admin"))
-    // {
-    //     // Không cần filter
-    // }
+    else if (roles.Contains("Admin"))
+    {
+        query = query.Where(p => p.Id == user.Id);
+        // Không cần filter
+    }
     else
     {
         return Unauthorized(new { success = false, message = "Không có quyền truy cập" });
@@ -126,10 +127,11 @@ public async Task<IActionResult> LayPhieuXuatTheoNgay([FromQuery] DateTime start
         query = query.Where(p => p.Id == user.Id);
     }
     // Nếu là Admin, lấy tất cả
-    // else if (roles.Contains("Admin"))
-    // {
-    //     // Không cần filter
-    // }
+    else if (roles.Contains("Admin"))
+    {
+         query = query.Where(p => p.Id == user.Id);
+        // Không cần filter
+    }
     else
     {
         return Unauthorized(new { success = false, message = "Không có quyền truy cập" });

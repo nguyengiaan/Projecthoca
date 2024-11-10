@@ -326,39 +326,65 @@ namespace Projecthoca.Service.Responser
         {
             try
             {
+                var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+                var roles = await _userManager.GetRolesAsync(user);
+                
+                var date = new DateTime(0001,01,01);
+                var query = _context.PhieuXuats.AsQueryable();
 
-                    var date=new DateTime(0001,01,01);
-                    var data=await _context.PhieuXuats.Join(_context.ChiTietPhieuXuats,px=>px.SoPhieu,ct=>ct.SoPhieu,(px,ct)=>new {px,ct})
-                    .Join(_context.Danhmuc,pxct=>pxct.ct.Ma_sanpham,dm=>dm.Ma_danhmuc,(pxct,dm)=>new {pxct, dm}).Select(x=>new Baocaodoanhthuct
-                    {
-                        SoPhieu=x.pxct.px.SoPhieu,
-                        Ngayphieu=x.pxct.px.NgayPhieu,
-                        Tenkhachhang=x.pxct.px.Khachhang,
-                        Masanpham=x.dm.Ma_danhmuc,
-                        Tensanpham=x.dm.Ten_danhmuc,
-                        Soluong=x.pxct.ct.SoLuong,
-                        DonGia= (int)x.pxct.ct.DonGia,
-                        Tongcong= (int)x.pxct.ct.ThanhTien,
-                        TenNV=x.pxct.px.NhanVien,
-                        Donvitinh=x.dm.Donvitinh,
-                    }).ToListAsync();
-                    if(data.Count<0)
-                    {
-                        return (null,0);
-                    }
-                    if(NgayBd!= date && NgayKt!=date)
-                    {
-                        data=data.Where(x=>x.Ngayphieu.Date>=NgayBd.Date && x.Ngayphieu.Date<=NgayKt.Date).ToList();
-                    }
-                    var totalItems = data.Count();
-                    var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
-                    data=data.Skip((page - 1) * pagesize).OrderByDescending(x=>x.SoPhieu).Take(pagesize).ToList();
-                    return (data,totalpages);
-                   
+                // Phân quyền truy cập dữ liệu
+                if (roles.Contains("Staff"))
+                {
+                    query = query.Where(x => x.Id == user.IdCustomer);
+                }
+                else if (roles.Contains("Customer") || roles.Contains("Admin"))
+                {
+                    query = query.Where(x => x.Id == user.Id);
+                }
+                else
+                {
+                    return (null, 0);
+                }
+
+                var data = await query
+                    .Join(_context.ChiTietPhieuXuats,
+                        px => px.SoPhieu,
+                        ct => ct.SoPhieu,
+                        (px,ct) => new {px,ct})
+                    .Join(_context.Danhmuc,
+                        pxct => pxct.ct.Ma_sanpham,
+                        dm => dm.Ma_danhmuc,
+                        (pxct,dm) => new Baocaodoanhthuct
+                        {
+                            SoPhieu = pxct.px.SoPhieu,
+                            Ngayphieu = pxct.px.NgayPhieu,
+                            Tenkhachhang = pxct.px.Khachhang,
+                            Masanpham = dm.Ma_danhmuc,
+                            Tensanpham = dm.Ten_danhmuc,
+                            Soluong = pxct.ct.SoLuong,
+                            DonGia = (int)pxct.ct.DonGia,
+                            Tongcong = (int)pxct.ct.ThanhTien,
+                            TenNV = pxct.px.NhanVien,
+                            Donvitinh = dm.Donvitinh,
+                        })
+                        .ToListAsync();
+
+                if(data.Count<0)
+                {
+                    return (null,0);
+                }
+                if(NgayBd!= date && NgayKt!=date)
+                {
+                    data=data.Where(x=>x.Ngayphieu.Date>=NgayBd.Date && x.Ngayphieu.Date<=NgayKt.Date).ToList();
+                }
+                var totalItems = data.Count();
+                var totalpages = (int)Math.Ceiling(totalItems / (double)pagesize);
+                data=data.Skip((page - 1) * pagesize).OrderByDescending(x=>x.SoPhieu).Take(pagesize).ToList();
+                return (data,totalpages);
             }
             catch(Exception ex)
             {
-                       return (null,0);
+                return (null,0);
             }
         }
      public async Task<List<Baocao>> Baocaodoanhthuct1(DateTime NgayBd, DateTime NgayKt)
@@ -366,48 +392,61 @@ namespace Projecthoca.Service.Responser
     try
     {
         var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+        var roles = await _userManager.GetRolesAsync(user);
         var defaultDate = new DateTime(0001, 01, 01);
         var baocaoList = new List<Baocao>();
 
-        // Kiểm tra và thiết lập ngày bắt đầu và ngày kết thúc nếu chúng là giá trị mặc định
+        // Kiểm tra và thiết lập ngày bắt đầu và ngày kết thúc
         if (NgayBd == defaultDate && NgayKt == defaultDate)
         {
             NgayBd = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
             NgayKt = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.DaysInMonth(DateTime.Now.Year, DateTime.Now.Month));
         }
 
-        // Lặp qua từng ngày trong khoảng thời gian từ NgayBd đến NgayKt
+        // Tạo query cơ bản
+        var query = _context.PhieuXuats.AsQueryable();
+
+        // Phân quyền truy cập dữ liệu
+        if (roles.Contains("Staff"))
+        {
+            query = query.Where(x => x.Id == user.IdCustomer && x.NgayPhieu.Date >= NgayBd.Date && x.NgayPhieu.Date <= NgayKt.Date);
+        }
+        else if (roles.Contains("Customer") || roles.Contains("Admin"))
+        {
+            query = query.Where(x => x.Id == user.Id && x.NgayPhieu.Date >= NgayBd.Date && x.NgayPhieu.Date <= NgayKt.Date);
+        }
+        else
+        {
+            return null;
+        }
+
+        // Lấy dữ liệu và include ChiTietPhieuXuats
+        var data = await query
+            .Include(x => x.ChiTietPhieuXuats)
+            .AsNoTracking()
+            .ToListAsync();
+
         for (DateTime date = NgayBd.Date; date <= NgayKt.Date; date = date.AddDays(1))
         {
-            var data = await _context.PhieuXuats
-                .Where(x => x.NgayPhieu.Date == date.Date && x.Id == user.Id)
-                .Include(x => x.ChiTietPhieuXuats) // Bao gồm chi tiết phiếu xuất
-                .ToListAsync();
+            var doanhthu =+ data.Where(x => x.NgayPhieu.Date == date.Date).Sum(ct => ct.TongTien);
+            var tienmat = +data.Where(x => x.NgayPhieu.Date == date.Date).Sum(ct => ct.TienMat); // Giả sử có thuộc tính TienMat
+            var chuyenkhoan =+ data.Where(x => x.NgayPhieu.Date == date.Date).Sum(ct => ct.ChuyenKhoan); // Giả sử có thuộc tính ChuyenKhoan
 
-            if (data.Count > 0)
+            var baocao = new Baocao
             {
-                var doanhthu =+ data.Sum(ct => ct.TongTien);
-                var tienmat = +data.Sum(ct => ct.TienMat); // Giả sử có thuộc tính TienMat
-                var chuyenkhoan =+ data.Sum(ct => ct.ChuyenKhoan); // Giả sử có thuộc tính ChuyenKhoan
+                Ngayphieu = date.Date,
+                Doanhthu = doanhthu,
+                Tienmat =tienmat,
+                Chuyenkhoan = chuyenkhoan,
+            };
 
-                var baocao = new Baocao
-                {
-                    Ngayphieu = date.Date,
-                    Doanhthu = doanhthu,
-                    Tienmat =tienmat,
-                    Chuyenkhoan = chuyenkhoan,
-                };
-
-                baocaoList.Add(baocao);
-            }
+            baocaoList.Add(baocao);
         }
 
         return baocaoList;
     }
     catch (Exception ex)
     {
-        // Ghi lại lỗi chi tiết
-   
         return null;
     }
 }
