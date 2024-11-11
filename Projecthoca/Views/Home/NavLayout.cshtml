@@ -40,47 +40,36 @@
 </li> *@
 
 
-      <!-- Nav Item - Alerts -->
-<li class="nav-item dropdown no-arrow mx-1">
-    
-
-    <!-- Nút thông báo -->
-    <a class="nav-link dropdown-toggle position-relative" href="#" id="alertsDropdown" role="button"
-        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        <i class="fas fa-bell fa-fw text-gray-600"></i>
-        <span class="badge badge-danger badge-counter position-absolute top-30 start-100 translate-middle rounded-pill text-center"></span>
-    </a>
-
-    <!-- Dropdown thông báo -->
-    <div class="dropdown-list dropdown-menu dropdown-menu-right shadow-lg animated--grow-in"
-            aria-labelledby="alertsDropdown">
-        <div class="dropdown-header bg-primary text-white py-3">
-            <h6 class="m-0 font-weight-bold">Thông báo</h6>
-        </div>
-        <!-- Thông báo sẽ được hiển thị ở đây -->
-        <a class="dropdown-item text-center small text-primary py-3" href="#">
-            Xem tất cả thông báo
-            <i class="fas fa-chevron-right ms-1"></i>
-        </a>
-    </div>
-</li>
+        <!-- Nav Item - Alerts -->
+        <li class="nav-item dropdown no-arrow mx-1">
+            <a class="nav-link dropdown-toggle" href="#" id="alertsDropdown" role="button"
+               data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-bell fa-fw"></i>
+                <!-- Counter - Alerts -->
+                <span class="badge badge-danger badge-counter"></span>
+            </a>
+            <!-- Dropdown - Alerts -->
+            <div class="dropdown-list dropdown-menu dropdown-menu-right shadow animated--grow-in"
+                 aria-labelledby="alertsDropdown">
+                <h6 class="dropdown-header">
+                    Thông báo
+                </h6>
+                <!-- Thông báo sẽ được hiển thị ở đây -->
+                <a class="dropdown-item text-center small text-gray-500" href="#">Show All Alerts</a>
+            </div>
+        </li>
 
         <div class="topbar-divider d-none d-sm-block"></div>
 
         <!-- Nav Item - User Information -->
-        <li class="nav-item dropdown no-arrow d-flex align-items-center">
-            @* <a class="nav-link" href="/Home/Hocau">
+        <li class="nav-item dropdown no-arrow">
+            <a class="nav-link dropdown-toggle" href="/Home/Hocau">
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">Trang chủ</span>
-            </a>      *@
-            <!-- Nút bán hàng -->
-            <a class="nav-link" href="/Home/Quanlyxuatkhonew">
-                <i class="fas fa-shopping-cart me-2"></i>
-                <span class="d-none d-lg-inline text-gray-800 fw-medium">Bán hàng</span>
-            </a> 
+            </a>           
         </li>
        
         <li class="nav-item dropdown no-arrow">
-            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button"
+            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <span class="mr-2 d-none d-lg-inline text-gray-600 small">
                     @if (User.Identity.IsAuthenticated)
@@ -179,36 +168,13 @@
 
 <style>
     .dropdown-list {
-        max-height: 300px;
-        overflow-y: auto !important;
-        position: relative;
-        width: 300px;
+        max-height: 300px; /* Giới hạn chiều cao của dropdown */
+        overflow-y: auto !important; /* Thêm thanh cuộn khi nội dung vượt quá chiều cao */
+        position: relative; /* Đảm bảo phần tử có vị trí tương đối */
     }
 
     .dropdown-content {
-        max-height: 300px;
-        overflow-y: auto !important;
-    }
-
-    .nav-item {
-        display: flex;
-        align-items: center;
-    }
-
-    .nav-link {
-        padding: 0.5rem 1rem;
-        white-space: nowrap;
-    }
-
-    .img-profile {
-        width: 32px;
-        height: 32px;
-    }
-    .badge-counter{
-        height:20px;
-        width:20px;
-        display:flex;
-        justify-content:center;
-        align-items:center;
+        max-height: 300px; /* Giới hạn chiều cao của nội dung dropdown */
+        overflow-y: auto !important; /* Thêm thanh cuộn khi nội dung vượt quá chiều cao */
     }
 </style>
